@@ -4,19 +4,27 @@ import org.apache.spark.{SparkConf, SparkContext}
 object WordCount{
 
   def main(args:Array[String]): Unit = {
+
     val spark = SparkSession.builder()
-      .master("local")
+      .master("local[*]")
       .getOrCreate()
     val sc = spark.sparkContext
+    sc.setLogLevel("WARN")
+    sc.addJar("./target/scala-2.11/databricks_dev.jar")
 
-    spark.sparkContext.addJar("./target/scala-2.11/databricks_dev.jar")
+    //DBUtils
+    val dbutils = com.databricks.service.DBUtils
+    dbutils.fs.rm("/temp/" , true)
 
     val textFile = sc.textFile("dbfs:/databricks-datasets/samples/docs/README.md")
     val words = textFile.flatMap(line => line.split(" "))
     val wordCounts = words.map(word => (word, 1)).reduceByKey((a,b) => a+b)
+    //println(wordCounts)
+    //TODO:collectを使うとエラー
+    //wordCounts.collect().foreach(println)
 
-    println(wordCounts)
-
-    //wordCounts.saveAsTextFile("/・・・/")
+    wordCounts.saveAsTextFile("dbfs:/temp/")
+    println(dbutils.fs.ls("/temp/"))
+    spark.stop()
   }
 }

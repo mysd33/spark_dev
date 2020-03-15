@@ -5,9 +5,9 @@ object Test {
     val spark = SparkSession.builder()
       .master("local")
       .getOrCreate()
+    spark.sparkContext.setLogLevel("WARN")
     println("Spark Test")
     println(spark.range(100).count())
-    // The Spark code will execute on the Azure Databricks cluster.
 
     //DBUtils
     val dbutils = com.databricks.service.DBUtils
