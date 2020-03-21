@@ -10,7 +10,7 @@ object WordCount{
       .getOrCreate()
     val sc = spark.sparkContext
     sc.setLogLevel("WARN")
-    sc.addJar("./target/scala-2.11/databricks_dev.jar")
+    sc.addJar("./target/scala-2.11/databricks_dev_2.11-0.1.jar")
 
     //DBUtils
     val dbutils = com.databricks.service.DBUtils
@@ -25,6 +25,6 @@ object WordCount{
 
     wordCounts.saveAsTextFile("dbfs:/temp/")
     println(dbutils.fs.ls("/temp/"))
-    spark.stop()
+    //spark.stop()
   }
 }
