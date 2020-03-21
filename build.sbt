@@ -5,12 +5,14 @@ ThisBuild / organization := "com.example"
 val unmanagedJarFiles = "c:\\users\\masas\\.conda\\envs\\dbconnect\\lib\\site-packages\\pyspark\\jars"
 val sparkVersion = "2.4.5"
 
-lazy val root = (project in file(".") )
-    .settings(
-      name := "databricks_dev",
-      version := "0.1",
-      unmanagedBase := new java.io.File(unmanagedJarFiles)
-    )
+lazy val root = (project in file("."))
+  .aggregate(sparkFramework)
+  .dependsOn(sparkFramework)
+  .settings(
+    name := "databricks_dev",
+    version := "0.1",
+    unmanagedBase := new java.io.File(unmanagedJarFiles)
+  )
 
 lazy val sparkFramework = (project in file("sparkFramework"))
   .settings(
