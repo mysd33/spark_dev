@@ -1,5 +1,5 @@
+import com.example.fw.utils.SampleUtils
 import org.apache.spark.sql.SparkSession
-import com.example.fw.SampleUtils
 
 object Test {
   def main(args: Array[String]): Unit = {
