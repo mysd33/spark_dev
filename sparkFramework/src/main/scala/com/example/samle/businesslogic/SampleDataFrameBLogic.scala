@@ -10,6 +10,7 @@ class SampleDataFrameBLogic extends DataFrameBLogic {
   override val outputFiles = "C:\\temp\\person.parquet" :: Nil
 
   override def process(inputs: Seq[DataFrame], sparkSession: SparkSession): Seq[DataFrame] = {
+    //TODO: DataSetで扱おうとするとimport文が必要なのでsparkSessionが引数に必要
     import sparkSession.implicits._
     val ds = inputs(0).as[Person]
     ds.show()
