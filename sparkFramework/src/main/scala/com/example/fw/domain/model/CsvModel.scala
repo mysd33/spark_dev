@@ -1,6 +1,5 @@
 package com.example.fw.domain.model
 
-import org.apache.spark.sql.types.StructType
 import org.apache.spark.sql.{DataFrameReader, DataFrameWriter, Dataset, Row}
 
 case class CsvModel(path: String) extends DataFile[Row] {
