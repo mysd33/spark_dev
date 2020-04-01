@@ -12,7 +12,7 @@ abstract class DataFrameBLogic extends Logic {
     setUp(sparkSession)
     val inputDatasets = input(sparkSession)
     val outputDatasets = process(inputDatasets, sparkSession)
-    output(outputDatasets, sparkSession)
+    output(outputDatasets)
     tearDown(sparkSession)
   }
 
@@ -20,22 +20,20 @@ abstract class DataFrameBLogic extends Logic {
   }
 
   def input(sparkSession: SparkSession): Seq[DataFrame] = {
-    //TODO: DataReaderWriterに処理を切り出し
     inputFiles.map(
       inputFile => {
-        sparkSession.read.json(inputFile)
+        DataFrameReaderWriter.read(sparkSession, inputFile)
       }
     )
   }
 
   def process(inputs: Seq[DataFrame], sparkSession: SparkSession): Seq[DataFrame]
 
-  def output(outputs: Seq[DataFrame], sparkSession: SparkSession): Unit = {
-    //TODO: DataReaderWriterに処理を切り出し
+  def output(outputs: Seq[DataFrame]): Unit = {
     outputs.zip(outputFiles).foreach(tuple => {
-      val ds = tuple._1
+      val df = tuple._1
       val outputFile = tuple._2
-      ds.write.mode(SaveMode.Overwrite).parquet(outputFile)
+      DataFrameReaderWriter.write(df, outputFile)
     })
   }
 
