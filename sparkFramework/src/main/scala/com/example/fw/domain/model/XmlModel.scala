@@ -9,6 +9,8 @@ case class XmlModel(path: String) extends DataFile[Row] {
   override def read(reader: DataFrameReader): Dataset[Row] = ???
 
   //TODO:XMLパースどこでやる？
+  //databrick-spark-xml使える？
+  //https://github.com/databricks/spark-xml
 
   //TODO:実装
   override def write(writer: DataFrameWriter[Row]): Unit = ???

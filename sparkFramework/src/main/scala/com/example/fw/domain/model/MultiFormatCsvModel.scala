@@ -9,6 +9,7 @@ case class MultiFormatCsvModel(path: String) extends DataFile[Row] {
   override def read(reader: DataFrameReader): Dataset[Row] = ???
 
   //TODO:各行のCSVパースどこでやる？
+  // https://stackoverflow.com/questions/25259425/spark-reading-files-using-different-delimiter-than-new-line
 
   //TODO:実装
   override def write(writer: DataFrameWriter[Row]): Unit = ???
