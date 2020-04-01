@@ -1,13 +1,14 @@
 package com.example.sample.logic
 
 import com.example.fw.domain.logic.DataFrameBLogic
-import com.example.fw.domain.model.{JsonModel, ParquetModel}
+import com.example.fw.domain.model.{CsvModel, ParquetModel}
 import com.example.sample.model.Person
+import org.apache.spark.sql.types.LongType
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
-class SampleDataFrameBLogic extends DataFrameBLogic {
-  //JSONファイルの読み込みの例
-  override val inputFiles = JsonModel("C:\\temp\\person.json") :: Nil
+class SampleDataFrameBLogic2 extends DataFrameBLogic  {
+  //CSVファイルの読み込みの例
+  override val inputFiles = CsvModel("C:\\temp\\person.csv") :: Nil
   override val outputFiles = ParquetModel("C:\\temp\\person.parquet") :: Nil
 
   override def process(inputs: Seq[DataFrame], sparkSession: SparkSession): Seq[DataFrame] = {

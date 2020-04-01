@@ -8,7 +8,7 @@ abstract class DataFrameBLogic extends Logic {
   val inputFiles: Seq[DataFile[Row]]
   val outputFiles: Seq[DataFile[Row]]
 
-  override def execute(sparkSession: SparkSession): Unit = {
+  override final def execute(sparkSession: SparkSession): Unit = {
     setUp(sparkSession)
     val inputDatasets = input(sparkSession)
     val outputDatasets = process(inputDatasets, sparkSession)
