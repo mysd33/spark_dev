@@ -1,4 +1,4 @@
-package app.businesslogic
+package com.dataricksexample.logic
 
 import com.example.fw.domain.logic.Logic
 import org.apache.spark.sql.SparkSession
