@@ -1,4 +1,4 @@
-import com.example.fw.utils.SampleUtils
+import com.example.fw.domain.utils.SampleUtils
 import org.apache.spark.sql.SparkSession
 
 object Test {

@@ -1,7 +1,9 @@
-package com.example.fw
-import com.example.fw.utils.Using._
+package com.example.fw.app
+
+import com.example.fw.domain.logic.Logic
+import com.example.fw.domain.utils.Using.using
 import org.apache.spark.sql.SparkSession
-import scala.reflect.runtime.universe._
+import scala.reflect.runtime.{universe => ru}
 
 object ApplicationEntryPoint {
   def main(args: Array[String]): Unit = {
@@ -11,7 +13,7 @@ object ApplicationEntryPoint {
     //TODO: localモードかどうかの切替え
     val master = "local[*]"
     //TODO: プロパティで切替え
-    val logLevel = "WARN"
+    val logLevel = "INFO"
     //Sparkの実行
     using(SparkSession.builder()
       .master(master)
@@ -30,10 +32,10 @@ object ApplicationEntryPoint {
     //参考
     //https://kazuhira-r.hatenablog.com/entry/20130121/1358780334
     //https://docs.scala-lang.org/ja/overviews/reflection/overview.html
-    val mirror = runtimeMirror(getClass.getClassLoader)
+    val mirror = ru.runtimeMirror(getClass.getClassLoader)
     val classSymbol = mirror.staticClass(classname)
     val classMirror = mirror.reflectClass(classSymbol)
-    val constructorSymbol = classSymbol.typeSignature.decl(termNames.CONSTRUCTOR).asMethod
+    val constructorSymbol = classSymbol.typeSignature.decl(ru.termNames.CONSTRUCTOR).asMethod
     val constructorMirror = classMirror.reflectConstructor(constructorSymbol)
     val logic = constructorMirror()
     logic.asInstanceOf[Logic]

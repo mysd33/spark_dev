@@ -1,6 +1,6 @@
 package app.businesslogic
 
-import com.example.fw.Logic
+import com.example.fw.domain.logic.Logic
 import org.apache.spark.sql.SparkSession
 
 class PiEstimationLogic extends Logic {

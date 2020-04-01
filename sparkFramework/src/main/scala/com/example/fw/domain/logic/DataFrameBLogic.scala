@@ -1,12 +1,12 @@
-package com.example.fw
+package com.example.fw.domain.logic
 
-import org.apache.spark.sql.{DataFrame, SaveMode, SparkSession}
+import com.example.fw.infra.dataaccess.DataFileReaderWriter
+import com.example.fw.domain.model.DataFile
+import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 
 abstract class DataFrameBLogic extends Logic {
-  //TODO:仮の記載
-  //TODO: inputFile outputFileのリスト化
-  val inputFiles: Seq[String]
-  val outputFiles: Seq[String]
+  val inputFiles: Seq[DataFile[Row]]
+  val outputFiles: Seq[DataFile[Row]]
 
   override def execute(sparkSession: SparkSession): Unit = {
     setUp(sparkSession)
@@ -17,12 +17,13 @@ abstract class DataFrameBLogic extends Logic {
   }
 
   def setUp(sparkSession: SparkSession): Unit = {
+    logInfo("ビジネスロジック開始")
   }
 
   def input(sparkSession: SparkSession): Seq[DataFrame] = {
     inputFiles.map(
       inputFile => {
-        DataFrameReaderWriter.read(sparkSession, inputFile)
+        DataFileReaderWriter.read(inputFile, sparkSession)
       }
     )
   }
@@ -33,10 +34,11 @@ abstract class DataFrameBLogic extends Logic {
     outputs.zip(outputFiles).foreach(tuple => {
       val df = tuple._1
       val outputFile = tuple._2
-      DataFrameReaderWriter.write(df, outputFile)
+      DataFileReaderWriter.write(df, outputFile)
     })
   }
 
   def tearDown(sparkSession: SparkSession): Unit = {
+    logInfo("ビジネスロジック終了")
   }
 }

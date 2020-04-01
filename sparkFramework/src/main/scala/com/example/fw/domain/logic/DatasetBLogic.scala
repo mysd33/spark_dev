@@ -1,6 +1,6 @@
-package com.example.fw
+package com.example.fw.domain.logic
 
-import com.example.samle.model.Person
+import com.example.sample.model.Person
 import org.apache.spark.sql.{Dataset, SaveMode, SparkSession}
 
 abstract class DatasetBLogic extends Logic {

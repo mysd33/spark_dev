@@ -1,4 +1,4 @@
-package com.example.fw.utils
+package com.example.fw.domain.utils
 
 object Using {
   //TODO: scala2.13.0からは標準でUsingクラスをサポート

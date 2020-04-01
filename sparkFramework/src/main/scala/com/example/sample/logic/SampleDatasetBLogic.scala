@@ -1,7 +1,7 @@
-package com.example.samle.businesslogic
+package com.example.sample.logic
 
-import com.example.fw.DatasetBLogic
-import com.example.samle.model.Person
+import com.example.fw.domain.logic.DatasetBLogic
+import com.example.sample.model.Person
 import org.apache.spark.sql.Dataset
 
 class SampleDatasetBLogic extends DatasetBLogic {

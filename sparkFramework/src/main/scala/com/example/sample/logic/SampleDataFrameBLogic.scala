@@ -1,13 +1,13 @@
-package com.example.samle.businesslogic
+package com.example.sample.logic
 
-import com.example.fw.DataFrameBLogic
-import com.example.samle.model.Person
+import com.example.fw.domain.logic.DataFrameBLogic
+import com.example.fw.domain.model.{JsonModel, ParquetModel}
+import com.example.sample.model.Person
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 class SampleDataFrameBLogic extends DataFrameBLogic {
-  //TODO:仮の記載
-  override val inputFiles = "C:\\temp\\person.json" :: Nil
-  override val outputFiles = "C:\\temp\\person.parquet" :: Nil
+  override val inputFiles = JsonModel("C:\\temp\\person.json") :: Nil
+  override val outputFiles = ParquetModel("C:\\temp\\person.parquet") :: Nil
 
   override def process(inputs: Seq[DataFrame], sparkSession: SparkSession): Seq[DataFrame] = {
     //TODO: DataSetで扱おうとするとimport文が必要なのでsparkSessionが引数に必要

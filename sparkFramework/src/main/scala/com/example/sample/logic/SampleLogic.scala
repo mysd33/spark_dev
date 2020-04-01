@@ -1,6 +1,6 @@
-package com.example.samle.businesslogic
+package com.example.sample.logic
 
-import com.example.fw.Logic
+import com.example.fw.domain.logic.Logic
 import org.apache.spark.sql.SparkSession
 
 class SampleLogic extends Logic {
