@@ -4,7 +4,6 @@ import com.example.fw.domain.dataaccess.DataFileReaderWriterImpl
 import com.example.fw.domain.model.DataFile
 import org.apache.spark.sql.{Dataset, Row, SaveMode, SparkSession}
 
-//TODO: Databricks依存のFWプロジェクトに切り出す
 class DeltaLakeReaderWriter extends DataFileReaderWriterImpl[Row] {
   val formatName = "delta"
 
