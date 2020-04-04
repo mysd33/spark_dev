@@ -5,7 +5,6 @@ import org.apache.spark.sql.{Dataset, SaveMode, SparkSession}
 
 abstract class DatasetBLogic extends Logic {
   //TODO:仮の記載
-  //TODO: inputFile outputFileのリスト化
   val inputFiles: Seq[String]
   val outputFiles: Seq[String]
 

@@ -1,12 +1,14 @@
 package com.example.fw.domain.logic
 
-import com.example.fw.infra.dataaccess.DataFileReaderWriter
+import com.example.fw.domain.dataaccess.DataFileReaderWriter
 import com.example.fw.domain.model.DataFile
+import com.example.fw.infra.dataaccess.StandardSparkDataFileReaderWriter
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 
-abstract class DataFrameBLogic extends Logic {
+abstract class DataFrameBLogic() extends Logic {
   val inputFiles: Seq[DataFile[Row]]
   val outputFiles: Seq[DataFile[Row]]
+  val dataFileReaderWriter: DataFileReaderWriter[Row]
 
   override final def execute(sparkSession: SparkSession): Unit = {
     setUp(sparkSession)
@@ -23,7 +25,7 @@ abstract class DataFrameBLogic extends Logic {
   def input(sparkSession: SparkSession): Seq[DataFrame] = {
     inputFiles.map(
       inputFile => {
-        DataFileReaderWriter.read(inputFile, sparkSession)
+        dataFileReaderWriter.read(inputFile, sparkSession)
       }
     )
   }
@@ -34,7 +36,7 @@ abstract class DataFrameBLogic extends Logic {
     outputs.zip(outputFiles).foreach(tuple => {
       val df = tuple._1
       val outputFile = tuple._2
-      DataFileReaderWriter.write(df, outputFile)
+      dataFileReaderWriter.write(df, outputFile)
     })
   }
 
