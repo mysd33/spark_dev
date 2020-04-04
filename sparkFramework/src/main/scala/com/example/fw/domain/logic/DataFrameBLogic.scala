@@ -2,7 +2,6 @@ package com.example.fw.domain.logic
 
 import com.example.fw.domain.dataaccess.DataFileReaderWriter
 import com.example.fw.domain.model.DataFile
-import com.example.fw.infra.dataaccess.StandardSparkDataFileReaderWriter
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 
 abstract class DataFrameBLogic() extends Logic {

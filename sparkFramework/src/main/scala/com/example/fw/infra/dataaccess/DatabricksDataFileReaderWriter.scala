@@ -1,7 +1,7 @@
 package com.example.fw.infra.dataaccess
 import com.example.fw.domain.model.{DataFile, ParquetModel}
 import com.example.fw.infra.dataaccess.impl.DeltaLakeReaderWriter
-import org.apache.spark.sql.{Dataset, Encoder, Row, SaveMode, SparkSession}
+import org.apache.spark.sql.{Dataset, Row, SaveMode, SparkSession}
 
 //TODO: Databricks依存のFWプロジェクトに切り出す
 trait DatabricksDataFileReaderWriter extends StandardSparkDataFileReaderWriter {
