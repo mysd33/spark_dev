@@ -4,10 +4,9 @@ import com.example.fw.domain.dataaccess.DataFileReaderWriter
 import com.example.fw.domain.model.DataFile
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 
-abstract class DataFrameBLogic() extends Logic {
+abstract class DataFrameBLogic(val dataFileReaderWriter: DataFileReaderWriter[Row]) extends Logic {
   val inputFiles: Seq[DataFile[Row]]
   val outputFiles: Seq[DataFile[Row]]
-  val dataFileReaderWriter: DataFileReaderWriter[Row]
 
   override final def execute(sparkSession: SparkSession): Unit = {
     setUp(sparkSession)
@@ -18,7 +17,7 @@ abstract class DataFrameBLogic() extends Logic {
   }
 
   def setUp(sparkSession: SparkSession): Unit = {
-    logInfo("ビジネスロジック開始")
+    logInfo("ビジネスロジック開始:" + getClass().getTypeName())
   }
 
   def input(sparkSession: SparkSession): Seq[DataFrame] = {

@@ -3,12 +3,12 @@ package com.example.fw.app
 import com.example.fw.domain.dataaccess.DataFileReaderWriter
 import com.example.fw.domain.logic.{Logic, LogicCreator}
 import com.example.fw.domain.utils.Using.using
-import com.example.fw.infra.dataaccess.StandardSparkDataFileReaderWriter
+import com.example.fw.infra.dataaccess.DatabricksDataFileReaderWriter
 import org.apache.spark.sql.{Row, SparkSession}
 
 import scala.reflect.runtime.{universe => ru}
 
-object ApplicationEntryPoint {
+object DatabricksApplicationEntryPoint {
   def main(args: Array[String]): Unit = {
     assert(args.length > 0)
     //TODO: コンストラクタ引数をとれるようにする
@@ -32,7 +32,8 @@ object ApplicationEntryPoint {
   }
 
   private def createDataFileReaderWriter(): DataFileReaderWriter[Row] = {
-    //Sparkの標準のDataFileReaderWriterで作成
-    new DataFileReaderWriter[Row] with StandardSparkDataFileReaderWriter
+    //Databricks用のReaderWriterに差し替え
+    new DataFileReaderWriter[Row] with DatabricksDataFileReaderWriter
   }
+
 }
