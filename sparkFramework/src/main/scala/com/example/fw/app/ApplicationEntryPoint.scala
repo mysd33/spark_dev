@@ -4,6 +4,7 @@ import com.example.fw.domain.dataaccess.DataFileReaderWriter
 import com.example.fw.domain.logic.{Logic, LogicCreator}
 import com.example.fw.domain.utils.Using.using
 import com.example.fw.infra.dataaccess.StandardSparkDataFileReaderWriter
+import org.apache.log4j.{Level, Logger}
 import org.apache.spark.sql.{Row, SparkSession}
 
 import scala.reflect.runtime.{universe => ru}
@@ -24,7 +25,11 @@ object ApplicationEntryPoint {
       .getOrCreate()
     ) { spark =>
       val sc = spark.sparkContext
+      //TODO:ログが多いのでオフしている。log4j.propertiesで設定できるようにするなど検討
       sc.setLogLevel(logLevel)
+      Logger.getLogger("org").setLevel(Level.OFF)
+      Logger.getLogger("akka").setLevel(Level.OFF)
+
       //Logicインスタンスの実行
       val logic = LogicCreator.newInstance(appName, createDataFileReaderWriter())
       logic.execute(spark)
