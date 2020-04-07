@@ -1,13 +1,11 @@
 package com.example.fw.app
 
 import com.example.fw.domain.dataaccess.DataFileReaderWriter
-import com.example.fw.domain.logic.{Logic, LogicCreator}
+import com.example.fw.domain.logic.LogicCreator
 import com.example.fw.domain.utils.Using.using
 import com.example.fw.infra.dataaccess.DatabricksDataFileReaderWriter
 import org.apache.log4j.{Level, Logger}
-import org.apache.spark.sql.{Row, SparkSession}
-
-import scala.reflect.runtime.{universe => ru}
+import org.apache.spark.sql.SparkSession
 
 object DatabricksApplicationEntryPoint {
   def main(args: Array[String]): Unit = {
@@ -36,9 +34,9 @@ object DatabricksApplicationEntryPoint {
     }
   }
 
-  private def createDataFileReaderWriter(): DataFileReaderWriter[Row] = {
+  private def createDataFileReaderWriter(): DataFileReaderWriter = {
     //Databricks用のReaderWriterに差し替え
-    new DataFileReaderWriter[Row] with DatabricksDataFileReaderWriter
+    new DataFileReaderWriter with DatabricksDataFileReaderWriter
   }
 
 }

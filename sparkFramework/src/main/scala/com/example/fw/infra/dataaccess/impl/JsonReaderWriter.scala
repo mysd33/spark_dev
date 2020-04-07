@@ -2,19 +2,23 @@ package com.example.fw.infra.dataaccess.impl
 
 import com.example.fw.domain.dataaccess.DataFileReaderWriterImpl
 import com.example.fw.domain.model.DataFile
-import org.apache.spark.sql.{Dataset, Row, SaveMode, SparkSession}
+import org.apache.spark.sql.{DataFrame, Dataset, Row, SaveMode, SparkSession}
+import scala.reflect.runtime.universe.TypeTag
 
-class JsonReaderWriter extends DataFileReaderWriterImpl[Row] {
-  //TODO:型パラーメータ化したい
-  override def read(inputFile: DataFile[Row], sparkSession: SparkSession): Dataset[Row] = {
+class JsonReaderWriter extends DataFileReaderWriterImpl {
+  override def readToDf(inputFile: DataFile[Row], sparkSession: SparkSession): DataFrame = {
+    sparkSession.read
+      .json(inputFile.filePath)
+  }
+
+  override def readToDs[T <: Product : TypeTag](inputFile: DataFile[T], sparkSession: SparkSession): Dataset[T] = {
     import sparkSession.implicits._
     sparkSession.read
       .json(inputFile.filePath)
-    //TODO: as使いたい
-    //.as[T]
+      .as[T]
   }
 
-  override def write(ds: Dataset[Row], outputFile: DataFile[Row], saveMode: SaveMode): Unit = {
+  override def writeFromDsDf[T](ds: Dataset[T], outputFile: DataFile[T], saveMode: SaveMode): Unit = {
     ds.write
       .mode(saveMode)
       .json(outputFile.filePath)

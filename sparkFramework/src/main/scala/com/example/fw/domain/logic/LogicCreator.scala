@@ -12,7 +12,7 @@ object LogicCreator {
 
   //引数あり版
   //Logicのコンストラクタに引数があれえばDataFileReaderWriterを渡す前提
-  def newInstance[T](className: String, dataFileReaderWriter: DataFileReaderWriter[T]): Logic = {
+  def newInstance[T](className: String, dataFileReaderWriter: DataFileReaderWriter): Logic = {
     val constructorMirror: ru.MethodMirror = getConstructorMirror(className)
     val paramList = constructorMirror.symbol.asMethod.paramLists
     val logic = if (paramList.size == 0) {

@@ -2,21 +2,28 @@ package com.example.fw.infra.dataaccess.impl
 
 import com.example.fw.domain.dataaccess.DataFileReaderWriterImpl
 import com.example.fw.domain.model.DataFile
-import org.apache.spark.sql.{Dataset, Encoder, Row, SaveMode, SparkSession}
+import org.apache.spark.sql.{DataFrame, Dataset, Row, SaveMode, SparkSession}
+import scala.reflect.runtime.universe.TypeTag
 
-//TODO:型パラーメータ化したい
-class CsvReaderWriter extends DataFileReaderWriterImpl[Row] {
-  override def read(inputFile: DataFile[Row], sparkSession: SparkSession): Dataset[Row] = {
-    //import sparkSession.implicits._
+class CsvReaderWriter extends DataFileReaderWriterImpl {
+  override def readToDf(inputFile: DataFile[Row], sparkSession: SparkSession): DataFrame = {
     sparkSession.read
       .option("header", "true")
       .option("inferSchema", "true")
       .csv(inputFile.filePath)
-    //TODO:as使えるようにしたい
-      //.as[T]
   }
 
-  override def write(ds: Dataset[Row], outputFile: DataFile[Row], saveMode: SaveMode): Unit = {
+  override def readToDs[T <: Product : TypeTag](inputFile: DataFile[T], sparkSession: SparkSession): Dataset[T] = {
+    import sparkSession.implicits._
+    sparkSession.read
+      .option("header", "true")
+      .option("inferSchema", "true")
+      .csv(inputFile.filePath)
+      .as[T]
+  }
+
+  override def writeFromDsDf[T](ds: Dataset[T], outputFile: DataFile[T], saveMode: SaveMode): Unit = {
+  import scala.reflect.runtime.universe
     ds.write
       .mode(saveMode)
       .csv(outputFile.filePath)

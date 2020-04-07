@@ -8,21 +8,21 @@ sealed abstract class DataFile[T](path: String) {
   val filePath: String = path
 }
 
-case class CsvModel(path: String) extends DataFile[Row](path: String) {
+case class CsvModel[T](path: String) extends DataFile[T](path: String) {
 }
 
-case class JsonModel(path: String) extends DataFile[Row](path: String) {
+case class JsonModel[T](path: String) extends DataFile[T](path: String) {
 }
 
-case class ParquetModel(path: String) extends DataFile[Row](path: String) {
+case class ParquetModel[T](path: String) extends DataFile[T](path: String) {
 }
 
-case class MultiFormatCsvModel(path: String) extends DataFile[Row](path: String) {
+case class MultiFormatCsvModel[T](path: String) extends DataFile[T](path: String) {
   //TODO:各行のCSVパースどこでやる？
   // https://stackoverflow.com/questions/25259425/spark-reading-files-using-different-delimiter-than-new-line
   //TODO:各行のCSV化どこでやる？
 }
 
-case class XmlModel(path: String) extends DataFile[Row](path: String) {
+case class XmlModel[T](path: String) extends DataFile[T](path: String) {
   //TODO:XML形式にするのはどこでやる？
 }
