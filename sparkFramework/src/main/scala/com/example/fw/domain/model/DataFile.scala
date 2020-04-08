@@ -1,11 +1,18 @@
 package com.example.fw.domain.model
 
+import java.util.ResourceBundle
+
+import com.example.fw.domain.utils.ResourceBundleManager
 import org.apache.spark.sql.types.StructType
 
 
-sealed abstract class DataFile[+T](val filePath: String, val schema: Option[StructType] = None) {
-  //TODO: ベースパスの置き換えができるようにする
-  require(filePath != null && filePath.length > 0)
+sealed abstract class DataFile[+T](path: String, val schema: Option[StructType] = None) {
+  require(path != null && path.length > 0)
+  val filePath = {
+    //プロパティでベースパスの置き換え
+    val basePath = ResourceBundleManager.get("basepath")
+    basePath + path
+  }
 }
 
 case class CsvModel[T](path: String, schm: StructType = null) extends DataFile[T](path, Option(schm)) {

@@ -9,8 +9,8 @@ import org.apache.spark.sql.{Dataset, SparkSession}
 class SampleDatasetBLogic(dataFileReaderWriter: DataFileReaderWriter)
   extends DatasetBLogic1to1[Person, Person](dataFileReaderWriter) {
 
-  override val inputFile = JsonModel[Person]("C:\\temp\\person.json")
-  override val outputFile = ParquetModel[Person]("C:\\temp\\person.parquet")
+  override val inputFile = JsonModel[Person]("person.json")
+  override val outputFile = ParquetModel[Person]("person.parquet")
 
   override def process(ds: Dataset[Person], sparkSession: SparkSession): Dataset[Person] = {
     //DataSetで扱おうとするとimport文が必要なのでsparkSessionが引数に必要

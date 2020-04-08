@@ -10,13 +10,13 @@ import org.apache.spark.sql.{Dataset, SparkSession}
 class SampleDataSetBLogic3(dataFileReaderWriter: DataFileReaderWriter)
   extends DatasetBLogic1to1[Person, Person](dataFileReaderWriter) {
   override val inputFile: DataFile[Person] = CsvModel[Person](
-    "C:\\temp\\person_noheader.csv",
+    "person_noheader.csv",
     StructType(Array(
       StructField("age", LongType, true),
       StructField("name", StringType, true)
     ))
   )
-  override val outputFile: DataFile[Person] = ParquetModel[Person]("C:\\temp\\person.parquet")
+  override val outputFile: DataFile[Person] = ParquetModel[Person]("person.parquet")
 
   override def process(ds: Dataset[Person], sparkSession: SparkSession): Dataset[Person] = {
     //DataSetで扱おうとするとimport文が必要なのでsparkSessionが引数に必要

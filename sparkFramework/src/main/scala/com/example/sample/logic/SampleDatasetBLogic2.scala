@@ -9,9 +9,9 @@ import org.apache.spark.sql.{Dataset, SparkSession}
 class SampleDatasetBLogic2(dataFileReaderWriter: DataFileReaderWriter)
   extends DatasetBLogic2to1[Person, PersonOther, Person](dataFileReaderWriter) {
 
-  override val inputFile1: DataFile[Person] = JsonModel[Person]("C:\\temp\\person.json")
-  override val inputFile2: DataFile[PersonOther] = JsonModel[PersonOther]("C:\\temp\\person.json")
-  override val outputFile: DataFile[Person] = ParquetModel[Person]("C:\\temp\\person_union.parquet")
+  override val inputFile1: DataFile[Person] = JsonModel[Person]("person.json")
+  override val inputFile2: DataFile[PersonOther] = JsonModel[PersonOther]("person.json")
+  override val outputFile: DataFile[Person] = ParquetModel[Person]("person_union.parquet")
 
   override def process(ds1: Dataset[Person], ds2: Dataset[PersonOther], sparkSession: SparkSession): Dataset[Person] = {
     import sparkSession.implicits._
