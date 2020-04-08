@@ -23,7 +23,6 @@ class CsvReaderWriter extends DataFileReaderWriterImpl {
   }
 
   override def writeFromDsDf[T](ds: Dataset[T], outputFile: DataFile[T], saveMode: SaveMode): Unit = {
-  import scala.reflect.runtime.universe
     ds.write
       .mode(saveMode)
       .csv(outputFile.filePath)
