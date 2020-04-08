@@ -7,7 +7,6 @@ import org.apache.spark.sql.{DataFrame, Dataset, Row, SaveMode, SparkSession}
 
 import scala.reflect.runtime.universe.TypeTag
 
-//TODO:型パラメータ化
 trait StandardSparkDataFileReaderWriter extends DataFileReaderWriterImpl {
   override def readToDf(inputFile: DataFile[Row], sparkSession: SparkSession): DataFrame = {
     inputFile match {
@@ -18,12 +17,17 @@ trait StandardSparkDataFileReaderWriter extends DataFileReaderWriterImpl {
     }
   }
 
-  //TODO: 実装
-  override def readToDs[T <: Product : TypeTag](inputFile: DataFile[T], sparkSession: SparkSession): Dataset[T] = ???
+  override def readToDs[T <: Product : TypeTag](inputFile: DataFile[T], sparkSession: SparkSession): Dataset[T] = {
+    inputFile match {
+      case f: CsvModel[T] => new CsvReaderWriter().readToDs(f, sparkSession)
+      case f: JsonModel[T] => new JsonReaderWriter().readToDs(f, sparkSession)
+      case f: ParquetModel[T] => new StandardParquetReaderWriter().readToDs(f, sparkSession)
+      //TODO: MultiFormatCsvModel, XmlModel
+    }
+  }
 
   override def writeFromDsDf[T](ds: Dataset[T], outputFile: DataFile[T], saveMode: SaveMode): Unit = {
     outputFile match {
-      //TODO:型パラメータ化
       case f: CsvModel[T] => new CsvReaderWriter().writeFromDsDf(ds, f, saveMode)
       case f: JsonModel[T] => new JsonReaderWriter().writeFromDsDf(ds, f, saveMode)
       case f: ParquetModel[T] => new StandardParquetReaderWriter().writeFromDsDf(ds, f, saveMode)

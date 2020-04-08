@@ -16,8 +16,11 @@ class DataFileReaderWriter {
     self.readToDf(inputFile, sparkSession)
   }
 
-  //TODO:メソッド名
-  def writeFromDsDf[T](ds: Dataset[T], outputFile: DataFile[T], saveMode: SaveMode = SaveMode.Overwrite): Unit = {
+  def writeFromDf[T](ds: DataFrame, outputFile: DataFile[Row], saveMode: SaveMode = SaveMode.Overwrite): Unit = {
+    self.writeFromDsDf(ds, outputFile, saveMode)
+  }
+
+  def writeFromDs[T <: Product : TypeTag](ds: Dataset[T], outputFile: DataFile[T], saveMode: SaveMode = SaveMode.Overwrite): Unit = {
     self.writeFromDsDf(ds, outputFile, saveMode)
   }
 }

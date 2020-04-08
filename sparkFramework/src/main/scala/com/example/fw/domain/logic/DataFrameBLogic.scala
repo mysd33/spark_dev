@@ -34,7 +34,7 @@ abstract class DataFrameBLogic(val dataFileReaderWriter: DataFileReaderWriter) e
     outputs.zip(outputFiles).foreach(tuple => {
       val df = tuple._1
       val outputFile = tuple._2
-      dataFileReaderWriter.writeFromDsDf(df, outputFile)
+      dataFileReaderWriter.writeFromDf(df, outputFile)
     })
   }
 

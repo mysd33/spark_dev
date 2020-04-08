@@ -1,8 +1,7 @@
 package com.example.fw.domain.model
 
-import org.apache.spark.sql.Row
 
-sealed abstract class DataFile[T](path: String) {
+sealed abstract class DataFile[+T](path: String) {
   //TODO: ベースパスの置き換えができるようにする
   require(path != null && path.length > 0)
   val filePath: String = path

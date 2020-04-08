@@ -1,12 +1,13 @@
 package com.example.fw.domain.logic
 
-import com.example.sample.model.Person
-import org.apache.spark.sql.{Dataset, SaveMode, SparkSession}
+import com.example.fw.domain.dataaccess.DataFileReaderWriter
+import com.example.fw.domain.model.DataFile
+import org.apache.spark.sql.{Dataset, SparkSession}
+import scala.reflect.runtime.universe.TypeTag
 
-abstract class DatasetBLogic extends Logic {
-  //TODO:仮の記載
-  val inputFiles: Seq[String]
-  val outputFiles: Seq[String]
+abstract class DatasetBLogic1[T <: Product : TypeTag, U <: Product :TypeTag](val dataFileReaderWriter: DataFileReaderWriter) extends Logic {
+  val inputFile: DataFile[T]
+  val outputFile: DataFile[U]
 
   override final def execute(sparkSession: SparkSession): Unit = {
     setUp(sparkSession)
@@ -19,30 +20,14 @@ abstract class DatasetBLogic extends Logic {
   def setUp(sparkSession: SparkSession): Unit = {
   }
 
-  //TODO: Datasetの型パラメータ化
-  def input(sparkSession: SparkSession): Seq[Dataset[Person]] = {
-    //TODO: DataReaderWriterに処理を切り出し
-    import sparkSession.implicits._
-    inputFiles.map(
-      inputFile => {
-        //TODO: 型パラメータ化
-        sparkSession.read.json(inputFile).as[Person]
-      }
-    )
+  def input(sparkSession: SparkSession): Dataset[T] = {
+    dataFileReaderWriter.readToDs(inputFile, sparkSession)
   }
 
-  //TODO: Datasetの型パラメータのパラメータ化
-  def process(inputs: Seq[Dataset[Person]]): Seq[Dataset[Person]]
+  def process(ds: Dataset[T]): Dataset[U]
 
-  //TODO: Datasetの型パラメータのパラメータ化
-  def output(outputs: Seq[Dataset[Person]]): Unit = {
-    //TODO: DataReaderWriterに処理を切り出し
-    //TODO: 複数のDatasetの繰り返し処理に対応
-    outputs.zip(outputFiles).foreach(tuple => {
-      val ds = tuple._1
-      val outputFile = tuple._2
-      ds.write.mode(SaveMode.Overwrite).parquet(outputFile)
-    })
+  def output(ds: Dataset[U]): Unit = {
+    dataFileReaderWriter.writeFromDs(ds, outputFile)
   }
 
   def tearDown(sparkSession: SparkSession): Unit = {
