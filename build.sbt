@@ -5,6 +5,7 @@ ThisBuild / organization := "com.example"
 val unmanagedJarFiles = "c:\\users\\masas\\.conda\\envs\\dbconnect\\lib\\site-packages\\pyspark\\jars"
 val sparkVersion = "2.4.5"
 
+//TODO:ジョブの Jar を作成するときにライブラリの依存関係を扱う場合は、Spark と Hadoop を provided 依存関係にする
 lazy val root = (project in file("."))
   .aggregate(sparkFramework_db)
   .aggregate(app)
