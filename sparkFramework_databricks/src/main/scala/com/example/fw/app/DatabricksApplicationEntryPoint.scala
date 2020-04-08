@@ -13,6 +13,8 @@ object DatabricksApplicationEntryPoint {
     assert(args.length > 0)
     //TODO: コンストラクタ引数をとれるようにする
     val appName = args(0)
+
+    //TODO:独自のプロパティではなくてSpark実行時のパラメータのほうがよいか？
     val clusterMode = ResourceBundleManager.get("clustermode")
     val logLevel = ResourceBundleManager.get("loglevel")
 
