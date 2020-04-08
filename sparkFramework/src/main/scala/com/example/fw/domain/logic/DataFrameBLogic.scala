@@ -9,11 +9,14 @@ abstract class DataFrameBLogic(val dataFileReaderWriter: DataFileReaderWriter) e
   val outputFiles: Seq[DataFile[Row]]
 
   override final def execute(sparkSession: SparkSession): Unit = {
-    setUp(sparkSession)
-    val inputDatasets = input(sparkSession)
-    val outputDatasets = process(inputDatasets, sparkSession)
-    output(outputDatasets)
-    tearDown(sparkSession)
+    try {
+      setUp(sparkSession)
+      val inputDatasets = input(sparkSession)
+      val outputDatasets = process(inputDatasets, sparkSession)
+      output(outputDatasets)
+    } finally {
+      tearDown(sparkSession)
+    }
   }
 
   def setUp(sparkSession: SparkSession): Unit = {

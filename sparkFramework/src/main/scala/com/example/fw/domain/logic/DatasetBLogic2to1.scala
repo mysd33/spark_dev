@@ -13,14 +13,18 @@ abstract class DatasetBLogic2to1[T1 <: Product : TypeTag, T2 <: Product : TypeTa
   val outputFile: DataFile[U]
 
   override final def execute(sparkSession: SparkSession): Unit = {
-    setUp(sparkSession)
-    val inputDatasets = input(sparkSession)
-    val outputDatasets = process(inputDatasets._1, inputDatasets._2, sparkSession)
-    output(outputDatasets)
-    tearDown(sparkSession)
+    try {
+      setUp(sparkSession)
+      val inputDatasets = input(sparkSession)
+      val outputDatasets = process(inputDatasets._1, inputDatasets._2, sparkSession)
+      output(outputDatasets)
+    } finally {
+      tearDown(sparkSession)
+    }
   }
 
   def setUp(sparkSession: SparkSession): Unit = {
+    logInfo("ビジネスロジック開始:" + getClass().getTypeName())
   }
 
   final def input(sparkSession: SparkSession): Tuple2[Dataset[T1], Dataset[T2]] = {
@@ -36,6 +40,7 @@ abstract class DatasetBLogic2to1[T1 <: Product : TypeTag, T2 <: Product : TypeTa
   }
 
   def tearDown(sparkSession: SparkSession): Unit = {
+    logInfo("ビジネスロジック終了")
   }
 
 }
