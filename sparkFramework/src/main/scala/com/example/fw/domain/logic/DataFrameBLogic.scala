@@ -20,7 +20,7 @@ abstract class DataFrameBLogic(val dataFileReaderWriter: DataFileReaderWriter) e
     logInfo("ビジネスロジック開始:" + getClass().getTypeName())
   }
 
-  def input(sparkSession: SparkSession): Seq[DataFrame] = {
+  final def input(sparkSession: SparkSession): Seq[DataFrame] = {
     inputFiles.map(
       inputFile => {
         dataFileReaderWriter.readToDf(inputFile, sparkSession)
@@ -30,7 +30,7 @@ abstract class DataFrameBLogic(val dataFileReaderWriter: DataFileReaderWriter) e
 
   def process(inputs: Seq[DataFrame], sparkSession: SparkSession): Seq[DataFrame]
 
-  def output(outputs: Seq[DataFrame]): Unit = {
+  final def output(outputs: Seq[DataFrame]): Unit = {
     outputs.zip(outputFiles).foreach(tuple => {
       val df = tuple._1
       val outputFile = tuple._2

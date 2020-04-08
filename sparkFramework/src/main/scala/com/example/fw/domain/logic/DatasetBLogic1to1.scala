@@ -21,13 +21,13 @@ abstract class DatasetBLogic1to1[T <: Product : TypeTag, U <: Product : TypeTag]
   def setUp(sparkSession: SparkSession): Unit = {
   }
 
-  def input(sparkSession: SparkSession): Dataset[T] = {
+  final def input(sparkSession: SparkSession): Dataset[T] = {
     dataFileReaderWriter.readToDs(inputFile, sparkSession)
   }
 
   def process(ds: Dataset[T], sparkSession: SparkSession): Dataset[U]
 
-  def output(ds: Dataset[U]): Unit = {
+  final def output(ds: Dataset[U]): Unit = {
     dataFileReaderWriter.writeFromDs(ds, outputFile)
   }
 

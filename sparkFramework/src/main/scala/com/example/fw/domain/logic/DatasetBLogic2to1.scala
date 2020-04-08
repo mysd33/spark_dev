@@ -23,7 +23,7 @@ abstract class DatasetBLogic2to1[T1 <: Product : TypeTag, T2 <: Product : TypeTa
   def setUp(sparkSession: SparkSession): Unit = {
   }
 
-  def input(sparkSession: SparkSession): Tuple2[Dataset[T1], Dataset[T2]] = {
+  final def input(sparkSession: SparkSession): Tuple2[Dataset[T1], Dataset[T2]] = {
     val input1 = dataFileReaderWriter.readToDs(inputFile1, sparkSession)
     val input2 = dataFileReaderWriter.readToDs(inputFile2, sparkSession)
     (input1, input2)
@@ -31,7 +31,7 @@ abstract class DatasetBLogic2to1[T1 <: Product : TypeTag, T2 <: Product : TypeTa
 
   def process(ds1: Dataset[T1], ds2: Dataset[T2], sparkSession: SparkSession): Dataset[U]
 
-  def output(ds: Dataset[U]): Unit = {
+  final def output(ds: Dataset[U]): Unit = {
     dataFileReaderWriter.writeFromDs(ds, outputFile)
   }
 
