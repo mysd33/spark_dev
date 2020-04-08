@@ -16,9 +16,9 @@ class SampleDatasetBLogic2(dataFileReaderWriter: DataFileReaderWriter)
   override def process(ds1: Dataset[Person], ds2: Dataset[PersonOther], sparkSession: SparkSession): Dataset[Person] = {
     import sparkSession.implicits._
     //DataSetで扱おうとするとimport文が必要なのでsparkSessionが引数に必要
-    val ds3 = ds2.map(po => Person(po.name, po.age))
-    //TODO: unionの例
-    //val ds3 = ds1.union(ds2.map( po => Person(po.name, po.age)))
+    val dsTemp = ds2.map(po => Person(po.name, po.age))
+    //unionの例
+    val ds3 = ds1.unionByName(dsTemp)
     ds3.show()
     ds3
   }
