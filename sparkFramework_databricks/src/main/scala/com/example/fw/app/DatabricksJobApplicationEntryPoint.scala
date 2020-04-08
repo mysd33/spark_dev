@@ -31,7 +31,8 @@ object DatabricksJobApplicationEntryPoint {
     Logger.getLogger("akka").setLevel(Level.OFF)
 
     //Logicインスタンスの実行
-    val logic = LogicCreator.newInstance(appName, createDataFileReaderWriter())
+    val logic = LogicCreator.newInstance(appName,
+      DatabrickDataFileReaderWriterFactory.createDataFileReaderWriter())
     logic.execute(spark)
 
   }

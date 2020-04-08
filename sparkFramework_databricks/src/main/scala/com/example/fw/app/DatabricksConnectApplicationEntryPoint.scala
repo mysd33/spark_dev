@@ -19,26 +19,19 @@ object DatabricksConnectApplicationEntryPoint {
     val logLevel = ResourceBundleManager.get("loglevel")
 
     //Sparkの実行
-    using(SparkSession.builder()
+    val spark = SparkSession.builder()
       .master(clusterMode)
       .appName(appName)
       .getOrCreate()
-    ) { spark =>
-      val sc = spark.sparkContext
-      //TODO:ログが多いのでオフしている。log4j.propertiesで設定できるようにするなど検討
-      sc.setLogLevel(logLevel)
-      Logger.getLogger("org").setLevel(Level.OFF)
-      Logger.getLogger("akka").setLevel(Level.OFF)
+    val sc = spark.sparkContext
+    //TODO:ログが多いのでオフしている。log4j.propertiesで設定できるようにするなど検討
+    sc.setLogLevel(logLevel)
+    Logger.getLogger("org").setLevel(Level.OFF)
+    Logger.getLogger("akka").setLevel(Level.OFF)
+    //Logicインスタンスの実行
+    val logic = LogicCreator.newInstance(appName,
+      DatabrickDataFileReaderWriterFactory.createDataFileReaderWriter())
+    logic.execute(spark)
 
-      //Logicインスタンスの実行
-      val logic = LogicCreator.newInstance(appName, createDataFileReaderWriter())
-      logic.execute(spark)
-    }
   }
-
-  private def createDataFileReaderWriter(): DataFileReaderWriter = {
-    //Databricks用のReaderWriterに差し替え
-    new DataFileReaderWriter with DatabricksDataFileReaderWriter
-  }
-
 }
