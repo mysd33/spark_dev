@@ -13,6 +13,12 @@ lazy val root = (project in file("."))
   .dependsOn(app)
   .settings(
     name := "databricks_dev",
+    version := "0.1"
+  )
+
+lazy val dbconnect_app = (project in file("dbconnect_ap"))
+  .settings(
+    name := "dbconnect_app",
     version := "0.1",
     unmanagedBase := new java.io.File(unmanagedJarFiles)
   )

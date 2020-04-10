@@ -1,5 +1,4 @@
-
-import com.example.sample.utils.SampleUtils
+//import com.example.sample.utils.SampleUtils
 import org.apache.spark.sql.SparkSession
 
 object Test {
@@ -15,7 +14,7 @@ object Test {
     //workspace.xmlにcomponent要素：PropertiesComponentに
     // <property name="dynamic.classpath" value="true" />を追加しないと
     // Command line is too long が出る
-    new SampleUtils().helloWorld()
+    //new SampleUtils().helloWorld()
 
     //DBUtils
     val dbutils = com.databricks.service.DBUtils
