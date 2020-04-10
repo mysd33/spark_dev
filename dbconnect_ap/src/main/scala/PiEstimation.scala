@@ -8,7 +8,7 @@ object PiEstimation {
     val sc = spark.sparkContext
     sc.setLogLevel("WARN")
     //依存関係のjarの追加操作を記載しないとエラー
-    sc.addJar("./target/scala-2.11/databricks_dev_2.11-0.1.jar")
+    sc.addJar("dbconnect_ap/target/scala-2.11/dbconnect_app_2.11-0.1.jar")
 
     val NUM_SAMPLES = 1000
     val count = sc.parallelize(1 to NUM_SAMPLES).filter { _ =>

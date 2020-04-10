@@ -9,6 +9,7 @@ val sparkVersion = "2.4.5"
 lazy val root = (project in file("."))
   .aggregate(sparkFramework_db)
   .aggregate(app)
+  .aggregate(dbconnect_app)
   .dependsOn(sparkFramework_db)
   .dependsOn(app)
   .settings(
@@ -17,10 +18,20 @@ lazy val root = (project in file("."))
   )
 
 lazy val dbconnect_app = (project in file("dbconnect_ap"))
+  .dependsOn(sparkFramework_db)
+  .dependsOn(app)
   .settings(
     name := "dbconnect_app",
     version := "0.1",
-    unmanagedBase := new java.io.File(unmanagedJarFiles)
+    //Dependency Library Setting For Databricks Connect
+    //https://docs.microsoft.com/ja-jp/azure/databricks/dev-tools/databricks-connect#sbt
+    //https://www.scala-sbt.org/1.x/docs/Library-Management.html
+    unmanagedBase := new java.io.File(unmanagedJarFiles),
+    //https://www.scala-sbt.org/1.x/docs/Library-Management.html#Exclude+Transitive+Dependencies
+    //TODO: Databricks接続用のライブラリが優先されるようにSparkライブラリの依存関係を除外（これでよいかは逐次動作確認）
+    excludeDependencies ++= Seq(
+      ExclusionRule(organization = "org.apache.spark")
+    )
   )
 
 lazy val app = (project in file("application"))
@@ -30,7 +41,6 @@ lazy val app = (project in file("application"))
     name := "application",
     version := "0.1"
   )
-
 
 lazy val sparkFramework = (project in file("sparkFramework"))
   .settings(
