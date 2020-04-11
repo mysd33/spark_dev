@@ -51,3 +51,7 @@ dbutils.fs.ls("/mnt/mystorage")
 
 // COMMAND ----------
 
+dbutils.fs.ls("/mnt/mystorage/person.parquet/")
+
+// COMMAND ----------
+
