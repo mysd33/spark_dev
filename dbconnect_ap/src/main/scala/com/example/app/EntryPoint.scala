@@ -6,10 +6,6 @@ import org.apache.spark.SparkContext
 
 object EntryPoint extends DatabricksConnectApplicationEntryPoint {
 
-  //TODO:なんか終了時にINFOログがいっぱい出力されてしまうので解析要
-  //(Databricks接続すると終了時にスレッドがロックしている旨のログ？)
-  //20/04/11 09:21:27 INFO privateLog: "dbe-client" #65 TIMED_WAITING
-
   def main(args: Array[String]): Unit = {
     //TODO:テストデータをnotebookで、dbutilでDatabricks上にマウントしてから実行する
     //参考
