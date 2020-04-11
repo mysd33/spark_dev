@@ -11,7 +11,9 @@ object EntryPoint extends DatabricksConnectApplicationEntryPoint {
   //20/04/11 09:21:27 INFO privateLog: "dbe-client" #65 TIMED_WAITING
 
   def main(args: Array[String]): Unit = {
-    //TODO:テストデータをnotebook側で、dbutilでブロブデータをマウントしてから実行する
+    //TODO:テストデータをnotebookで、dbutilでDatabricks上にマウントしてから実行する
+    //参考
+    //https://docs.microsoft.com/ja-jp/azure/azure-databricks/databricks-extract-load-sql-data-warehouse?toc=/azure/databricks/toc.json&bc=/azure/databricks/breadcrumb/toc.json
     run(args)
   }
 
