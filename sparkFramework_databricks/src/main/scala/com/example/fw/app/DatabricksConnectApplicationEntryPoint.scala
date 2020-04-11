@@ -6,10 +6,11 @@ import com.example.fw.domain.utils.ResourceBundleManager
 import com.example.fw.domain.utils.Using.using
 import com.example.fw.infra.dataaccess.DatabricksDataFileReaderWriter
 import org.apache.log4j.{Level, Logger}
+import org.apache.spark.SparkContext
 import org.apache.spark.sql.SparkSession
 
-object DatabricksConnectApplicationEntryPoint {
-  def main(args: Array[String]): Unit = {
+abstract class DatabricksConnectApplicationEntryPoint {
+  def run(args: Array[String]): Unit = {
     assert(args.length > 0)
     //TODO: コンストラクタ引数をとれるようにする
     val appName = args(0)
@@ -28,10 +29,15 @@ object DatabricksConnectApplicationEntryPoint {
     sc.setLogLevel(logLevel)
     Logger.getLogger("org").setLevel(Level.OFF)
     Logger.getLogger("akka").setLevel(Level.OFF)
+    //Jarの追加
+    addJar(sc)
+
     //Logicインスタンスの実行
     val logic = LogicCreator.newInstance(appName,
       DatabrickDataFileReaderWriterFactory.createDataFileReaderWriter())
     logic.execute(spark)
-
   }
+
+  protected def addJar(sc: SparkContext)
+
 }
