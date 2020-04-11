@@ -20,7 +20,9 @@ object EntryPoint extends DatabricksConnectApplicationEntryPoint {
     sc.addJar("dbconnect_ap/target/scala-2.11/dbconnect_app_2.11-0.1.jar")
 
     //TODO:暫定コード
+    val profile = ResourceBundleManager.getActiveProfile()
+    println(s"Active Profile : $profile")
     val basePath = ResourceBundleManager.get("basepath")
-    println(s"basePath : $basePath")
+    println(s"BasePath : $basePath")
   }
 }

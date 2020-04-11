@@ -20,6 +20,8 @@ object ResourceBundleManager {
   }
   private lazy val rbProfile = ResourceBundle.getBundle(PROPERTIES_FILE_NAME + SEPARATOR + profile)
 
+  def getActiveProfile(): String = profile
+
   def get(key: String): String = {
     val tempValue = System.getProperty(key)
     val value = if (tempValue != null && !tempValue.isEmpty) {
