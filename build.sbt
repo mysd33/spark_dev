@@ -1,25 +1,30 @@
 ThisBuild / scalaVersion := "2.11.0"
+ThisBuild / version := "0.1"
 ThisBuild / organization := "com.example"
 
-//val unmanagedJarFiles = "c:\\programdata\\anaconda3\\lib\\site-packages\\pyspark\\jars"
-val unmanagedJarFiles = "c:\\users\\masas\\.conda\\envs\\dbconnect\\lib\\site-packages\\pyspark\\jars"
-val sparkVersion = "2.4.5"
+lazy val sparkVersion = "2.4.5"
+//lazy val unmanagedJarFiles = "c:\\programdata\\anaconda3\\lib\\site-packages\\pyspark\\jars"
+lazy val unmanagedJarFiles = "c:\\users\\masas\\.conda\\envs\\dbconnect\\lib\\site-packages\\pyspark\\jars"
 
-//TODO:ジョブの Jar を作成するときにライブラリの依存関係を扱う場合は、Spark と Hadoop を provided 依存関係にする
+lazy val commonSettings = Seq(
+  //共通のsettingsを記述
+  assemblyOption in assembly := (assemblyOption in assembly).value
+    .copy(includeScala = false, includeDependency = false)
+)
+
 lazy val root = (project in file("."))
-  .aggregate(sparkFramework_db, app, dbconnect_app)
-  .dependsOn(sparkFramework_db, app)
+  .aggregate(application, sparkFramework, databricksFramework, dbconnectApplication)
+  .dependsOn(application, databricksFramework)
   .settings(
-    name := "databricks_dev",
-    version := "0.1"
+    commonSettings,
+    name := "databricks_dev"
   )
 
-lazy val dbconnect_app = (project in file("dbconnect_ap"))
-  .dependsOn(sparkFramework_db)
-  .dependsOn(app)
+lazy val dbconnectApplication = (project in file("dbconnectApplication"))
+  .dependsOn(application, databricksFramework)
   .settings(
-    name := "dbconnect_app",
-    version := "0.1",
+    commonSettings,
+    name := "dbconnectApplication",
     //Dependency Library Setting For Databricks Connect
     //https://docs.microsoft.com/ja-jp/azure/databricks/dev-tools/databricks-connect#sbt
     //https://www.scala-sbt.org/1.x/docs/Library-Management.html
@@ -31,26 +36,27 @@ lazy val dbconnect_app = (project in file("dbconnect_ap"))
     )
   )
 
-lazy val app = (project in file("application"))
-  .aggregate(sparkFramework)
+lazy val application = (project in file("application"))
   .dependsOn(sparkFramework)
   .settings(
+    commonSettings,
     name := "application",
     version := "0.1"
   )
 
-lazy val sparkFramework = (project in file("sparkFramework"))
-  .settings(
-    name := "sparkFramework",
-    version := "0.1",
-    libraryDependencies += "org.apache.spark" %% "spark-core" % sparkVersion,
-    libraryDependencies += "org.apache.spark" %% "spark-sql" % sparkVersion
-  )
-
-lazy val sparkFramework_db = (project in file("sparkFramework_databricks"))
-  .aggregate(sparkFramework)
+lazy val databricksFramework = (project in file("databricksFramework"))
   .dependsOn(sparkFramework)
   .settings(
-    name :="sparkFramework_databricks",
-    version := "0.1"
+    commonSettings,
+    name := "databricksFramework"
+  )
+
+lazy val sparkFramework = (project in file("sparkFramework"))
+  .settings(
+    commonSettings,
+    name := "sparkFramework",
+    libraryDependencies ++= Seq(
+      "org.apache.spark" %% "spark-core" % sparkVersion,
+      "org.apache.spark" %% "spark-sql" % sparkVersion
+    )
   )

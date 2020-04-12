@@ -10,7 +10,7 @@ object WordCount{
     val sc = spark.sparkContext
     sc.setLogLevel("WARN")
     //依存関係のjarの追加操作を記載しないとエラー
-    sc.addJar("dbconnect_ap/target/scala-2.11/dbconnect_app_2.11-0.1.jar")
+    sc.addJar("dbconnectApplication/target/scala-2.11/dbconnectApplication_2.11-0.1.jar")
 
     //DBUtils
     val dbutils = com.databricks.service.DBUtils
