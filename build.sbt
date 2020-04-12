@@ -7,11 +7,8 @@ val sparkVersion = "2.4.5"
 
 //TODO:ジョブの Jar を作成するときにライブラリの依存関係を扱う場合は、Spark と Hadoop を provided 依存関係にする
 lazy val root = (project in file("."))
-  .aggregate(sparkFramework_db)
-  .aggregate(app)
-  .aggregate(dbconnect_app)
-  .dependsOn(sparkFramework_db)
-  .dependsOn(app)
+  .aggregate(sparkFramework_db, app, dbconnect_app)
+  .dependsOn(sparkFramework_db, app)
   .settings(
     name := "databricks_dev",
     version := "0.1"
