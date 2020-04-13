@@ -1,7 +1,7 @@
 // Databricks notebook source
-val appID = "b8d73315-fc1d-495c-9188-9612d86854bc"
-val secret = "qnhVL7.A@Q-O/Y9jAtFAd372nc]:lAt9"
-val tenantID = "94743a8e-f153-4fa4-a334-57e6b14a19d4"
+val appID = ""
+val secret = ""
+val tenantID = ""
 
 spark.conf.set("fs.azure.account.auth.type", "OAuth")
 spark.conf.set("fs.azure.account.oauth.provider.type", "org.apache.hadoop.fs.azurebfs.oauth2.ClientCredsTokenProvider")
