@@ -2,14 +2,19 @@ ThisBuild / scalaVersion := "2.11.0"
 ThisBuild / version := "0.1"
 ThisBuild / organization := "com.example"
 
+//TODO テスト時のAP基盤のプロファイル設定
+Test / fork := true
+Test / javaOptions += """-Dactive.profile="ut""""
+
 lazy val sparkVersion = "2.4.5"
+lazy val scalatestVersion = "3.1.1"
 //lazy val unmanagedJarFiles = "c:\\programdata\\anaconda3\\lib\\site-packages\\pyspark\\jars"
 lazy val unmanagedJarFiles = "c:\\users\\masas\\.conda\\envs\\dbconnect\\lib\\site-packages\\pyspark\\jars"
 
 lazy val commonSettings = Seq(
   //共通のsettingsを記述
   assemblyOption in assembly := (assemblyOption in assembly).value
-    .copy(includeScala = false, includeDependency = false)
+    .copy(includeScala = false, includeDependency = false),
 )
 
 lazy val root = (project in file("."))
@@ -30,7 +35,7 @@ lazy val dbconnectApplication = (project in file("dbconnectApplication"))
     //https://www.scala-sbt.org/1.x/docs/Library-Management.html
     unmanagedBase := new java.io.File(unmanagedJarFiles),
     //https://www.scala-sbt.org/1.x/docs/Library-Management.html#Exclude+Transitive+Dependencies
-    //TODO: Databricks接続用のライブラリが優先されるようにSparkライブラリの依存関係を除外（これでよいかは逐次動作確認）
+    //Databricks接続用のライブラリが優先されるようにSparkライブラリの依存関係を除外
     excludeDependencies ++= Seq(
       ExclusionRule(organization = "org.apache.spark")
     )
@@ -38,6 +43,7 @@ lazy val dbconnectApplication = (project in file("dbconnectApplication"))
 
 lazy val application = (project in file("application"))
   .dependsOn(sparkFramework)
+  .dependsOn(sparkTestFramework % "test->test;compile->compile")
   .settings(
     commonSettings,
     name := "application",
@@ -59,4 +65,12 @@ lazy val sparkFramework = (project in file("sparkFramework"))
       "org.apache.spark" %% "spark-core" % sparkVersion,
       "org.apache.spark" %% "spark-sql" % sparkVersion
     )
+  )
+
+lazy val sparkTestFramework = (project in file("sparkTestFramework"))
+  .dependsOn(sparkFramework)
+  .settings(
+    commonSettings,
+    name := "sparkTestFramework",
+    libraryDependencies += "org.scalatest" %% "scalatest" % scalatestVersion % "test"
   )
