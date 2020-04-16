@@ -2,14 +2,13 @@ ThisBuild / scalaVersion := "2.11.0"
 ThisBuild / version := "0.1"
 ThisBuild / organization := "com.example"
 
-//TODO テスト時のAP基盤のプロファイル設定
-Test / fork := true
-Test / javaOptions += """-Dactive.profile="ut""""
-
 lazy val sparkVersion = "2.4.5"
 lazy val scalatestVersion = "3.1.1"
 //lazy val unmanagedJarFiles = "c:\\programdata\\anaconda3\\lib\\site-packages\\pyspark\\jars"
 lazy val unmanagedJarFiles = "c:\\users\\masas\\.conda\\envs\\dbconnect\\lib\\site-packages\\pyspark\\jars"
+//TODO テスト時のAP基盤のプロファイル設定
+Test / fork := true
+Test / javaOptions += "-Dactive.profile=ut"
 
 lazy val commonSettings = Seq(
   //共通のsettingsを記述
@@ -47,7 +46,8 @@ lazy val application = (project in file("application"))
   .settings(
     commonSettings,
     name := "application",
-    version := "0.1"
+    version := "0.1",
+
   )
 
 lazy val databricksFramework = (project in file("databricksFramework"))

@@ -14,12 +14,12 @@ class SampleDataSetBLogic3Test extends DatasetBLogicFunSuite[Person, Person] {
     import sparkSession.implicits._
     val inputDs = Seq(
       Person("Michael", None),
-      Person("Andy", Option(30)),
-      Person("Justion", Option(19))).toDS()
+      Person("Andy", Some(30)),
+      Person("Justion", Some(19))).toDS()
     val expected = Seq(
       Person("Michael", None),
-      Person("Andy", Option(30)),
-      Person("Justion", Option(19))).toDS()
+      Person("Andy", Some(30)),
+      Person("Justion", Some(19))).toDS()
     assertDataset(expected){
       sut.process(inputDs, sparkSession)
     }
