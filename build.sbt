@@ -6,9 +6,12 @@ lazy val sparkVersion = "2.4.5"
 lazy val scalatestVersion = "3.1.1"
 //lazy val unmanagedJarFiles = "c:\\programdata\\anaconda3\\lib\\site-packages\\pyspark\\jars"
 lazy val unmanagedJarFiles = "c:\\users\\masas\\.conda\\envs\\dbconnect\\lib\\site-packages\\pyspark\\jars"
-//TODO テスト時のAP基盤のプロファイル設定
-Test / fork := true
-Test / javaOptions += "-Dactive.profile=ut"
+
+//TODO: README.mdに記載
+//sbt testのプロファイル設定するため
+//sbt -Dactive.profile=ut test以下のように起動すること
+//IntelliJの場合には、設定で、sbtのVM起動オプションを設定しておく。
+//ちなみに、sbtのfork機能でのjavaOptions設定は有効にならなかった
 
 lazy val commonSettings = Seq(
   //共通のsettingsを記述
