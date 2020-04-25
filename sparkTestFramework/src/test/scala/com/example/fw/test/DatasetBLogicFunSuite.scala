@@ -6,7 +6,7 @@ import org.apache.spark.sql.{Dataset, SparkSession}
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.{Assertion, BeforeAndAfter, BeforeAndAfterAll}
 
-abstract class DatasetBLogicFunSuite[T, U] extends AnyFunSuite with BeforeAndAfter with BeforeAndAfterAll {
+abstract class DatasetBLogicFunSuite extends AnyFunSuite with BeforeAndAfter with BeforeAndAfterAll {
   lazy protected val sparkSession: SparkSession = {
     val clusterMode = ResourceBundleManager.get("clustermode")
     val logLevel = ResourceBundleManager.get("loglevel")
@@ -31,7 +31,7 @@ abstract class DatasetBLogicFunSuite[T, U] extends AnyFunSuite with BeforeAndAft
     sparkSession.stop()
   }
 
-  protected def assertDataset(expected: Dataset[U])(actual: Dataset[U]): Assertion = {
+  protected def assertDataset[T](expected: Dataset[T])(actual: Dataset[T]): Assertion = {
     if (expected == null && actual == null) {
       succeed
     } else {

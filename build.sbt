@@ -16,7 +16,7 @@ lazy val unmanagedJarFiles = "c:\\users\\masas\\.conda\\envs\\dbconnect\\lib\\si
 lazy val commonSettings = Seq(
   //共通のsettingsを記述
   assemblyOption in assembly := (assemblyOption in assembly).value
-    .copy(includeScala = false, includeDependency = false),
+    .copy(includeScala = false, includeDependency = false)
 )
 
 lazy val root = (project in file("."))
@@ -49,8 +49,7 @@ lazy val application = (project in file("application"))
   .settings(
     commonSettings,
     name := "application",
-    version := "0.1",
-
+    version := "0.1"
   )
 
 lazy val databricksFramework = (project in file("databricksFramework"))
@@ -75,5 +74,9 @@ lazy val sparkTestFramework = (project in file("sparkTestFramework"))
   .settings(
     commonSettings,
     name := "sparkTestFramework",
-    libraryDependencies += "org.scalatest" %% "scalatest" % scalatestVersion % "test"
+    libraryDependencies ++= Seq(
+      "org.scalatest" %% "scalatest" % scalatestVersion % Test,
+      "org.mockito" % "mockito-core" % "3.3.3" % Test,
+      "org.scalatestplus" %% "scalatestplus-mockito" % "1.0.0-M2" % Test
+    )
   )
