@@ -28,7 +28,7 @@ abstract class DatasetBLogicFunSuite extends AnyFunSuite with BeforeAndAfter wit
   }
 
   override protected def afterAll(): Unit = {
-    sparkSession.stop()
+    //sparkSession.stop()
   }
 
   protected def assertDataset[T](expected: Dataset[T])(actual: Dataset[T]): Assertion = {
