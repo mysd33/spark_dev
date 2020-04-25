@@ -7,7 +7,6 @@ lazy val scalatestVersion = "3.1.1"
 //lazy val unmanagedJarFiles = "c:\\programdata\\anaconda3\\lib\\site-packages\\pyspark\\jars"
 lazy val unmanagedJarFiles = "c:\\users\\masas\\.conda\\envs\\dbconnect\\lib\\site-packages\\pyspark\\jars"
 
-//TODO: README.mdに記載
 //sbt testのプロファイル設定するため
 //sbt -Dactive.profile=ut test以下のように起動すること
 //IntelliJの場合には、設定で、sbtのVM起動オプションを設定しておく。
@@ -15,8 +14,11 @@ lazy val unmanagedJarFiles = "c:\\users\\masas\\.conda\\envs\\dbconnect\\lib\\si
 
 lazy val commonSettings = Seq(
   //共通のsettingsを記述
+  //sbt assemblyで、scalaのjarや、sbtでlibraryDependencies定義した依存ライブラリのクラスはjarに含めない
   assemblyOption in assembly := (assemblyOption in assembly).value
-    .copy(includeScala = false, includeDependency = false)
+    .copy(includeScala = false, includeDependency = false),
+  //sbt assemblyで、テストをスキップ
+  test in assembly := {}
 )
 
 lazy val root = (project in file("."))
