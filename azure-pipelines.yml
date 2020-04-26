@@ -20,7 +20,7 @@ steps:
 #    sbt -Dactive.profile=ut test
 #  displayName: 'Unit Test'
 
-#- script: |
-#    echo assembly
-#    sbt assembly
-#  displayName: 'Create Assembly'
+- script: |
+    echo assembly
+    sbt assembly
+  displayName: 'Create Assembly'
