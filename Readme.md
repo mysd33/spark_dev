@@ -79,3 +79,7 @@
   ```
   sbt assembly
   ```
+  
+##Azure DevOps PipelineでのCI
+* Azure Reposでソースコード管理し、Azure Pipelineでパイプラインを作成することでazure-pipelines.ymlの定義に基づきPipeline実行できます
+* 現状、ビルド、単体テスト、実行可能jar作成が実行できます
