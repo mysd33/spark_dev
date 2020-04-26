@@ -5,7 +5,8 @@ ThisBuild / organization := "com.example"
 lazy val sparkVersion = "2.4.5"
 lazy val scalatestVersion = "3.1.1"
 //lazy val unmanagedJarFiles = "c:\\programdata\\anaconda3\\lib\\site-packages\\pyspark\\jars"
-lazy val unmanagedJarFiles = "c:\\users\\masas\\.conda\\envs\\dbconnect\\lib\\site-packages\\pyspark\\jars"
+//lazy val unmanagedJarFiles = "c:\\users\\masas\\.conda\\envs\\dbconnect\\lib\\site-packages\\pyspark\\jars"
+lazy val unmanagedJarFiles = "lib"
 
 //sbt testのプロファイル設定するため
 //sbt -Dactive.profile=ut test以下のように起動すること
