@@ -1,7 +1,5 @@
 package com.example.fw.domain.model
 
-import java.util.ResourceBundle
-
 import com.example.fw.domain.utils.ResourceBundleManager
 import org.apache.spark.sql.types.StructType
 
@@ -15,10 +13,16 @@ sealed abstract class DataFile[+T](path: String, val schema: Option[StructType] 
   }
 }
 
+case class TextFileModel[T](path: String, schm: StructType = null) extends DataFile[T](path, Option(schm)) {
+  //TODO: encoding
+}
+
 case class CsvModel[T](path: String, schm: StructType = null) extends DataFile[T](path, Option(schm)) {
+  //TODO: encoding
 }
 
 case class JsonModel[T](path: String, schm: StructType = null) extends DataFile[T](path, Option(schm)) {
+  //TODO: encoding
 }
 
 case class ParquetModel[T](path: String, schm: StructType = null) extends DataFile[T](path, Option(schm)) {
