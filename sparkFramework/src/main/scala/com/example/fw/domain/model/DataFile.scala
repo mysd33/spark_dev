@@ -14,18 +14,22 @@ sealed abstract class DataFile[+T](path: String, val schema: Option[StructType] 
 }
 
 case class TextFileModel[T](path: String, schm: StructType = null) extends DataFile[T](path, Option(schm)) {
-  //TODO: encoding
+  //TODO: encoding対応
+  //TODO: partitioning対応
 }
 
 case class CsvModel[T](path: String, schm: StructType = null) extends DataFile[T](path, Option(schm)) {
-  //TODO: encoding
+  //TODO: encoding対応
+  //TODO: partitioning対応
 }
 
 case class JsonModel[T](path: String, schm: StructType = null) extends DataFile[T](path, Option(schm)) {
-  //TODO: encoding
+  //TODO: encoding対応
+  //TODO: partitioning対応
 }
 
 case class ParquetModel[T](path: String, schm: StructType = null) extends DataFile[T](path, Option(schm)) {
+  //TODO: partitioning対応
 }
 
 case class MultiFormatCsvModel[T](path: String, schm: StructType = null) extends DataFile[T](path, Option(schm)) {
