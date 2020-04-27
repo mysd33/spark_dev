@@ -3,9 +3,10 @@ package com.example.fw.domain.logic
 import com.example.fw.domain.dataaccess.DataFileReaderWriter
 import com.example.fw.domain.model.DataFile
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.{Dataset, SparkSession}
+import scala.reflect.runtime.universe.TypeTag
 
-abstract class RDDToDatasetBLogic[U](val dataFileReaderWriter: DataFileReaderWriter) extends Logic {
+abstract class RDDToDatasetBLogic[U <: Product : TypeTag](val dataFileReaderWriter: DataFileReaderWriter) extends Logic {
   val inputFiles: Seq[DataFile[String]]
   val outputFile: DataFile[U]
 
@@ -33,10 +34,10 @@ abstract class RDDToDatasetBLogic[U](val dataFileReaderWriter: DataFileReaderWri
     )
   }
 
-  def process(inputs: Seq[RDD[String]], sparkSession: SparkSession): RDD[U]
+  def process(inputs: Seq[RDD[String]], sparkSession: SparkSession): Dataset[U]
 
-  final def output(rdd: RDD[U]): Unit = {
-    dataFileReaderWriter.writeFromRDD(rdd, outputFile)
+  final def output(ds: Dataset[U]): Unit = {
+    dataFileReaderWriter.writeFromDs(ds, outputFile)
   }
 
   def tearDown(sparkSession: SparkSession): Unit = {
