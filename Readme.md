@@ -79,6 +79,23 @@
   ```
   sbt assembly
   ```
+
+## Databricksでのライブラリ（jar）登録
+* 実行可能jar「databricks_dev-assembly-0.1.jar」を下記ドキュメントの通り、ワースペースライブラリとして登録し、クラスタに同jarをインストールします
+  * https://docs.microsoft.com/ja-jp/azure/databricks/libraries
+
+## Databricksでのライブラリを用いたnotebook実行
+* 上記手順でjarをクラスタにライブラリインストールすると、Notebook上で、jarに含まれるクラスを呼び出すことができます
+* 以下のNotebookのscalaサンプルコードが参考になります。
+  * databricks_dev\notebooks\Users\admin@mysd33.work\testFramework.scala
+
+## Databricksでのjarジョブ実行手順
+* 下記ドキュメントの通り、ジョブを作成し、jarをアップロードして実行するか、ワークスペース上のjarを指定します
+  * https://docs.microsoft.com/ja-jp/azure/databricks/jobs#create-a-job
+
+## Databricksでのnotbookジョブ実行手順
+* 下記ドキュメントの通り、ジョブを作成し、notebooを指定します
+  * https://docs.microsoft.com/ja-jp/azure/databricks/jobs#create-a-job
   
 ##Azure DevOps PipelineでのCI
 * Azure Reposでソースコード管理し、Azure Pipelineでパイプラインを作成することでazure-pipelines.ymlの定義に基づきPipeline実行できます
