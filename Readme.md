@@ -8,12 +8,16 @@
   * sparkTestFramework SparkAP用の拡張テストフレームワークサブプロジェクト
   * databricksFramework Databricks固有の機能に依存するAP基盤サブプロジェクト
   * notebooks Databricks Notebookと同期されたNotebookソースコードフォルダ
+  * testdata 業務APを動作させるためのテストファイル
 
 ##IntelliJからのAPの端末ローカルSpark実行
 * 通常、APは「application」プロジェクトに作成します
 * 端末ローカルでSpark実行します
 * この起動方法は、Databricks依存機能は実行できません
 * 別途ローカル実行用の環境セットアップが必要(Teams Wiki参照)です
+* サンプルを動作させる際は、testdataディレクトリにあるデータを「C:\temp」にコピーしてください
+  * applicaitonプロジェクト/src/main/resources/application-dev.propertiesのbasepathプロパティを変更すれば違うディレクトリにも変更可能です
+* AP起動方法
   * 「構成の編集」で「アプリケーション」を作成
   * 「メインクラス」に「com.example.fw.app.ApplicationEntryPoint」を設定
   * 「プログラムの引数」に対象Logicクラスの完全修飾名を設定
