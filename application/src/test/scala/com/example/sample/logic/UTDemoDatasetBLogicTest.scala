@@ -3,7 +3,7 @@ package com.example.sample.logic
 import com.example.fw.domain.dataaccess.DataFileReaderWriter
 import com.example.fw.domain.utils.ResourceBundleManager
 import com.example.fw.infra.dataaccess.StandardSparkDataFileReaderWriter
-import com.example.fw.test.DatasetBLogicFunSuite
+import com.example.fw.test.SparkTestFunSuite
 import com.example.sample.common.logic.SampleSharedLogic
 import com.example.sample.common.rule.PersonRule
 import com.example.sample.model.Person
@@ -11,7 +11,7 @@ import org.mockito.Mockito._
 import org.scalatestplus.mockito._
 import org.mockito.ArgumentMatchers._
 
-class UTDemoDatasetBLogicTest extends DatasetBLogicFunSuite with MockitoSugar {
+class UTDemoDatasetBLogicTest extends SparkTestFunSuite with MockitoSugar {
   test("UTDemoDatasetBLogicTest.process") {
     println("active.profile:" + ResourceBundleManager.getActiveProfile())
     import sparkSession.implicits._

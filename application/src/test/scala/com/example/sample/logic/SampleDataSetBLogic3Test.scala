@@ -3,10 +3,10 @@ package com.example.sample.logic
 import com.example.fw.domain.dataaccess.DataFileReaderWriter
 import com.example.fw.domain.utils.ResourceBundleManager
 import com.example.fw.infra.dataaccess.StandardSparkDataFileReaderWriter
-import com.example.fw.test.DatasetBLogicFunSuite
+import com.example.fw.test.SparkTestFunSuite
 import com.example.sample.model.Person
 
-class SampleDataSetBLogic3Test extends DatasetBLogicFunSuite {
+class SampleDataSetBLogic3Test extends SparkTestFunSuite {
   test("SampleDatasetBLogic3.process") {
     println("active.profile:" + ResourceBundleManager.getActiveProfile())
     import sparkSession.implicits._
