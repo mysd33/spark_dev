@@ -1,6 +1,7 @@
 package com.example.sample.common.receipt
 
-case class MedREReceiptRecord(dataShikibetsu: String,
+case class MedREReceiptRecord(receiptKanriNo: String,
+                              dataShikibetsu: String,
                               gyoNo: String,
                               receEdaNo: String,
                               recordType: String,
@@ -41,13 +42,15 @@ case class MedREReceiptRecord(dataShikibetsu: String,
                               shippei3: String,
                               kana: String,
                               patientStatus: String
-                          ) extends ReceiptRecord {
+                             ) extends ReceiptRecord {
 }
 
-//TODO:冗長な定義をどうにかできないか？
 object MedREReceiptRecordMapper {
-  def map(items: Array[String]): MedREReceiptRecord = {
-    MedREReceiptRecord(dataShikibetsu = items(0),
+  def map(receiptKanriNo: String, items: Array[String]): MedREReceiptRecord = {
+    //CSVのマッピング定義
+    MedREReceiptRecord(
+      receiptKanriNo = receiptKanriNo,
+      dataShikibetsu = items(0),
       gyoNo = items(1),
       receEdaNo = items(2),
       recordType = items(3),
@@ -72,7 +75,7 @@ object MedREReceiptRecordMapper {
       kirokujokenMonth = items(22),
       seikyu = items(23),
       shinryokaName1 = items(24),
-      bui1= items(25),
+      bui1 = items(25),
       shinryoukaSex1 = items(26),
       shochi1 = items(27),
       shippei1 = items(28),

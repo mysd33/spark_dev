@@ -12,8 +12,9 @@ case class MedMNReceiptRecord(dataShikibetsu: String,
                               yobi4: String
                           ) extends ReceiptRecord {
 }
-//TODO:冗長な定義をどうにかできないか？
+
 object MedMNReceiptRecordMapper {
+  //CSVのマッピング定義
   def map(items: Array[String]): MedMNReceiptRecord = {
     MedMNReceiptRecord(
       dataShikibetsu = items(0),
