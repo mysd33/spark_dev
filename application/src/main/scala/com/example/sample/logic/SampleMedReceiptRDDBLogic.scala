@@ -1,14 +1,13 @@
 package com.example.sample.logic
 
 import com.example.fw.domain.dataaccess.DataFileReaderWriter
-import com.example.fw.domain.logic.Logic
 import com.example.fw.domain.model.{CsvModel, DataFile, MultiFormatCsvModel}
 import com.example.sample.common.logic.AbstractReceiptRDDBLogic
 import com.example.sample.common.receipt.{MedMNReceiptRecord, MedREReceiptRecord, ReceiptRecord, ReceiptRecordMapper}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
 
-class SampleReceiptRDDBLogic(dataFileReaderWriter: DataFileReaderWriter)
+class SampleMedReceiptRDDBLogic(dataFileReaderWriter: DataFileReaderWriter)
   extends AbstractReceiptRDDBLogic(dataFileReaderWriter) {
   //事前にシェルで\x00で区切り文字として設定しておいたレセプトファイル
   override val inputFile: DataFile[String] =
