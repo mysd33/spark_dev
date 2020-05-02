@@ -21,7 +21,7 @@ class UTDemoDatasetBLogic(dataFileReaderWriter: DataFileReaderWriter) extends
 
   override val inputFile: DataFile[Person] = CsvModel[Person](
     "person_noheader.csv",
-    StructType(Array(
+    schm = StructType(Array(
       StructField("age", LongType, true),
       StructField("name", StringType, true)
     ))

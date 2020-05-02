@@ -11,7 +11,7 @@ class SampleDataSetBLogic3(dataFileReaderWriter: DataFileReaderWriter)
   extends DatasetBLogic1to1[Person, Person](dataFileReaderWriter) {
   override val inputFile: DataFile[Person] = CsvModel[Person](
     "person_noheader.csv",
-    StructType(Array(
+    schm = StructType(Array(
       StructField("age", LongType, true),
       StructField("name", StringType, true)
     ))

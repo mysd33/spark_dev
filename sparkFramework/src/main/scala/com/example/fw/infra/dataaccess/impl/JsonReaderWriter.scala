@@ -19,8 +19,12 @@ class JsonReaderWriter extends DataFileReaderWriterImpl {
   }
 
   override def writeFromDsDf[T](ds: Dataset[T], outputFile: DataFile[T], saveMode: SaveMode): Unit = {
-    ds.write
-      .mode(saveMode)
-      .json(outputFile.filePath)
+    val writer =
+      if (outputFile.hasPartition) {
+        ds.write.mode(saveMode).partitionBy(outputFile.partition.get)
+      } else {
+        ds.write.mode(saveMode)
+      }
+    writer.json(outputFile.filePath)
   }
 }

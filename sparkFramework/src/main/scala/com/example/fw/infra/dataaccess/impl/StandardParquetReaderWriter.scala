@@ -20,7 +20,12 @@ class StandardParquetReaderWriter extends DataFileReaderWriterImpl {
   }
 
   override def writeFromDsDf[T](ds: Dataset[T], outputFile: DataFile[T], saveMode: SaveMode): Unit = {
-    //TODO:パーティション対応
-    ds.write.mode(saveMode).parquet(outputFile.filePath)
+    val writer =
+      if (outputFile.hasPartition) {
+        ds.write.mode(saveMode).partitionBy(outputFile.partition.get)
+      } else {
+        ds.write.mode(saveMode)
+      }
+    writer.parquet(outputFile.filePath)
   }
 }
