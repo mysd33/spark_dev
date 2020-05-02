@@ -4,6 +4,6 @@ import org.apache.spark.internal.Logging
 import org.apache.spark.sql.SparkSession
 
 //TODO: org.apache.spark.internal.Loggingを使ってよいか？
-trait Logic extends Logging {
+trait Logic extends Logging with Serializable {
   def execute(sparkSession: SparkSession): Unit
 }

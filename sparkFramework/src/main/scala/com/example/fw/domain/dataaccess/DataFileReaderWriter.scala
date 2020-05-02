@@ -6,7 +6,7 @@ import org.apache.spark.sql.{DataFrame, Dataset, Row, SaveMode, SparkSession}
 
 import scala.reflect.runtime.universe.TypeTag
 
-class DataFileReaderWriter {
+class DataFileReaderWriter extends Serializable {
   //自分型アノテーションでDataFileReaderWriterの実装をDI
   self: DataFileReaderWriterImpl =>
   def readToRDD(inputFile: DataFile[String], sparkSession: SparkSession): RDD[String] = {
