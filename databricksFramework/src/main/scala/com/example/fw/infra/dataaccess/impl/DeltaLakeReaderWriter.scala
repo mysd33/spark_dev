@@ -24,9 +24,11 @@ class DeltaLakeReaderWriter extends DataFileReaderWriterImpl {
   }
 
   override def writeFromDsDf[T](ds: Dataset[T], outputFile: DataFile[T], saveMode: SaveMode): Unit = {
-    ds.write
-      .mode(saveMode)
-      .format(formatName)
-      .save(outputFile.filePath)
+    val writer = ds.write.mode(saveMode)
+    val writer2 = outputFile.partition match {
+      case Some(partition) => writer.partitionBy(partition)
+      case _ => writer
+    }
+    writer2.format(formatName).save(outputFile.filePath)
   }
 }

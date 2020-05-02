@@ -21,6 +21,11 @@ class MultiFormatCsvReaderWriter extends DataFileReaderWriterImpl {
     conf.set(HADOOP_TEXTINPUTFORMAT_RECORD_DELIMITER_KEY, textInputFormatRecordDelimiter)
     //エンコーディングをShift_JIS（MS932）に変更し、各レセプトの文字列を１要素とするRDD[String]を取得
     val rdd = sc.newAPIHadoopFile(inputFile.filePath, classOf[TextInputFormat], classOf[LongWritable], classOf[Text], conf)
-    rdd.map { case (_, text) => new String(text.getBytes, inputFile.encoding) }
+    rdd.map { case (_, text) =>
+      inputFile.encoding match {
+        case Some(encoding) => new String(text.getBytes, encoding)
+        case _ => new String(text.getBytes)
+      }
+    }
   }
 }
