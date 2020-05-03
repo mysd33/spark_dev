@@ -39,6 +39,8 @@ class CsvReaderWriter extends DataFileReaderWriterImpl {
 
   override def writeFromDsDf[T](ds: Dataset[T], outputFile: DataFile[T], saveMode: SaveMode): Unit = {
     val writer = ds.write.mode(saveMode)
+      //TODO: DataFileで設定可能にする
+      .option("header", "true")
     val writer2 = outputFile.partition match {
       case Some(partition) => writer.partitionBy(partition)
       case _ => writer
