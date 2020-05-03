@@ -3,6 +3,7 @@ ThisBuild / version := "0.1"
 ThisBuild / organization := "com.example"
 
 lazy val sparkVersion = "2.4.5"
+lazy val sparkXmlVersion = "0.9.0"
 lazy val scalatestVersion = "3.1.1"
 //lazy val unmanagedJarFiles = "c:\\programdata\\anaconda3\\lib\\site-packages\\pyspark\\jars"
 //lazy val unmanagedJarFiles = "c:\\users\\masas\\.conda\\envs\\dbconnect\\lib\\site-packages\\pyspark\\jars"
@@ -68,7 +69,9 @@ lazy val sparkFramework = (project in file("sparkFramework"))
     name := "sparkFramework",
     libraryDependencies ++= Seq(
       "org.apache.spark" %% "spark-core" % sparkVersion,
-      "org.apache.spark" %% "spark-sql" % sparkVersion
+      "org.apache.spark" %% "spark-sql" % sparkVersion,
+      //TODO: spark-xmlのjarはDatabricksにインストールが必要なはず
+      "com.databricks" %% "spark-xml" % sparkXmlVersion
     )
   )
 

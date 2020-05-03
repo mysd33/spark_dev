@@ -16,14 +16,17 @@ sealed abstract class DataFile[+T](path: String,
   }
 }
 
+//TODO: 基底クラスがtraitでないので、schmとschema、ecとencodingの２種類のプロパティができてしまっている
 case class TextFileModel[T](path: String, schm: StructType = null, ec: String = "UTF-8")
   extends DataFile[T](path, schema = Option(schm), encoding = Option(ec)) {
 }
 
+//TODO:delmiterの定義
 case class MultiFormatCsvModel[T](path: String, schm: StructType = null, ec: String = "UTF-8")
   extends DataFile[T](path, schema = Option(schm), encoding = Option(ec)) {
 }
 
+//TODO:delmiterの定義
 case class CsvModel[T](path: String, pt: String = null, schm: StructType = null, ec: String = "UTF-8")
   extends DataFile[T](path, Option(pt), Option(schm), Option(ec)) {
 }
@@ -36,7 +39,7 @@ case class ParquetModel[T](path: String, pt: String = null, schm: StructType = n
   extends DataFile[T](path, Option(pt), Option(schm)) {
 }
 
-case class XmlModel[T](path: String, schm: StructType = null, ec: String = "UTF-8")
+case class XmlModel[T](path: String, rowTag: String = null, rootTag: String = null, schm: StructType = null, ec: String = "UTF-8")
   extends DataFile[T](path, schema = Option(schm), encoding = Option(ec)) {
-  //TODO:XML形式にするのはどこでやる？
+
 }
