@@ -43,19 +43,23 @@ class SampleMedReceiptRDDBLogic(dataFileReaderWriter: DataFileReaderWriter)
     val cached = result.cache()
     try {
       //レコード種別ごとにDatasetを作成しファイル出力
-      //TODO: 明示的に各クラスをキャストして出力しないといけないコードが冗長だが、対処が難しい
+      //明示的に各クラスをキャストして出力しないといけないコードが冗長だが、対処が難しい
+
+      //TODO: processメソッド側でSeq[DataFrame]で返すようにする
+      //TODO: レセプト解析コンポーネントとして別クラスに切り出してテストしやすくする
       val re = "RE"
       val reDir = CsvModel[MedREReceiptRecord](outputDirPath + directoryPath + re)
       val reDS = cached.filter(t => t._1 == re)
         .map(t => t._2.asInstanceOf[MedREReceiptRecord])
         .toDS()
-      dataFileReaderWriter.writeFromDs(reDS, reDir)
 
       val mn = "MN"
       val mnDir = CsvModel[MedMNReceiptRecord](outputDirPath + directoryPath + mn)
       val mnDS = cached.filter(t => t._1 == mn)
         .map(t => t._2.asInstanceOf[MedMNReceiptRecord])
         .toDS()
+
+      dataFileReaderWriter.writeFromDs(reDS, reDir)
       dataFileReaderWriter.writeFromDs(mnDS, mnDir)
     } finally {
       cached.unpersist()
