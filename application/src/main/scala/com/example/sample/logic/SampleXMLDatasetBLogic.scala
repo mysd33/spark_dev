@@ -5,12 +5,13 @@ import com.example.fw.domain.logic.DataFrameBLogic
 import com.example.fw.domain.model.{CsvModel, DataFile, XmlModel}
 import org.apache.spark.sql.types.{DoubleType, StringType, StructField, StructType}
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
+import com.example.fw.domain.utils.OptionImplicit._
 
 class SampleXMLDatasetBLogic(dataFileReaderWriter: DataFileReaderWriter)
   extends DataFrameBLogic(dataFileReaderWriter) {
   override val inputFiles: Seq[DataFile[Row]] =
     XmlModel[Row](path = "xml/books.xml", rowTag = "book",
-      schm = StructType(Array(
+      schema = StructType(Array(
         StructField("_id", StringType, nullable = true),
         StructField("author", StringType, nullable = true),
         StructField("description", StringType, nullable = true),

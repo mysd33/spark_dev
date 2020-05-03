@@ -8,6 +8,7 @@ import com.example.sample.common.rule.PersonRule
 import com.example.sample.model.Person
 import org.apache.spark.sql.{Dataset, SparkSession}
 import org.apache.spark.sql.types.{LongType, StringType, StructField, StructType}
+import com.example.fw.domain.utils.OptionImplicit._
 
 //単体テストコードデモ用
 class UTDemoDatasetBLogic(dataFileReaderWriter: DataFileReaderWriter) extends
@@ -21,7 +22,7 @@ class UTDemoDatasetBLogic(dataFileReaderWriter: DataFileReaderWriter) extends
 
   override val inputFile: DataFile[Person] = CsvModel[Person](
     "person_noheader.csv",
-    schm = StructType(Array(
+    schema = StructType(Array(
       StructField("age", LongType, true),
       StructField("name", StringType, true)
     ))

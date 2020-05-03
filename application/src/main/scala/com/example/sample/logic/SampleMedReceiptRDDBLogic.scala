@@ -6,12 +6,14 @@ import com.example.sample.common.logic.AbstractReceiptRDDBLogic
 import com.example.sample.common.receipt.{MedMNReceiptRecord, MedREReceiptRecord, ReceiptRecord, ReceiptRecordMapper}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
+import com.example.fw.domain.utils.OptionImplicit._
 
 class SampleMedReceiptRDDBLogic(dataFileReaderWriter: DataFileReaderWriter)
   extends AbstractReceiptRDDBLogic(dataFileReaderWriter) {
   //事前にシェルで\x00で区切り文字として設定しておいたレセプトファイル
   override val inputFile: DataFile[String] =
-    MultiFormatCsvModel[String](path = "receipt/11_RECODEINFO_MED_result.CSV", ec = "MS932")
+    MultiFormatCsvModel[String](path = "receipt/11_RECODEINFO_MED_result.CSV",
+      encoding = "MS932")
 
   override def process(receipts: RDD[String], sparkSession: SparkSession): RDD[(String, ReceiptRecord)] = {
     val lineSeparator = "\r\n"

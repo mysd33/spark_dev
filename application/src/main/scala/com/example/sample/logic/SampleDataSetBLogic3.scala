@@ -7,11 +7,13 @@ import com.example.sample.model.Person
 import org.apache.spark.sql.types.{LongType, StringType, StructField, StructType}
 import org.apache.spark.sql.{Dataset, SparkSession}
 
+import com.example.fw.domain.utils.OptionImplicit._
+
 class SampleDataSetBLogic3(dataFileReaderWriter: DataFileReaderWriter)
   extends DatasetBLogic1to1[Person, Person](dataFileReaderWriter) {
   override val inputFile: DataFile[Person] = CsvModel[Person](
     "person_noheader.csv",
-    schm = StructType(Array(
+    schema = StructType(Array(
       StructField("age", LongType, true),
       StructField("name", StringType, true)
     ))
