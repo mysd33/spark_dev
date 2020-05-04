@@ -12,7 +12,7 @@ object MedReceiptRecordMapper {
     val records = receipt.split(lineSeparator)
     //最初のMNレコードからレセプト管理番号を取得
     val receiptKanriNo = MedReceiptRecordMapper.mapToRecord(records(0))
-      .asInstanceOf[MedMNReceiptRecord]
+      .asInstanceOf[MedMN]
       .receiptKanriNo
     //レコードごとのRDDを作成
     records.map(recordString => {

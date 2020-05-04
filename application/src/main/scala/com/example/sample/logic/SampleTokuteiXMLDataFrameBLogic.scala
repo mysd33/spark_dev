@@ -3,7 +3,7 @@ package com.example.sample.logic
 import com.example.fw.domain.dataaccess.DataFileReaderWriter
 import com.example.fw.domain.logic.RDDToDataFrameBLogic
 import com.example.fw.domain.model.{CsvModel, DataFile, TextFileModel}
-import com.example.sample.common.tokutei.{Code, PatientRole, TokuteiKenshin}
+import com.example.sample.common.tokutei.{Code, CodeTokuteiKenshinMapper, PatientRole, PatientRoleTokuteiKenshinMapper, TokuteiKenshin, TokuteiKenshinMapper}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 
@@ -11,15 +11,17 @@ import scala.xml.XML
 
 class SampleTokuteiXMLDataFrameBLogic(dataFileReaderWriter: DataFileReaderWriter)
   extends RDDToDataFrameBLogic(dataFileReaderWriter) {
+  private val outputDir = "tokutei/output2/"
+  private val code = "Code"
+  private val patientRole = "PatientRole"
+
   //1行1特定検診XMLのテキストファイルとして扱う
   override val inputFiles: Seq[DataFile[String]] =
     TextFileModel[String]("tokutei/kensin_kihon_tokutei_result2.xml") :: Nil
 
   override val outputFiles: Seq[DataFile[Row]] =
-    CsvModel[Row](
-      "tokutei/output2/code.csv"
-    ) :: CsvModel[Row](
-      "tokutei/output2/patient_role.csv"
+    CsvModel[Row](outputDir + code
+    ) :: CsvModel[Row](outputDir + patientRole
     ) :: Nil
 
   var cached: RDD[(String, TokuteiKenshin)] = null
@@ -31,29 +33,15 @@ class SampleTokuteiXMLDataFrameBLogic(dataFileReaderWriter: DataFileReaderWriter
     val tokuteiXmlStrs = inputs(0)
     val recordRDD = tokuteiXmlStrs.flatMap(xmlStr => {
       val xml = XML.loadString(xmlStr)
-      //TODO: 別々のMapperコードに切り出す
-      val codeTag = xml \ "code"
-      val codeValue = codeTag \@ "code"
-      val codeSystem = codeTag \@ "codeSystem"
-      val code: TokuteiKenshin = Code(codeValue.toLong, codeSystem)
-
-      val patientRoleTag = xml \ "recordTarget" \ "patientRole"
-      val idTags = patientRoleTag \\ "id"
-      val hokenjaNo = idTags(0) \@ "extension"
-      val hihokensaKigo = idTags(1) \@ "extension"
-      val hihokensaNo = idTags(2) \@ "extension"
-      val patientRole: TokuteiKenshin = PatientRole(hokenjaNo, hihokensaKigo, hihokensaNo)
-      ("Code", code) :: ("patientRole", patientRole) :: Nil
+      TokuteiKenshinMapper.mapToTokuteiKennshinTuples(xml)
     })
     //何度も使用するのでキャッシュ
     cached = recordRDD.cache()
 
     //1つのRDDでXMLを各ファイルに分割するため別のDFに出力
-    val codeDF = cached.filter(t => t._1 == "Code")
-      .map(t => t._2.asInstanceOf[Code]).toDF()
-    val patientDF = cached.filter(t => t._1 == "patientRole")
-      .map(t => t._2.asInstanceOf[PatientRole]).toDF()
-
+    val codeDF = TokuteiKenshinMapper.extractRDD[Code](code, cached).toDF()
+    val patientDF = TokuteiKenshinMapper.extractRDD[PatientRole](patientRole, cached).toDF()
+    //TODO:レコード種別ごとに処理を追加していく
     codeDF :: patientDF :: Nil
   }
 
@@ -62,5 +50,4 @@ class SampleTokuteiXMLDataFrameBLogic(dataFileReaderWriter: DataFileReaderWriter
     cached.unpersist()
     super.tearDown(sparkSession)
   }
-
 }

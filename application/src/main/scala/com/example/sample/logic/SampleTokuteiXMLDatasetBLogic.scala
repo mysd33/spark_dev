@@ -9,6 +9,8 @@ import com.example.sample.common.tokutei.{Code, PatientRole}
 
 import scala.collection.mutable
 
+
+//TODO: spark-xmlは、ネストした複雑なXMLデータ構造だと煩雑なコードになってしまうし、ファイルを読んで逐次動作させながらでないと実装が難しいので使わない
 class SampleTokuteiXMLDatasetBLogic(dataFileReaderWriter: DataFileReaderWriter)
   extends DataFrameBLogic(dataFileReaderWriter) {
   override val inputFiles: Seq[DataFile[Row]] =
@@ -27,9 +29,7 @@ class SampleTokuteiXMLDatasetBLogic(dataFileReaderWriter: DataFileReaderWriter)
     import sparkSession.implicits._
     val df = inputs(0)
 
-    //TODO: 特定検診の解析コンポーネントとして別クラスに切り出して単体テストしやすくする
-
-    //TODO: spark-xmlは、ネストした複雑なXMLデータ構造だと煩雑なコードになってしまうし、ファイルを読んで逐次動作させながらでないと実装が難しい
+    //本来なら特定検診の解析コンポーネントとして別クラスに切り出して単体テストしやすくする
     //報告区分(code)タグ
     val code = df.select("code")
       .map(row => {
