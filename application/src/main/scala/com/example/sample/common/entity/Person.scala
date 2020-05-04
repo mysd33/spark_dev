@@ -1,3 +1,3 @@
-package com.example.sample.model
+package com.example.sample.common.entity
 
 case class Person(name: String, age: Option[Long])

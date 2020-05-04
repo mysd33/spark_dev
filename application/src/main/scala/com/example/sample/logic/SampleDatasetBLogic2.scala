@@ -3,7 +3,7 @@ package com.example.sample.logic
 import com.example.fw.domain.dataaccess.DataFileReaderWriter
 import com.example.fw.domain.logic.DatasetBLogic2to1
 import com.example.fw.domain.model.{DataFile, JsonModel, ParquetModel}
-import com.example.sample.model.{Person, PersonOther}
+import com.example.sample.common.entity.{Person, PersonOther}
 import org.apache.spark.sql.{Dataset, SparkSession}
 
 class SampleDatasetBLogic2(dataFileReaderWriter: DataFileReaderWriter)

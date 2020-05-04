@@ -1,7 +1,7 @@
 package com.example.sample.common.logic
 
 import com.example.fw.domain.dataaccess.DataFileReaderWriter
-import com.example.sample.model.Person
+import com.example.sample.common.entity.Person
 import org.apache.spark.sql.Dataset
 
 //共通処理の例

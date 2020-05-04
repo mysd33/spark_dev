@@ -4,7 +4,7 @@ import com.example.fw.domain.dataaccess.DataFileReaderWriter
 import com.example.fw.domain.utils.ResourceBundleManager
 import com.example.fw.infra.dataaccess.StandardSparkDataFileReaderWriter
 import com.example.fw.test.SparkTestFunSuite
-import com.example.sample.model.Person
+import com.example.sample.common.entity.Person
 
 class SampleRDDtoRDDBLogicTest extends SparkTestFunSuite {
   test("SampleRDDtoRDDBLogicTest.process") {

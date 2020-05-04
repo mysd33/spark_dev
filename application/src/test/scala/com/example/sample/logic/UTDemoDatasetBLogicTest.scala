@@ -6,7 +6,7 @@ import com.example.fw.infra.dataaccess.StandardSparkDataFileReaderWriter
 import com.example.fw.test.SparkTestFunSuite
 import com.example.sample.common.logic.SampleSharedLogic
 import com.example.sample.common.rule.PersonRule
-import com.example.sample.model.Person
+import com.example.sample.common.entity.Person
 import org.mockito.Mockito._
 import org.scalatestplus.mockito._
 import org.mockito.ArgumentMatchers._

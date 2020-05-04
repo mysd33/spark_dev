@@ -1,6 +1,6 @@
 package com.example.sample.common.rule
 
-import com.example.sample.model.Person
+import com.example.sample.common.entity.Person
 
 
 class PersonRule extends Serializable {

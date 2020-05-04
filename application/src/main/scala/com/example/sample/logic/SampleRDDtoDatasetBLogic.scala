@@ -3,7 +3,7 @@ package com.example.sample.logic
 import com.example.fw.domain.dataaccess.DataFileReaderWriter
 import com.example.fw.domain.logic.{RDDToDatasetBLogic, RDDToRDDBLogic}
 import com.example.fw.domain.model.{CsvModel, DataFile, ParquetModel, TextFileModel}
-import com.example.sample.model.WordCount
+import com.example.sample.common.entity.WordCount
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{Dataset, SparkSession}
 

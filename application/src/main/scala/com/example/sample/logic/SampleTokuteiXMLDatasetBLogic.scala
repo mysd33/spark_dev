@@ -3,10 +3,9 @@ package com.example.sample.logic
 import com.example.fw.domain.dataaccess.DataFileReaderWriter
 import com.example.fw.domain.logic.DataFrameBLogic
 import com.example.fw.domain.model.{CsvModel, DataFile, XmlModel}
-import com.example.sample.model.{Code, PatientRole}
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
-
 import com.example.fw.domain.utils.OptionImplicit._
+import com.example.sample.common.tokutei.{Code, PatientRole}
 
 import scala.collection.mutable
 

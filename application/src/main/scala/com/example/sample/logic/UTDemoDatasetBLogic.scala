@@ -5,7 +5,7 @@ import com.example.fw.domain.logic.DatasetBLogic1to1
 import com.example.fw.domain.model.{CsvModel, DataFile, ParquetModel}
 import com.example.sample.common.logic.SampleSharedLogic
 import com.example.sample.common.rule.PersonRule
-import com.example.sample.model.Person
+import com.example.sample.common.entity.Person
 import org.apache.spark.sql.{Dataset, SparkSession}
 import org.apache.spark.sql.types.{LongType, StringType, StructField, StructType}
 import com.example.fw.domain.utils.OptionImplicit._

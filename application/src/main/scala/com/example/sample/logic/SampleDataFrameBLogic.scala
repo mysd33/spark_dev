@@ -3,7 +3,7 @@ package com.example.sample.logic
 import com.example.fw.domain.dataaccess.DataFileReaderWriter
 import com.example.fw.domain.logic.DataFrameBLogic
 import com.example.fw.domain.model.{JsonModel, ParquetModel}
-import com.example.sample.model.Person
+import com.example.sample.common.entity.Person
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 
 class SampleDataFrameBLogic(dataFileReaderWriter: DataFileReaderWriter)
