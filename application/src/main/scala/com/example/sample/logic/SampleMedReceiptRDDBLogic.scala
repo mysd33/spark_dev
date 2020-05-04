@@ -1,23 +1,38 @@
 package com.example.sample.logic
 
 import com.example.fw.domain.dataaccess.DataFileReaderWriter
+import com.example.fw.domain.logic.RDDToDataFrameBLogic
 import com.example.fw.domain.model.{CsvModel, DataFile, MultiFormatCsvModel}
-import com.example.sample.common.logic.AbstractReceiptRDDBLogic
+import com.example.fw.domain.utils.OptionImplicit._
 import com.example.sample.common.receipt.{MedMNReceiptRecord, MedREReceiptRecord, ReceiptRecord, ReceiptRecordMapper}
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.SparkSession
-import com.example.fw.domain.utils.OptionImplicit._
+import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 
 class SampleMedReceiptRDDBLogic(dataFileReaderWriter: DataFileReaderWriter)
-  extends AbstractReceiptRDDBLogic(dataFileReaderWriter) {
-  //事前にシェルで\x00で区切り文字として設定しておいたレセプトファイル
-  override val inputFile: DataFile[String] =
-    MultiFormatCsvModel[String](path = "receipt/11_RECODEINFO_MED_result.CSV",
-      encoding = "MS932")
+  extends RDDToDataFrameBLogic(dataFileReaderWriter) {
+  val outputDirPath = "receipt/output"
+  val directoryPath = "/"
+  val re = "RE"
+  val mn = "MN"
+  var cached: RDD[(String, ReceiptRecord)] = null
 
-  override def process(receipts: RDD[String], sparkSession: SparkSession): RDD[(String, ReceiptRecord)] = {
+  //事前にシェルで\x00で区切り文字として設定しておいたレセプトファイル
+  override val inputFiles: Seq[DataFile[String]] =
+    MultiFormatCsvModel[String](path = "receipt/11_RECODEINFO_MED_result.CSV",
+      encoding = "MS932") :: Nil
+
+  override val outputFiles: Seq[DataFile[Row]] =
+    CsvModel[Row](outputDirPath + directoryPath + re
+    ) :: CsvModel[Row](outputDirPath + directoryPath + mn
+    ) :: Nil
+
+
+  //override def process(receipts: RDD[String], sparkSession: SparkSession): RDD[(String, ReceiptRecord)] = {
+  override def process(inputs: Seq[RDD[String]], sparkSession: SparkSession): Seq[DataFrame] = {
+    import sparkSession.implicits._
     val lineSeparator = "\r\n"
-    receipts.flatMap(receipt => {
+    val receipts = inputs(0)
+    val result = receipts.flatMap(receipt => {
       //1レセプトを改行コードでレコードごとに分解
       val records = receipt.split(lineSeparator)
       //最初のMNレコードからレセプト管理番号を取得
@@ -32,39 +47,26 @@ class SampleMedReceiptRDDBLogic(dataFileReaderWriter: DataFileReaderWriter)
         (record.recordType, record)
       })
     })
-  }
-
-  override def output(result: RDD[(String, ReceiptRecord)], sparkSession: SparkSession): Unit = {
-    import sparkSession.implicits._
-    val outputDirPath = "receipt/output"
-    val directoryPath = "/"
-
+    //レコード種別ごとにDatasetを作成しファイル出力
+    //明示的に各クラスをキャストして出力しないといけないコードが冗長だが、対処が難しい
     //何度も使用するのでキャッシュしておく
-    val cached = result.cache()
-    try {
-      //レコード種別ごとにDatasetを作成しファイル出力
-      //明示的に各クラスをキャストして出力しないといけないコードが冗長だが、対処が難しい
-
-      //TODO: processメソッド側でSeq[DataFrame]で返すようにする
-      //TODO: レセプト解析コンポーネントとして別クラスに切り出してテストしやすくする
-      val re = "RE"
-      val reDir = CsvModel[MedREReceiptRecord](outputDirPath + directoryPath + re)
-      val reDS = cached.filter(t => t._1 == re)
-        .map(t => t._2.asInstanceOf[MedREReceiptRecord])
-        .toDS()
-
-      val mn = "MN"
-      val mnDir = CsvModel[MedMNReceiptRecord](outputDirPath + directoryPath + mn)
-      val mnDS = cached.filter(t => t._1 == mn)
-        .map(t => t._2.asInstanceOf[MedMNReceiptRecord])
-        .toDS()
-
-      dataFileReaderWriter.writeFromDs(reDS, reDir)
-      dataFileReaderWriter.writeFromDs(mnDS, mnDir)
-    } finally {
-      cached.unpersist()
-    }
+    cached = result.cache()
+    //TODO: レセプト解析コンポーネントとして別クラスに切り出してテストしやすくする
+    val reDS = cached.filter(t => t._1 == re)
+      .map(t => t._2.asInstanceOf[MedREReceiptRecord])
+      .toDF()
+    val mnDS = cached.filter(t => t._1 == mn)
+      .map(t => t._2.asInstanceOf[MedMNReceiptRecord])
+      .toDF()
+    reDS :: mnDS :: Nil
   }
+
+  override def tearDown(sparkSession: SparkSession): Unit = {
+    //キャッシュをunpersist
+    cached.unpersist()
+    super.tearDown(sparkSession)
+  }
+
 }
 
 
