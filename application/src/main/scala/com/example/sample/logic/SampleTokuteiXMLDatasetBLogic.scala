@@ -19,9 +19,9 @@ class SampleTokuteiXMLDatasetBLogic(dataFileReaderWriter: DataFileReaderWriter)
     ) :: Nil
   override val outputFiles: Seq[DataFile[Row]] =
     CsvModel[Row](
-      "tokutei/code.csv"
+      "tokutei/output/code.csv"
     ) :: CsvModel[Row](
-      "tokutei/patient_role.csv"
+      "tokutei/output/patient_role.csv"
     ) :: Nil
 
   override def process(inputs: Seq[DataFrame], sparkSession: SparkSession): Seq[DataFrame] = {
