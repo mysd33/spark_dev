@@ -9,7 +9,7 @@ import com.example.sample.common.tokutei.{Code, PatientRole, TokuteiKenshinConst
 
 import scala.collection.mutable
 
-
+//TODO: spark-xmlの依存jarをすべてDatabricksクラスタにインストールしないと動作しないので本番開発では使用しない
 //TODO: spark-xmlは、ネストした複雑なXMLデータ構造だと煩雑なコードになってしまうし、ファイルを読んで逐次動作させながらでないと実装が難しいので使わない
 class SampleTokuteiXMLDatasetBLogic(dataFileReaderWriter: DataFileReaderWriter)
   extends DataFrameBLogic(dataFileReaderWriter) {

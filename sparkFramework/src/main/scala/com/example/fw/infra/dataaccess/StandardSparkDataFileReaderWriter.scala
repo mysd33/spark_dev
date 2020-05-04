@@ -22,6 +22,7 @@ trait StandardSparkDataFileReaderWriter extends DataFileReaderWriterImpl {
       case f: CsvModel[Row] => new CsvReaderWriter().readToDf(f, sparkSession)
       case f: JsonModel[Row] => new JsonReaderWriter().readToDf(f, sparkSession)
       case f: ParquetModel[Row] => new StandardParquetReaderWriter().readToDf(f, sparkSession)
+      //TODO: spark-xmlの依存jarをすべてDatabricksクラスタにインストールしないと動作しないので本番開発では使用しない
       case f: XmlModel[Row] => new XmlReaderWriter().readToDf(f, sparkSession)
       case _ => ???
     }
@@ -48,6 +49,7 @@ trait StandardSparkDataFileReaderWriter extends DataFileReaderWriterImpl {
       case f: CsvModel[T] => new CsvReaderWriter().writeFromDsDf(ds, f, saveMode)
       case f: JsonModel[T] => new JsonReaderWriter().writeFromDsDf(ds, f, saveMode)
       case f: ParquetModel[T] => new StandardParquetReaderWriter().writeFromDsDf(ds, f, saveMode)
+      //TODO: spark-xmlの依存jarをすべてDatabricksクラスタにインストールしないと動作しないので本番開発では使用しない
       case f: XmlModel[T] => new XmlReaderWriter().writeFromDsDf(ds, f, saveMode)
       case _ => ???
     }

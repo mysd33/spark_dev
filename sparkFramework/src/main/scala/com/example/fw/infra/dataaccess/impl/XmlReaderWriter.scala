@@ -5,6 +5,7 @@ import com.example.fw.domain.model.{DataFile, XmlModel}
 import org.apache.spark.sql.{DataFrame, Dataset, Row, SaveMode, SparkSession}
 import com.databricks.spark.xml._
 
+//TODO: spark-xmlの依存jarをすべてDatabricksクラスタにインストールしないと動作しないので本番開発では使用しない
 class XmlReaderWriter extends DataFileReaderWriterImpl {
   //spark-xmlを利用
   //https://github.com/databricks/spark-xml/blob/master/README.md

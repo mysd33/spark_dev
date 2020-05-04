@@ -70,7 +70,7 @@ lazy val sparkFramework = (project in file("sparkFramework"))
     libraryDependencies ++= Seq(
       "org.apache.spark" %% "spark-core" % sparkVersion,
       "org.apache.spark" %% "spark-sql" % sparkVersion,
-      //TODO: spark-xmlのjarはDatabricksにインストールが必要なはず
+      //TODO: spark-xmlの依存jarをすべてDatabricksクラスタにインストールしないと動作しないので本番開発では使用しない
       "com.databricks" %% "spark-xml" % sparkXmlVersion
     )
   )

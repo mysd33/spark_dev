@@ -7,6 +7,7 @@ import org.apache.spark.sql.types.{DoubleType, StringType, StructField, StructTy
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import com.example.fw.domain.utils.OptionImplicit._
 
+//TODO: spark-xmlの依存jarをすべてDatabricksクラスタにインストールしないと動作しないので本番開発では使用しない
 class SampleXMLDatasetBLogic(dataFileReaderWriter: DataFileReaderWriter)
   extends DataFrameBLogic(dataFileReaderWriter) {
   override val inputFiles: Seq[DataFile[Row]] =
