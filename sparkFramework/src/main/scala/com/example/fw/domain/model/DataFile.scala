@@ -41,6 +41,7 @@ case class ParquetModel[T](path: String,
                            override val partition: Option[String] = None,
                            override val schema: Option[StructType] = None) extends DataFile[T]
 
+//TODO: spark-xmlの依存jarをすべてDatabricksクラスタにインストールしないと動作しないので本番開発では使用しない
 case class XmlModel[T](path: String,
                        rowTag: Option[String] = None,
                        rootTag: Option[String] = None,
