@@ -42,8 +42,7 @@ case class ParquetModel[T](path: String,
                            override val schema: Option[StructType] = None) extends DataFile[T]
 
 case class XmlModel[T](path: String,
-                       //TODO:Option化
-                       rowTag: String = null,
-                       rootTag: String = null,
+                       rowTag: Option[String] = None,
+                       rootTag: Option[String] = None,
                        override val schema: Option[StructType] = None,
                        override val encoding: Option[String] = Some("UTF-8")) extends DataFile[T]

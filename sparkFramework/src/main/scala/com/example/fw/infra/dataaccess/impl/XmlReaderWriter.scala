@@ -12,10 +12,9 @@ class XmlReaderWriter extends DataFileReaderWriterImpl {
   override def readToDf(inputFile: DataFile[Row], sparkSession: SparkSession): DataFrame = {
     //TODO: XmlModel型のチェック
     val xmlFile = inputFile.asInstanceOf[XmlModel[Row]]
-    val reader = if (xmlFile.rowTag == null) {
-      sparkSession.read
-    } else {
-      sparkSession.read.option("rowTag", xmlFile.rowTag)
+    val reader = xmlFile.rowTag match {
+      case Some(rowTag) => sparkSession.read.option("rowTag", rowTag)
+      case _ => sparkSession.read
     }
     val reader2 = xmlFile.schema match {
       case Some(schema) => reader.schema(schema)
@@ -33,15 +32,13 @@ class XmlReaderWriter extends DataFileReaderWriterImpl {
     val xmlFile = outputFile.asInstanceOf[XmlModel[T]]
 
     val writer = ds.write.mode(saveMode)
-    val writer2 = if (xmlFile.rootTag == null) {
-      writer
-    } else {
-      writer.option("rootTag", xmlFile.rootTag)
+    val writer2 = xmlFile.rootTag match {
+      case Some(rootTag) => writer.option("rootTag", rootTag)
+      case _ => writer
     }
-    val writer3 = if (xmlFile.rowTag == null) {
-      writer2
-    } else {
-      writer2.option("rowTag", xmlFile.rowTag)
+    val writer3 = xmlFile.rowTag match {
+      case Some(rowTag) => writer2.option("rowTag", rowTag)
+      case _ => writer2
     }
     writer3.xml(outputFile.filePath)
   }

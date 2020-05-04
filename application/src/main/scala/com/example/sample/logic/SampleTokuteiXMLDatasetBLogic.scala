@@ -6,6 +6,8 @@ import com.example.fw.domain.model.{CsvModel, DataFile, XmlModel}
 import com.example.sample.model.{Code, PatientRole}
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 
+import com.example.fw.domain.utils.OptionImplicit._
+
 import scala.collection.mutable
 
 class SampleTokuteiXMLDatasetBLogic(dataFileReaderWriter: DataFileReaderWriter)
@@ -28,7 +30,7 @@ class SampleTokuteiXMLDatasetBLogic(dataFileReaderWriter: DataFileReaderWriter)
 
     //TODO: 特定検診の解析コンポーネントとして別クラスに切り出して単体テストしやすくする
 
-    //TODO: spark-xmlは、ネストした複雑なXMLデータ構造だと煩雑なコードになってしまう
+    //TODO: spark-xmlは、ネストした複雑なXMLデータ構造だと煩雑なコードになってしまうし、ファイルを読んで逐次動作させながらでないと実装が難しい
     //報告区分(code)タグ
     val code = df.select("code")
       .map(row => {
@@ -40,7 +42,7 @@ class SampleTokuteiXMLDatasetBLogic(dataFileReaderWriter: DataFileReaderWriter)
 
     //受診者情報(recordTarget)タグ -> 患者情報を抽出
     val recordTarget = df.select("recordTarget")
-    recordTarget.printSchema()
+    //recordTarget.printSchema()
     val patient = recordTarget.map(row => {
       val recordTargetTag = row.getAs[Row]("recordTarget")
       val patientRoleTag = recordTargetTag.getAs[Row]("patientRole")
