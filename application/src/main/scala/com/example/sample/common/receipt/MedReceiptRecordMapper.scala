@@ -31,8 +31,8 @@ object MedReceiptRecordMapper {
     val unKnownRecord = UnknownReceiptRecord(items)
     val receiptRecord =
       unKnownRecord.recordType match {
-        case "MN" => MedMNReceiptRecordMapper.map(items)
-        case "RE" => MedREReceiptRecordMapper.map(receiptKanriNo, items)
+        case ReceiptConst.MN => MedMNReceiptRecordMapper.map(items)
+        case ReceiptConst.RE => MedREReceiptRecordMapper.map(receiptKanriNo, items)
 
         //TODO:レコード種別ごとに、文字列配列をcaseクラスにマッピングする処理を追加していく
 
@@ -41,7 +41,7 @@ object MedReceiptRecordMapper {
     receiptRecord
   }
 
-  def extractRecordRDD[T <: ReceiptRecord : ClassTag]
+  def extractRDD[T <: ReceiptRecord : ClassTag]
   (recordTypeName: String, rdd: RDD[(String, ReceiptRecord)]): RDD[T] = {
     rdd.filter(t => t._1 == recordTypeName)
       .map(t => t._2.asInstanceOf[T])

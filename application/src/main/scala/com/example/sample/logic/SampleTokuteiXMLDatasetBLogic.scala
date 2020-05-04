@@ -5,7 +5,7 @@ import com.example.fw.domain.logic.DataFrameBLogic
 import com.example.fw.domain.model.{CsvModel, DataFile, XmlModel}
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import com.example.fw.domain.utils.OptionImplicit._
-import com.example.sample.common.tokutei.{Code, PatientRole}
+import com.example.sample.common.tokutei.{Code, PatientRole, TokuteiKenshinConst}
 
 import scala.collection.mutable
 
@@ -13,16 +13,17 @@ import scala.collection.mutable
 //TODO: spark-xmlは、ネストした複雑なXMLデータ構造だと煩雑なコードになってしまうし、ファイルを読んで逐次動作させながらでないと実装が難しいので使わない
 class SampleTokuteiXMLDatasetBLogic(dataFileReaderWriter: DataFileReaderWriter)
   extends DataFrameBLogic(dataFileReaderWriter) {
-  override val inputFiles: Seq[DataFile[Row]] =
+  private val outputDir = "tokutei/output/"
+
   //特定健診データを複数１つのXMLとして連結したもの
+  override val inputFiles: Seq[DataFile[Row]] =
     XmlModel[Row](path = "tokutei/kensin_kihon_tokutei_result.xml",
       rowTag = "ClinicalDocument"
     ) :: Nil
+
   override val outputFiles: Seq[DataFile[Row]] =
-    CsvModel[Row](
-      "tokutei/output/code.csv"
-    ) :: CsvModel[Row](
-      "tokutei/output/patient_role.csv"
+    CsvModel[Row](outputDir + TokuteiKenshinConst.Code
+    ) :: CsvModel[Row](outputDir + TokuteiKenshinConst.PatientRole
     ) :: Nil
 
   override def process(inputs: Seq[DataFrame], sparkSession: SparkSession): Seq[DataFrame] = {

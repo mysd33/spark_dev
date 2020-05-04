@@ -11,8 +11,9 @@ object TokuteiKenshinMapper {
     val patientRole: TokuteiKenshin = PatientRoleTokuteiKenshinMapper.map(xml)
 
     //TODO:特定検診のタグごとに、文字列配列をcaseクラスにマッピングする処理を追加していく
-
-    ("Code", code) :: ("PatientRole", patientRole) :: Nil
+    (TokuteiKenshinConst.Code, code
+    ) :: (TokuteiKenshinConst.PatientRole, patientRole
+    ) :: Nil
   }
 
   def extractRDD[T <: TokuteiKenshin : ClassTag]

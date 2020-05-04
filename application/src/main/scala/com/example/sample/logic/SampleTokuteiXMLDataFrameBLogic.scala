@@ -3,7 +3,7 @@ package com.example.sample.logic
 import com.example.fw.domain.dataaccess.DataFileReaderWriter
 import com.example.fw.domain.logic.RDDToDataFrameBLogic
 import com.example.fw.domain.model.{CsvModel, DataFile, TextFileModel}
-import com.example.sample.common.tokutei.{Code, CodeTokuteiKenshinMapper, PatientRole, PatientRoleTokuteiKenshinMapper, TokuteiKenshin, TokuteiKenshinMapper}
+import com.example.sample.common.tokutei.{Code, CodeTokuteiKenshinMapper, PatientRole, PatientRoleTokuteiKenshinMapper, TokuteiKenshin, TokuteiKenshinConst, TokuteiKenshinMapper}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 
@@ -12,16 +12,14 @@ import scala.xml.XML
 class SampleTokuteiXMLDataFrameBLogic(dataFileReaderWriter: DataFileReaderWriter)
   extends RDDToDataFrameBLogic(dataFileReaderWriter) {
   private val outputDir = "tokutei/output2/"
-  private val code = "Code"
-  private val patientRole = "PatientRole"
 
   //1行1特定検診XMLのテキストファイルとして扱う
   override val inputFiles: Seq[DataFile[String]] =
     TextFileModel[String]("tokutei/kensin_kihon_tokutei_result2.xml") :: Nil
 
   override val outputFiles: Seq[DataFile[Row]] =
-    CsvModel[Row](outputDir + code
-    ) :: CsvModel[Row](outputDir + patientRole
+    CsvModel[Row](outputDir + TokuteiKenshinConst.Code
+    ) :: CsvModel[Row](outputDir + TokuteiKenshinConst.PatientRole
     ) :: Nil
 
   var cached: RDD[(String, TokuteiKenshin)] = null
@@ -39,8 +37,8 @@ class SampleTokuteiXMLDataFrameBLogic(dataFileReaderWriter: DataFileReaderWriter
     cached = recordRDD.cache()
 
     //1つのRDDでXMLを各ファイルに分割するため別のDFに出力
-    val codeDF = TokuteiKenshinMapper.extractRDD[Code](code, cached).toDF()
-    val patientDF = TokuteiKenshinMapper.extractRDD[PatientRole](patientRole, cached).toDF()
+    val codeDF = TokuteiKenshinMapper.extractRDD[Code](TokuteiKenshinConst.Code, cached).toDF()
+    val patientDF = TokuteiKenshinMapper.extractRDD[PatientRole](TokuteiKenshinConst.PatientRole, cached).toDF()
     //TODO:レコード種別ごとに処理を追加していく
     codeDF :: patientDF :: Nil
   }
