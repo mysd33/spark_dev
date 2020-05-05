@@ -1,16 +1,21 @@
 package com.example.fw.infra.dataaccess.impl
 
-import com.example.fw.domain.dataaccess.DataFileReaderWriterImpl
-import com.example.fw.domain.model.DataFile
+import com.example.fw.domain.model.{CsvModel, DataFile}
 import org.apache.spark.sql.{DataFrame, Dataset, Row, SaveMode, SparkSession}
+
 import scala.reflect.runtime.universe.TypeTag
 
-class CsvReaderWriter extends DataFileReaderWriterImpl {
-  override def readToDf(inputFile: DataFile[Row], sparkSession: SparkSession): DataFrame = {
+class CsvReaderWriter {
+  //TODO:csvのoptionの実装
+  //http://spark.apache.org/docs/latest/api/scala/index.html#org.apache.spark.sql.DataFrameReader@csv(paths:String*):org.apache.spark.sql.DataFrame
+  //http://spark.apache.org/docs/latest/api/scala/index.html#org.apache.spark.sql.DataFrameWriter@csv(path:String):Unit
+
+  def readToDf(inputFile: CsvModel[Row], sparkSession: SparkSession): DataFrame = {
     val reader = sparkSession.read
     val reader2 = inputFile.schema match {
       case Some(schm) => reader.schema(schm)
       case _ => reader
+        //TODO: DataFileで設定可能にする
         .option("header", "true")
         .option("inferSchema", "true")
     }
@@ -21,12 +26,13 @@ class CsvReaderWriter extends DataFileReaderWriterImpl {
     reader3.csv(inputFile.filePath)
   }
 
-  override def readToDs[T <: Product : TypeTag](inputFile: DataFile[T], sparkSession: SparkSession): Dataset[T] = {
+  def readToDs[T <: Product : TypeTag](inputFile: CsvModel[T], sparkSession: SparkSession): Dataset[T] = {
     import sparkSession.implicits._
     val reader = sparkSession.read
     val reader2 = inputFile.schema match {
       case Some(schm) => reader.schema(schm)
       case _ => reader
+        //TODO: DataFileで設定可能にする
         .option("header", "true")
         .option("inferSchema", "true")
     }
@@ -37,10 +43,12 @@ class CsvReaderWriter extends DataFileReaderWriterImpl {
     reader3.csv(inputFile.filePath).as[T]
   }
 
-  override def writeFromDsDf[T](ds: Dataset[T], outputFile: DataFile[T], saveMode: SaveMode): Unit = {
+  def writeFromDsDf[T](ds: Dataset[T], outputFile: CsvModel[T], saveMode: SaveMode): Unit = {
     val writer = ds.write.mode(saveMode)
       //TODO: DataFileで設定可能にする
       .option("header", "true")
+      //TODO: DataFileで設定可能にする
+      //.option("compression", "bzip2")
     val writer2 = outputFile.partition match {
       case Some(partition) => writer.partitionBy(partition)
       case _ => writer
