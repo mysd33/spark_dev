@@ -11,7 +11,7 @@ import com.example.fw.domain.utils.OptionImplicit._
 class SampleXMLDatasetBLogic(dataFileReaderWriter: DataFileReaderWriter)
   extends DataFrameBLogic(dataFileReaderWriter) {
   override val inputFiles: Seq[DataFile[Row]] =
-    XmlModel[Row](path = "xml/books.xml", rowTag = "book",
+    XmlModel[Row](relativePath = "xml/books.xml", rowTag = "book",
       schema = StructType(Array(
         StructField("_id", StringType, nullable = true),
         StructField("author", StringType, nullable = true),
@@ -23,7 +23,7 @@ class SampleXMLDatasetBLogic(dataFileReaderWriter: DataFileReaderWriter)
     ) :: Nil
 
   override val outputFiles: Seq[DataFile[Row]] =
-    XmlModel[Row](path = "xml/newbooks.xml", rootTag = "books", rowTag = "book"
+    XmlModel[Row](relativePath = "xml/newbooks.xml", rootTag = "books", rowTag = "book"
     ) :: CsvModel[Row]("xml/newbooks.csv"
     ) :: Nil
 

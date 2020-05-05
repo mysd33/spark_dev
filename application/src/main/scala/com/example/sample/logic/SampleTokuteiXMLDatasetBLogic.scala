@@ -17,13 +17,13 @@ class SampleTokuteiXMLDatasetBLogic(dataFileReaderWriter: DataFileReaderWriter)
 
   //特定健診データを複数１つのXMLとして連結したもの
   override val inputFiles: Seq[DataFile[Row]] =
-    XmlModel[Row](path = "tokutei/kensin_kihon_tokutei_result.xml",
+    XmlModel[Row](relativePath = "tokutei/kensin_kihon_tokutei_result.xml",
       rowTag = "ClinicalDocument"
     ) :: Nil
 
   override val outputFiles: Seq[DataFile[Row]] =
-    CsvModel[Row](outputDir + TokuteiKenshinConst.Code
-    ) :: CsvModel[Row](outputDir + TokuteiKenshinConst.PatientRole
+    CsvModel[Row](outputDir + TokuteiKenshinConst.Code, compression = "bzip2"
+    ) :: CsvModel[Row](outputDir + TokuteiKenshinConst.PatientRole, compression = "bzip2"
     ) :: Nil
 
   override def process(inputs: Seq[DataFrame], sparkSession: SparkSession): Seq[DataFrame] = {

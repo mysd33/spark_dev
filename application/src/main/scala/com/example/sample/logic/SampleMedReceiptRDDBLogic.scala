@@ -15,7 +15,7 @@ class SampleMedReceiptRDDBLogic(dataFileReaderWriter: DataFileReaderWriter)
 
   //事前にシェルで\x00で区切り文字として設定しておいたレセプトファイル
   override val inputFiles: Seq[DataFile[String]] =
-    MultiFormatCsvModel[String](path = "receipt/11_RECODEINFO_MED_result.CSV",
+    MultiFormatCsvModel[String](relativePath = "receipt/11_RECODEINFO_MED_result.CSV",
       encoding = ReceiptConst.ReceiptEncoding) :: Nil
 
   override val outputFiles: Seq[DataFile[Row]] =

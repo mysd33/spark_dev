@@ -1,8 +1,8 @@
 package com.example.fw.infra.dataaccess
 
 import com.example.fw.domain.dataaccess.DataFileReaderWriterImpl
-import com.example.fw.domain.model.{CsvModel, DataFile, JsonModel, MultiFormatCsvModel, ParquetModel, TextFileModel, XmlModel}
-import com.example.fw.infra.dataaccess.impl.{CsvReaderWriter, JsonReaderWriter, MultiFormatCsvReaderWriter, StandardParquetReaderWriter, TextFileReaderWriter, XmlReaderWriter}
+import com.example.fw.domain.model.{CsvModel, DataFile, JsonModel, MultiFormatCsvModel, ParquetModel, TextLineModel, XmlModel}
+import com.example.fw.infra.dataaccess.impl.{CsvReaderWriter, JsonReaderWriter, MultiFormatCsvReaderWriter, StandardParquetReaderWriter, TextLineFileReaderWriter, XmlReaderWriter}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{DataFrame, Dataset, Row, SaveMode, SparkSession}
 
@@ -11,7 +11,7 @@ import scala.reflect.runtime.universe.TypeTag
 trait StandardSparkDataFileReaderWriter extends DataFileReaderWriterImpl {
   override def readToRDD(inputFile: DataFile[String], sparkSession: SparkSession): RDD[String] = {
     inputFile match {
-      case f: TextFileModel[String] => new TextFileReaderWriter().readToRDD(f, sparkSession)
+      case f: TextLineModel[String] => new TextLineFileReaderWriter().readToRDD(f, sparkSession)
       case f: MultiFormatCsvModel[String] => new MultiFormatCsvReaderWriter().readToRDD(f, sparkSession)
       case _ => ???
     }
@@ -39,7 +39,7 @@ trait StandardSparkDataFileReaderWriter extends DataFileReaderWriterImpl {
 
   override def writeFromRDD[T](rdd: RDD[T], outputFile: DataFile[T]): Unit = {
     outputFile match {
-      case f: TextFileModel[T] => new TextFileReaderWriter().writeFromRDD(rdd, f)
+      case f: TextLineModel[T] => new TextLineFileReaderWriter().writeFromRDD(rdd, f)
       case _ => ???
     }
   }

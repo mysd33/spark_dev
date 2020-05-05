@@ -2,12 +2,13 @@ package com.example.sample.logic
 
 import com.example.fw.domain.dataaccess.DataFileReaderWriter
 import com.example.fw.domain.logic.RDDToDataFrameBLogic
-import com.example.fw.domain.model.{CsvModel, DataFile, TextFileModel}
+import com.example.fw.domain.model.{CsvModel, DataFile, TextLineModel}
 import com.example.sample.common.tokutei.{Code, CodeTokuteiKenshinMapper, PatientRole, PatientRoleTokuteiKenshinMapper, TokuteiKenshin, TokuteiKenshinConst, TokuteiKenshinMapper}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
-
 import scala.xml.XML
+
+import com.example.fw.domain.utils.OptionImplicit._
 
 class SampleTokuteiXMLDataFrameBLogic(dataFileReaderWriter: DataFileReaderWriter)
   extends RDDToDataFrameBLogic(dataFileReaderWriter) {
@@ -15,11 +16,11 @@ class SampleTokuteiXMLDataFrameBLogic(dataFileReaderWriter: DataFileReaderWriter
 
   //1行1特定検診XMLのテキストファイルとして扱う
   override val inputFiles: Seq[DataFile[String]] =
-    TextFileModel[String]("tokutei/kensin_kihon_tokutei_result2.xml") :: Nil
+    TextLineModel[String]("tokutei/kensin_kihon_tokutei_result2.xml") :: Nil
 
   override val outputFiles: Seq[DataFile[Row]] =
-    CsvModel[Row](outputDir + TokuteiKenshinConst.Code
-    ) :: CsvModel[Row](outputDir + TokuteiKenshinConst.PatientRole
+    CsvModel[Row](outputDir + TokuteiKenshinConst.Code, compression = "bzip2"
+    ) :: CsvModel[Row](outputDir + TokuteiKenshinConst.PatientRole, compression = "bzip2"
     ) :: Nil
 
   var cached: RDD[(String, TokuteiKenshin)] = null

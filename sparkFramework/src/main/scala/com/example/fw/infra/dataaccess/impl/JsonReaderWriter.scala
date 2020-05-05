@@ -1,39 +1,40 @@
 package com.example.fw.infra.dataaccess.impl
 
-import com.example.fw.domain.model.DataFile
+import com.example.fw.domain.model.{DataFile, JsonModel}
 import org.apache.spark.sql.{DataFrame, Dataset, Row, SaveMode, SparkSession}
+
 import scala.reflect.runtime.universe.TypeTag
+import com.example.fw.infra.dataaccess.impl.ReaderMethodBuilder._
+import com.example.fw.infra.dataaccess.impl.WriterMethodBuilder._
 
 class JsonReaderWriter {
-  def readToDf(inputFile: DataFile[Row], sparkSession: SparkSession): DataFrame = {
-    val reader = sparkSession.read
-    val reader2 = inputFile.encoding match {
-      case Some(encoding) => reader.option("encoding", encoding)
-      case _ => reader
-    }
-    reader2.json(inputFile.filePath)
+  def readToDf(inputFile: JsonModel[Row], sparkSession: SparkSession): DataFrame = {
+    sparkSession.read
+      .buildSchema(inputFile)
+      .buildOptionDateFormat(inputFile)
+      .buildOptionEncoding(inputFile)
+      .buildOptionCompression(inputFile)
+      .json(inputFile.absolutePath)
   }
 
-  def readToDs[T <: Product : TypeTag](inputFile: DataFile[T], sparkSession: SparkSession): Dataset[T] = {
+  def readToDs[T <: Product : TypeTag](inputFile: JsonModel[T], sparkSession: SparkSession): Dataset[T] = {
     import sparkSession.implicits._
-    val reader = sparkSession.read
-    val reader2 = inputFile.encoding match {
-      case Some(encoding) => reader.option("encoding", encoding)
-      case _ => reader
-    }
-    reader2.json(inputFile.filePath).as[T]
+    sparkSession.read
+      //暗黙の型変換でメソッド拡張
+      .buildSchema(inputFile)
+      .buildOptionDateFormat(inputFile)
+      .buildOptionEncoding(inputFile)
+      .buildOptionCompression(inputFile)
+      .json(inputFile.absolutePath).as[T]
   }
 
-  def writeFromDsDf[T](ds: Dataset[T], outputFile: DataFile[T], saveMode: SaveMode): Unit = {
-    val writer = ds.write.mode(saveMode)
-    val writer2 = outputFile.partition match {
-      case Some(partition) => writer.partitionBy(partition)
-      case _ => writer
-    }
-    val writer3 = outputFile.encoding match {
-      case Some(encoding) => writer2.option("encoding", encoding)
-      case _ => writer2
-    }
-    writer3.json(outputFile.filePath)
+  def writeFromDsDf[T](ds: Dataset[T], outputFile: JsonModel[T], saveMode: SaveMode): Unit = {
+    ds.write.mode(saveMode)
+      //暗黙の型変換でメソッド拡張
+      .buildOptionDateFormat(outputFile)
+      .buildOptionEncoding(outputFile)
+      .buildOptionCompression(outputFile)
+      .buildPartitionBy(outputFile)
+      .json(outputFile.absolutePath)
   }
 }

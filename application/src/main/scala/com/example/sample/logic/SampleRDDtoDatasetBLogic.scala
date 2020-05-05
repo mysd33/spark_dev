@@ -2,14 +2,14 @@ package com.example.sample.logic
 
 import com.example.fw.domain.dataaccess.DataFileReaderWriter
 import com.example.fw.domain.logic.{RDDToDatasetBLogic, RDDToRDDBLogic}
-import com.example.fw.domain.model.{CsvModel, DataFile, ParquetModel, TextFileModel}
+import com.example.fw.domain.model.{CsvModel, DataFile, ParquetModel, TextLineModel}
 import com.example.sample.common.entity.WordCount
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{Dataset, SparkSession}
 
 class SampleRDDtoDatasetBLogic(dataFileReaderWriter: DataFileReaderWriter)
   extends RDDToDatasetBLogic[WordCount](dataFileReaderWriter) {
-  override val inputFiles: Seq[DataFile[String]] = TextFileModel[String]("README.md") :: Nil
+  override val inputFiles: Seq[DataFile[String]] = TextLineModel[String]("README.md") :: Nil
   override val outputFile: DataFile[WordCount] = ParquetModel[WordCount]("WordCount2")
 
   override def process(inputs: Seq[RDD[String]], sparkSession: SparkSession): Dataset[WordCount] = {
