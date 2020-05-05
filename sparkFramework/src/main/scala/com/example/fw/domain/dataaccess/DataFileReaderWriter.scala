@@ -6,29 +6,86 @@ import org.apache.spark.sql.{DataFrame, Dataset, Row, SaveMode, SparkSession}
 
 import scala.reflect.runtime.universe.TypeTag
 
+/**
+ * ファイル・テーブルアクセス機能のインタフェース。
+ * DataFileを元にファイルやテーブルの読み書きを行う。
+ *
+ * DI機能を実装しており、インスタンス化する場合には、
+ * 自分型アノテーションでDataFileReaderWriterImplトレイトの
+ * 実装トレイトをミックスインすることで、Sparkのディストリビューション専用の
+ * DataFileReaderWriter実装に切替えて使用する。
+ * {{{
+ *   //example for Standard Spark Application
+ *   new DataFileReaderWriter with StandardSparkDataFileReaderWriter
+ *
+ *   //example for Databricks(and Delta Lake) Spark Application
+ *   new DataFileReaderWriter with DatabricksDataFileReaderWriter
+ * }}}
+ *
+ * @constructor コンストラクタ
+ */
 class DataFileReaderWriter extends Serializable {
   //自分型アノテーションでDataFileReaderWriterの実装をDI
   self: DataFileReaderWriterImpl =>
+  /**
+   * ファイルを読み込みRDDを返却する
+   * @param inputFile 入力ファイルのDataFile
+   * @param sparkSession SparkSession
+   * @return RDD
+   */
   def readToRDD(inputFile: DataFile[String], sparkSession: SparkSession): RDD[String] = {
     self.readToRDD(inputFile, sparkSession)
   }
 
+  /**
+   * ファイルを読み込みDatasetを返却する
+   * @param inputFile 入力ファイルのDataFile
+   * @param sparkSession SparkSession
+   * @tparam T DataFileおよびDatasetの型パラメータ
+   * @return Dataset
+   */
   def readToDs[T <: Product : TypeTag](inputFile: DataFile[T], sparkSession: SparkSession): Dataset[T] = {
     self.readToDs(inputFile, sparkSession)
   }
 
+  /**
+   * ファイルを読み込みDataFrameを返却する
+   * @param inputFile 入力ファイルのDataFile
+   * @param sparkSession SparkSession
+   * @return DataFrame
+   */
   def readToDf(inputFile: DataFile[Row], sparkSession: SparkSession): DataFrame = {
     self.readToDf(inputFile, sparkSession)
   }
 
+  /**
+   * 引数で受け取ったRDDを、指定のファイルに出力する
+   * @param rdd 出力対象のRDD
+   * @param outputFile 出力先ファイルのDataFile
+   * @tparam T RDDおよびDataFileの型パラメータ
+   */
   def writeFromRDD[T](rdd: RDD[T], outputFile: DataFile[T]): Unit = {
     self.writeFromRDD(rdd, outputFile)
   }
 
-  def writeFromDf[T](ds: DataFrame, outputFile: DataFile[Row], saveMode: SaveMode = SaveMode.Overwrite): Unit = {
-    self.writeFromDsDf(ds, outputFile, saveMode)
+  /**
+   * 引数で受け取ったDataFrameを、指定のファイルに出力する
+   * @param df 出力対象のDataFrame
+   * @param outputFile 出力先ファイルのDataFile
+   * @param saveMode 出力時のSaveMode
+   * @tparam T DataFileの型パラメータ
+   */
+  def writeFromDf[T](df: DataFrame, outputFile: DataFile[Row], saveMode: SaveMode = SaveMode.Overwrite): Unit = {
+    self.writeFromDsDf(df, outputFile, saveMode)
   }
 
+  /**
+   * 引数で受け取ったDatasetを、指定のファイルに出力する
+   * @param ds 出力対象のDataset
+   * @param outputFile 出力先ファイルのDataFile
+   * @param saveMode 出力時のSaveMode
+   * @tparam T DatasetおよびDataFileの型パラメータ
+   */
   def writeFromDs[T <: Product : TypeTag](ds: Dataset[T], outputFile: DataFile[T], saveMode: SaveMode = SaveMode.Overwrite): Unit = {
     self.writeFromDsDf(ds, outputFile, saveMode)
   }
