@@ -19,8 +19,8 @@ class SampleMedReceiptRDDBLogic(dataFileReaderWriter: DataFileReaderWriter)
       encoding = ReceiptConst.ReceiptEncoding) :: Nil
 
   override val outputFiles: Seq[DataFile[Row]] =
-    CsvModel[Row](outputDirPath + ReceiptConst.MN
-    ) :: CsvModel[Row](outputDirPath + ReceiptConst.RE
+    CsvModel[Row](outputDirPath + ReceiptConst.MN, compression = "bzip2"
+    ) :: CsvModel[Row](outputDirPath + ReceiptConst.RE, compression = "bzip2"
     ) :: Nil
 
   override def process(inputs: Seq[RDD[String]], sparkSession: SparkSession): Seq[DataFrame] = {
