@@ -8,7 +8,22 @@ import org.apache.spark.sql.{DataFrame, Dataset, Row, SaveMode, SparkSession}
 
 import scala.reflect.runtime.universe.TypeTag
 
+/**
+ * DataFileReaderWriterImplのSpark標準APIの場合の実装トレイト
+ *
+ * DataFileReaderWriter実装に切替える際に使用する。
+ * {{{
+ *   //example for Standard Spark Application
+ *   new DataFileReaderWriter with StandardSparkDataFileReaderWriter
+ * }}}
+ */
 trait StandardSparkDataFileReaderWriter extends DataFileReaderWriterImpl {
+  /**
+   * @see [[com.example.fw.domain.dataaccess.DataFileReaderWriterImpl.readToRDD]]
+   * @param inputFile    入力ファイルのDataFile
+   * @param sparkSession SparkSession
+   * @return RDD
+   */
   override def readToRDD(inputFile: DataFile[String], sparkSession: SparkSession): RDD[String] = {
     inputFile match {
       case f: TextLineModel[String] => new TextLineFileReaderWriter().readToRDD(f, sparkSession)
@@ -17,6 +32,12 @@ trait StandardSparkDataFileReaderWriter extends DataFileReaderWriterImpl {
     }
   }
 
+  /**
+   * @see [[com.example.fw.domain.dataaccess.DataFileReaderWriterImpl.readToDf]]
+   * @param inputFile    入力ファイルのDataFile
+   * @param sparkSession SparkSession
+   * @return DataFrame
+   */
   override def readToDf(inputFile: DataFile[Row], sparkSession: SparkSession): DataFrame = {
     inputFile match {
       case f: CsvModel[Row] => new CsvReaderWriter().readToDf(f, sparkSession)
@@ -28,6 +49,13 @@ trait StandardSparkDataFileReaderWriter extends DataFileReaderWriterImpl {
     }
   }
 
+  /**
+   * @see [[com.example.fw.domain.dataaccess.DataFileReaderWriterImpl.readToDs]]
+   * @param inputFile    入力ファイルのDataFile
+   * @param sparkSession SparkSession
+   * @tparam T DataFileおよびDatasetの型パラメータ
+   * @return Dataset
+   */
   override def readToDs[T <: Product : TypeTag](inputFile: DataFile[T], sparkSession: SparkSession): Dataset[T] = {
     inputFile match {
       case f: CsvModel[T] => new CsvReaderWriter().readToDs(f, sparkSession)
@@ -37,6 +65,12 @@ trait StandardSparkDataFileReaderWriter extends DataFileReaderWriterImpl {
     }
   }
 
+  /**
+   * @see [[com.example.fw.domain.dataaccess.DataFileReaderWriterImpl.writeFromRDD]]
+   * @param rdd        出力対象のRDD
+   * @param outputFile 出力先ファイルのDataFile
+   * @tparam T RDDおよびDataFileの型パラメータ
+   */
   override def writeFromRDD[T](rdd: RDD[T], outputFile: DataFile[T]): Unit = {
     outputFile match {
       case f: TextLineModel[T] => new TextLineFileReaderWriter().writeFromRDD(rdd, f)
@@ -44,6 +78,13 @@ trait StandardSparkDataFileReaderWriter extends DataFileReaderWriterImpl {
     }
   }
 
+  /**
+   * @see [[com.example.fw.domain.dataaccess.DataFileReaderWriterImpl.writeFromDsDf]]
+   * @param ds         出力対象のDataset/DataFrame
+   * @param outputFile 出力先ファイルのDataFile
+   * @param saveMode   出力時のSaveMode
+   * @tparam T DataFileの型パラメータ
+   */
   override def writeFromDsDf[T](ds: Dataset[T], outputFile: DataFile[T], saveMode: SaveMode): Unit = {
     outputFile match {
       case f: CsvModel[T] => new CsvReaderWriter().writeFromDsDf(ds, f, saveMode)

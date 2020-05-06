@@ -47,7 +47,7 @@ trait DataFileReaderWriterImpl {
 
 
   /**
-   * 引数で受け取ったRDDを、指定のファイルに出力する
+   * 引数で受け取ったRDDを指定のファイルに出力する
    *
    * @param rdd        出力対象のRDD
    * @param outputFile 出力先ファイルのDataFile
@@ -56,7 +56,7 @@ trait DataFileReaderWriterImpl {
   def writeFromRDD[T](rdd: RDD[T], outputFile: DataFile[T]): Unit
 
   /**
-   * 引数で受け取ったDataset/DataFrameを、指定のファイルに出力する
+   * 引数で受け取ったDataset/DataFrameを指定のファイルに出力する
    *
    * @param ds         出力対象のDataset/DataFrame
    * @param outputFile 出力先ファイルのDataFile

@@ -20,7 +20,9 @@ lazy val commonSettings = Seq(
   assemblyOption in assembly := (assemblyOption in assembly).value
     .copy(includeScala = false, includeDependency = false),
   //sbt assemblyで、テストをスキップ
-  test in assembly := {}
+  test in assembly := {},
+  //外部のscaladocへのリンクの自動マッピング設定
+  autoAPIMappings := true
 )
 
 lazy val root = (project in file("."))

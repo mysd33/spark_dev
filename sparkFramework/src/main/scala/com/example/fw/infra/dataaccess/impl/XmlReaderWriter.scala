@@ -8,19 +8,30 @@ import com.example.fw.infra.dataaccess.impl.ReaderMethodBuilder._
 import com.example.fw.infra.dataaccess.impl.WriterMethodBuilder._
 
 //TODO: spark-xmlの依存jarをすべてDatabricksクラスタにインストールしないと動作しないので本番開発では使用しない
+/**
+ * XmlModelに対応したファイルアクセス機能
+ *
+ * spark-xmlを利用しており、xmlメソッドに対応する
+ * @see [[https://github.com/databricks/spark-xml/blob/master/README.md]]
+ */
 class XmlReaderWriter {
-  //spark-xmlを利用
-  //https://github.com/databricks/spark-xml/blob/master/README.md
   //Optionの実装
   //https://github.com/databricks/spark-xml#features
 
+  /**
+   * Xmlファイルを読み込みDataFrameを返却する
+   *
+   * @param inputFile    入力ファイルのXmlModel
+   * @param sparkSession SparkSession
+   * @return DataFrame
+   */
   def readToDf(inputFile: XmlModel[Row], sparkSession: SparkSession): DataFrame = {
     val reader = inputFile.rowTag match {
       case Some(rowTag) => sparkSession.read.option("rowTag", rowTag)
       case _ => sparkSession.read
     }
     val reader2 = inputFile.encoding match {
-      //encodingではなくcharset
+      //spark-xmlではencodingではなくcharset
       case Some(encoding) => reader.option("charset", encoding)
       case _ => reader
     }
@@ -30,6 +41,14 @@ class XmlReaderWriter {
       .xml(inputFile.absolutePath)
   }
 
+  /**
+   * 引数で受け取ったDataset/DataFrameを、指定のXmlファイルに出力する
+   *
+   * @param ds         出力対象のDataset/DataFrame
+   * @param outputFile 出力先ファイルのXmlModel
+   * @param saveMode   出力時のSaveMode
+   * @tparam T CsvModelの型パラメータ
+   */
   def writeFromDsDf[T](ds: Dataset[T], outputFile: XmlModel[T], saveMode: SaveMode): Unit = {
     val writer = ds.write.mode(saveMode)
     val writer2 = outputFile.rootTag match {

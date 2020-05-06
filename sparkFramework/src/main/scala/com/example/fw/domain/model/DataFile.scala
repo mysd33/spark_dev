@@ -81,13 +81,15 @@ trait HavingDateFormat {
    * 日付文字列のフォーマット
    *
    * Sparkのoptionメソッドの"dateFormat"と対応。
+   * SimpleDataFormatクラスで使用できるフォーマットを指定する。
    */
   val dateFormat: Option[String]
 
   /**
    * タイムスタンプ文字列のフォーマット
    *
-   * Sparkのoptionメソッドの"timestampFormat"と対応
+   * Sparkのoptionメソッドの"timestampFormat"と対応。
+   * SimpleDataFormatクラスで使用できるフォーマットを指定する。
    */
   val timestampFormat: Option[String]
 }
