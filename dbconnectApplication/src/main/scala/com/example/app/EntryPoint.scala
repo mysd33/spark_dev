@@ -14,7 +14,7 @@ object EntryPoint extends DatabricksConnectApplicationEntryPoint {
     run(args)
   }
 
-  override protected def addJar(sc: SparkContext): Unit = {
+  override def addJar(sc: SparkContext): Unit = {
     //DatabricksConnectの場合、必要なクラスの入ったjarを追加する必要があるのでsbt assemblyを実行しておくこと
     sc.addJar("target/scala-2.11/databricks_dev-assembly-0.1.jar")
  }
