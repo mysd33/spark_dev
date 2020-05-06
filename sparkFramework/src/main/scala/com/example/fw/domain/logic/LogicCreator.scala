@@ -17,17 +17,19 @@ object LogicCreator {
    *
    * @param className            Logicクラスの完全修飾名
    * @param dataFileReaderWriter Logicクラスのコンストラクタ引数に渡すDataFileReaderWriter
+   * @param methodArgs           Logicクラスのメソッド引数
    * @return 生成されたLogicインスタンス
    */
-  def newInstance(className: String, dataFileReaderWriter: DataFileReaderWriter): Logic = {
+  def newInstance(className: String, dataFileReaderWriter: DataFileReaderWriter, methodArgs: Array[String]): Logic = {
     val constructorMirror: ru.MethodMirror = getConstructorMirror(className)
     val paramList = constructorMirror.symbol.asMethod.paramLists
     val logic = if (paramList.size == 0) {
       constructorMirror()
     } else if (paramList.size == 1) {
       constructorMirror(dataFileReaderWriter)
-    } else {
-      //TODO:引数0か1の前提になってしまっている
+    } else if (paramList.size == 2) {
+      constructorMirror(dataFileReaderWriter, methodArgs)
+    }else {
       ???
     }
     logic.asInstanceOf[Logic]

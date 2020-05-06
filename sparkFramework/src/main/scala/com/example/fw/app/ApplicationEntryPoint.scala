@@ -22,8 +22,8 @@ object ApplicationEntryPoint {
    */
   def main(args: Array[String]): Unit = {
     assert(args.length > 0)
-    //TODO: コンストラクタ引数をとれるようにする
     val appName = args(0)
+    val methodArgs = if (args.length > 1) args.tail else null
     //TODO:独自のプロパティではなくてSpark実行時のパラメータのほうがよいか？
     val clusterMode = ResourceBundleManager.get("clustermode")
     val logLevel = ResourceBundleManager.get("loglevel")
@@ -44,7 +44,7 @@ object ApplicationEntryPoint {
       Logger.getLogger("akka").setLevel(Level.OFF)
 
       //Logicインスタンスの実行
-      val logic = LogicCreator.newInstance(appName, createDataFileReaderWriter())
+      val logic = LogicCreator.newInstance(appName, createDataFileReaderWriter(), methodArgs)
       logic.execute(spark)
     }
   }
