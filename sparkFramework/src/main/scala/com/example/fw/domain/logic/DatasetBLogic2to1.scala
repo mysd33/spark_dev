@@ -17,13 +17,15 @@ import scala.reflect.runtime.universe.TypeTag
  *
  * @constructor コンストラクタ
  * @param dataFileReaderWriter Logicクラスが使用するDataFileReaderWriter
+ * @param args                 AP起動時の引数
  * @tparam T1 入力ファイルつまり、inputFile1のDataFile、Datasetが扱う型パラメータ
  * @tparam T2 入力ファイルつまり、inputFile2のDataFile、Datasetが扱う型パラメータ
- * @tparam U 出力ファイルつまり、outputFileのDataFile、Datasetが扱う型パラメータ
+ * @tparam U  出力ファイルつまり、outputFileのDataFile、Datasetが扱う型パラメータ
  */
 abstract class DatasetBLogic2to1[T1 <: Product : TypeTag, T2 <: Product : TypeTag, U <: Product : TypeTag]
-(val dataFileReaderWriter: DataFileReaderWriter) extends Logic {
-  /** 1つ目の入力ファイルのDataFileを実装する。*/
+(val dataFileReaderWriter: DataFileReaderWriter, val args: Array[String] = null) extends Logic {
+  require(dataFileReaderWriter != null)
+  /** 1つ目の入力ファイルのDataFileを実装する。 */
   val inputFile1: DataFile[T1]
   /** 2つ目の入力ファイルのDataFileを実装する。 */
   val inputFile2: DataFile[T2]
@@ -65,7 +67,8 @@ abstract class DatasetBLogic2to1[T1 <: Product : TypeTag, T2 <: Product : TypeTa
 
   /**
    * inputFile1、inputFile2のDataFileからDatasetを取得する
-   * @param sparkSession  SparkSession
+   *
+   * @param sparkSession SparkSession
    * @return Datasetのタプル
    */
   final def input(sparkSession: SparkSession): (Dataset[T1], Dataset[T2]) = {
@@ -76,10 +79,11 @@ abstract class DatasetBLogic2to1[T1 <: Product : TypeTag, T2 <: Product : TypeTa
 
   /**
    * ジョブ設計書の処理内容を実装する。
-   * @param input1 inputFile1で定義したDatasetが渡される。
-   * @param input2 inputFile1で定義したDatasetが渡される。
+   *
+   * @param input1       inputFile1で定義したDatasetが渡される。
+   * @param input2       inputFile1で定義したDatasetが渡される。
    * @param sparkSession SparkSession。当該メソッド内でDatasetを扱うために
-   *                     {{{ import sparkSession.implicits._ }}}
+   * {{{ import sparkSession.implicits._ }}}
    *                     を指定できる。
    * @return ジョブの処理結果となるDataset
    */
@@ -88,6 +92,7 @@ abstract class DatasetBLogic2to1[T1 <: Product : TypeTag, T2 <: Product : TypeTa
   /**
    * processメソッドで返却されたDatasetからoutputFileのDataFileで
    * 指定されたファイルを出力する
+   *
    * @param ds processメソッドで返却されたDataset
    */
   final def output(ds: Dataset[U]): Unit = {

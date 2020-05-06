@@ -14,8 +14,11 @@ import org.apache.spark.sql.{DataFrame, Row, SparkSession}
  *
  * @constructor コンストラクタ
  * @param dataFileReaderWriter Logicクラスが使用するDataFileReaderWriter
+ * @param args AP起動時の引数
  */
-abstract class DataFrameBLogic(val dataFileReaderWriter: DataFileReaderWriter) extends Logic {
+abstract class DataFrameBLogic(val dataFileReaderWriter: DataFileReaderWriter,
+                               val args: Array[String] = null) extends Logic {
+  require(dataFileReaderWriter != null)
   /** 入力ファイルのDataFileのリストを実装する。複数ファイル指定できる。 */
   val inputFiles: Seq[DataFile[Row]]
   /** 出力ファイルのDataFileのリストを実装する。複数ファイル指定できる。 */
@@ -56,7 +59,8 @@ abstract class DataFrameBLogic(val dataFileReaderWriter: DataFileReaderWriter) e
 
   /**
    * inputFilesのDataFileのリストからDataFrameのリストを取得する
-   * @param sparkSession  SparkSession
+   *
+   * @param sparkSession SparkSession
    * @return DataFrameのリスト
    */
   final def input(sparkSession: SparkSession): Seq[DataFrame] = {
@@ -69,9 +73,10 @@ abstract class DataFrameBLogic(val dataFileReaderWriter: DataFileReaderWriter) e
 
   /**
    * ジョブ設計書の処理内容を実装する。
-   * @param inputs inputFilesで定義したDataFileのリストの順番にDataFrameのリストが渡される。
+   *
+   * @param inputs       inputFilesで定義したDataFileのリストの順番にDataFrameのリストが渡される。
    * @param sparkSession SparkSession。当該メソッド内でDatasetを扱うために
-   *                     {{{ import sparkSession.implicits._ }}}
+   * {{{ import sparkSession.implicits._ }}}
    *                     を指定できる。
    * @return ジョブの処理結果となるDataFrame。outputFilesで定義したDataFileのリストの順番にDataFrameのリストを渡す必要がある。
    */
@@ -79,6 +84,7 @@ abstract class DataFrameBLogic(val dataFileReaderWriter: DataFileReaderWriter) e
 
   /**
    * processメソッドで返却されたDataFrameのリストからoutputFilesのDataFileのリストで指定されたファイルを出力する
+   *
    * @param outputs processメソッドで返却されたDataFrame
    */
   final def output(outputs: Seq[DataFrame]): Unit = {

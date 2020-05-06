@@ -19,9 +19,12 @@ import org.apache.spark.sql.{DataFrame, Dataset, SparkSession}
  *
  * @constructor コンストラクタ
  * @param dataFileReaderWriter Logicクラスが使用するDataFileReaderWriter
+ * @param args                 AP起動時の引数
  * @tparam U 出力ファイルつまり、outputFileのDataFile、RDDが扱う型パラメータ
  */
-abstract class RDDToRDDBLogic[U](val dataFileReaderWriter: DataFileReaderWriter) extends Logic {
+abstract class RDDToRDDBLogic[U](val dataFileReaderWriter: DataFileReaderWriter,
+                                 val args: Array[String] = null) extends Logic {
+  require(dataFileReaderWriter != null)
   /** 入力ファイルのDataFileのリストを実装する。複数ファイル指定できる。 */
   val inputFiles: Seq[DataFile[String]]
   /** 出力ファイルのDataFileを実装する。 1ファイルのみ指定できる。 */
@@ -62,7 +65,8 @@ abstract class RDDToRDDBLogic[U](val dataFileReaderWriter: DataFileReaderWriter)
 
   /**
    * inputFilesのDataFileのリストからRDDのリストを取得する
-   * @param sparkSession  SparkSession
+   *
+   * @param sparkSession SparkSession
    * @return RDDのリスト
    */
   final def input(sparkSession: SparkSession): Seq[RDD[String]] = {
@@ -75,7 +79,8 @@ abstract class RDDToRDDBLogic[U](val dataFileReaderWriter: DataFileReaderWriter)
 
   /**
    * ジョブ設計書の処理内容を実装する。
-   * @param inputs inputFilesで定義したDataListのリストの順番にRDDのリストが渡される。
+   *
+   * @param inputs       inputFilesで定義したDataListのリストの順番にRDDのリストが渡される。
    * @param sparkSession SparkSession
    * @return ジョブの処理結果となるRDD
    */
@@ -84,6 +89,7 @@ abstract class RDDToRDDBLogic[U](val dataFileReaderWriter: DataFileReaderWriter)
   /**
    * processメソッドで返却されたRDDからoutputFileのDataFileで
    * 指定されたファイルを出力する
+   *
    * @param rdd processメソッドで返却されたRDD
    */
   final def output(rdd: RDD[U]): Unit = {

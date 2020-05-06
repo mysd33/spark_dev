@@ -19,9 +19,12 @@ import scala.reflect.runtime.universe.TypeTag
  *
  * @constructor コンストラクタ
  * @param dataFileReaderWriter Logicクラスが使用するDataFileReaderWriter
+ * @param args                 AP起動時の引数
  * @tparam U 出力ファイルつまり、outputFileのDataFile、Datasetが扱う型パラメータ
  */
-abstract class RDDToDatasetBLogic[U <: Product : TypeTag](val dataFileReaderWriter: DataFileReaderWriter) extends Logic {
+abstract class RDDToDatasetBLogic[U <: Product : TypeTag]
+(val dataFileReaderWriter: DataFileReaderWriter, val args: Array[String] = null) extends Logic {
+  require(dataFileReaderWriter != null)
   /** 入力ファイルのDataFileのリストを実装する。複数ファイル指定できる。 */
   val inputFiles: Seq[DataFile[String]]
   /** 出力ファイルのDataFileを実装する。 1ファイルのみ指定できる。 */
@@ -41,6 +44,7 @@ abstract class RDDToDatasetBLogic[U <: Product : TypeTag](val dataFileReaderWrit
       tearDown(sparkSession)
     }
   }
+
   /**
    * processメソッド前の処理を実行する。デフォルト実装は、ビジネスロジックを開始するログを出力する。
    *
@@ -61,7 +65,8 @@ abstract class RDDToDatasetBLogic[U <: Product : TypeTag](val dataFileReaderWrit
 
   /**
    * inputFilesのDataFileのリストからRDDのリストを取得する
-   * @param sparkSession  SparkSession
+   *
+   * @param sparkSession SparkSession
    * @return RDDのリスト
    */
   final def input(sparkSession: SparkSession): Seq[RDD[String]] = {
@@ -74,9 +79,10 @@ abstract class RDDToDatasetBLogic[U <: Product : TypeTag](val dataFileReaderWrit
 
   /**
    * ジョブ設計書の処理内容を実装する。
-   * @param inputs inputFilesで定義したDataListのリストの順番にRDDのリストが渡される。
+   *
+   * @param inputs       inputFilesで定義したDataListのリストの順番にRDDのリストが渡される。
    * @param sparkSession SparkSession。当該メソッド内でDatasetを扱うために
-   *                     {{{ import sparkSession.implicits._ }}}
+   * {{{ import sparkSession.implicits._ }}}
    *                     を指定できる。
    * @return ジョブの処理結果となるDataset
    */
@@ -85,6 +91,7 @@ abstract class RDDToDatasetBLogic[U <: Product : TypeTag](val dataFileReaderWrit
   /**
    * processメソッドで返却されたDatasetからoutputFileのDataFileで
    * 指定されたファイルを出力する
+   *
    * @param ds processメソッドで返却されたDataset
    */
   final def output(ds: Dataset[U]): Unit = {
