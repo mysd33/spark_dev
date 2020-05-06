@@ -8,10 +8,11 @@ import scala.reflect.runtime.universe.TypeTag
 /**
  * 入出力をDatasetで扱うためのLogicの基底クラス。
  *
- * Datasetが型パラメータを指定する必要があるため、
- * 1つの入力Datasetに対して1つのDatasetを返却する場合のみ利用できる。
- *
  * 業務開発者は本クラスを継承してLogicクラスを実装する。
+ *
+ * Datasetを使用できるのでタイプセーフに実装できるが
+ * 型パラメータを指定する必要があるため、
+ * 1つの入力Datasetに対して1つのDatasetを返却する場合のみ利用できる。
  *
  * @constructor コンストラクタ
  * @param dataFileReaderWriter Logicクラスが使用するDataFileReaderWriter
@@ -26,7 +27,7 @@ abstract class DatasetBLogic1to1[T <: Product : TypeTag, U <: Product : TypeTag]
   val outputFile: DataFile[U]
 
   /**
-   * @see [[com.example.fw.domain.logic.Logic#execute(org.apache.spark.sql.SparkSession)]]
+   * @see [[com.example.fw.domain.logic.Logic.execute]]
    * @param sparkSession SparkSession
    */
   override final def execute(sparkSession: SparkSession): Unit = {
@@ -58,12 +59,31 @@ abstract class DatasetBLogic1to1[T <: Product : TypeTag, U <: Product : TypeTag]
     logInfo("ビジネスロジック開始:" + getClass().getTypeName())
   }
 
+  /**
+   * inputFilesのDataFileからDatasetを取得する
+   * @param sparkSession  SparkSession
+   * @return Dataset
+   */
   final def input(sparkSession: SparkSession): Dataset[T] = {
     dataFileReaderWriter.readToDs(inputFile, sparkSession)
   }
 
-  def process(ds: Dataset[T], sparkSession: SparkSession): Dataset[U]
+  /**
+   * ジョブ設計書の処理内容を実装する。
+   * @param input inputFileで定義したDatasetが渡される。
+   * @param sparkSession SparkSession。当該メソッド内でDatasetを扱うために
+   *                     {{{ import sparkSession.implicits._ }}}
+   *                     を指定できる。
+   * @return ジョブの処理結果となるDataset
+   */
+  def process(input: Dataset[T], sparkSession: SparkSession): Dataset[U]
 
+
+  /**
+   * processメソッドで返却されたDatasetからoutputFileのDataFileで
+   * 指定されたファイルを出力する
+   * @param ds processメソッドで返却されたDataset
+   */
   final def output(ds: Dataset[U]): Unit = {
     dataFileReaderWriter.writeFromDs(ds, outputFile)
   }

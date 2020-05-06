@@ -15,7 +15,7 @@ class MultiFormatCsvReaderWriter  {
     // https://stackoverflow.com/questions/25259425/spark-reading-files-using-different-delimiter-than-new-line
     val sc = sparkSession.sparkContext
     val conf = new Configuration(sc.hadoopConfiguration)
-    inputFile.delimiter match {
+    inputFile.recordDelimiter match {
       case Some(delimiter) => conf.set("textinputformat.record.delimiter", delimiter)
       case _ => FWConst.DEFAULT_MULTIFORMAT_CSV_DELIMITER
     }

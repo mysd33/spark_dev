@@ -20,9 +20,9 @@ class SampleDataSetBLogic3(dataFileReaderWriter: DataFileReaderWriter)
   )
   override val outputFile: DataFile[Person] = ParquetModel[Person]("person.parquet")
 
-  override def process(ds: Dataset[Person], sparkSession: SparkSession): Dataset[Person] = {
+  override def process(input: Dataset[Person], sparkSession: SparkSession): Dataset[Person] = {
     //DataSetで扱おうとするとimport文が必要なのでsparkSessionが引数に必要
-    ds.show()
-    ds
+    input.show()
+    input
   }
 }

@@ -13,12 +13,12 @@ class SampleDatasetBLogic2(dataFileReaderWriter: DataFileReaderWriter)
   override val inputFile2: DataFile[PersonOther] = JsonModel[PersonOther]("person.json")
   override val outputFile: DataFile[Person] = ParquetModel[Person]("person_union.parquet")
 
-  override def process(ds1: Dataset[Person], ds2: Dataset[PersonOther], sparkSession: SparkSession): Dataset[Person] = {
+  override def process(input1: Dataset[Person], input2: Dataset[PersonOther], sparkSession: SparkSession): Dataset[Person] = {
     import sparkSession.implicits._
     //DataSetで扱おうとするとimport文が必要なのでsparkSessionが引数に必要
-    val dsTemp = ds2.map(po => Person(po.name, po.age))
+    val dsTemp = input2.map(po => Person(po.name, po.age))
     //unionの例
-    val ds3 = ds1.unionByName(dsTemp)
+    val ds3 = input1.unionByName(dsTemp)
     ds3.show()
     ds3
   }

@@ -1,7 +1,7 @@
 package com.example.fw.infra.dataaccess.impl
 
-import com.example.fw.domain.model.{Compressable, CsvModel, HavingDateFormat, HavingSchema, Splittable, TextFormat}
-import org.apache.spark.sql.{DataFrameReader, DataFrameWriter}
+import com.example.fw.domain.model._
+import org.apache.spark.sql.DataFrameReader
 
 object ReaderMethodBuilder {
   //csvのoptionの実装
@@ -34,8 +34,8 @@ object ReaderMethodBuilder {
       }
     }
 
-    def buildOptionSep(file: Splittable): DataFrameReader = {
-      file.delimiter match {
+    def buildOptionSep[T](file: CsvModel[T]): DataFrameReader = {
+      file.sep match {
         case Some(delimiter) => reader.option("sep", delimiter)
         case _ => reader
       }

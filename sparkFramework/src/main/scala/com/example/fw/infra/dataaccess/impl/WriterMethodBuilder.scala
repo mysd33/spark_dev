@@ -1,7 +1,7 @@
 package com.example.fw.infra.dataaccess.impl
 
-import com.example.fw.domain.model.{Compressable, CsvModel, HavingDateFormat, HavingSchema, Partitionable, Splittable, TextFormat}
-import org.apache.spark.sql.{DataFrameReader, DataFrameWriter}
+import com.example.fw.domain.model._
+import org.apache.spark.sql.DataFrameWriter
 
 object WriterMethodBuilder {
 
@@ -13,9 +13,9 @@ object WriterMethodBuilder {
 
 
   implicit class RichDataFrameWriter[T](writer: DataFrameWriter[T]) {
-    def buildOptionSep(file: Splittable): DataFrameWriter[T] = {
-      file.delimiter match {
-        case Some(delimiter) => writer.option("sep", delimiter)
+    def buildOptionSep(file: CsvModel[T]): DataFrameWriter[T] = {
+      file.sep match {
+        case Some(sep) => writer.option("sep", sep)
         case _ => writer
       }
     }

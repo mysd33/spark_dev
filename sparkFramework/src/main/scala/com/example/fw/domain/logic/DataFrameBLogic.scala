@@ -9,6 +9,9 @@ import org.apache.spark.sql.{DataFrame, Row, SparkSession}
  *
  * 業務開発者は本クラスを継承してLogicクラスを実装する。
  *
+ * DataFrameで扱う代わりに、入力DataFrame、出力DataFrameともに
+ * 複数ファイル扱うことができ汎用的に利用できる。
+ *
  * @constructor コンストラクタ
  * @param dataFileReaderWriter Logicクラスが使用するDataFileReaderWriter
  */
@@ -19,7 +22,7 @@ abstract class DataFrameBLogic(val dataFileReaderWriter: DataFileReaderWriter) e
   val outputFiles: Seq[DataFile[Row]]
 
   /**
-   * @see [[com.example.fw.domain.logic.Logic#execute(org.apache.spark.sql.SparkSession)]]
+   * @see [[com.example.fw.domain.logic.Logic.execute]]
    * @param sparkSession SparkSession
    */
   override final def execute(sparkSession: SparkSession): Unit = {
@@ -52,9 +55,9 @@ abstract class DataFrameBLogic(val dataFileReaderWriter: DataFileReaderWriter) e
   }
 
   /**
-   * 入力ファイルのDataFilesのリストからDataFrameのリストを取得する
+   * inputFilesのDataFileのリストからDataFrameのリストを取得する
    * @param sparkSession  SparkSession
-   * @return DataFrameのリストを取得する
+   * @return DataFrameのリスト
    */
   final def input(sparkSession: SparkSession): Seq[DataFrame] = {
     inputFiles.map(
@@ -66,15 +69,17 @@ abstract class DataFrameBLogic(val dataFileReaderWriter: DataFileReaderWriter) e
 
   /**
    * ジョブ設計書の処理内容を実装する。
-   * @param inputs inputFilesで定義したDataListのリストの順番にDataFrameのリストが渡される。
-   * @param sparkSession SparkSession。当該メソッド内でDatasetを扱いたい場合に{{{ import sparkSession.implicits.? }}を指定できる。
-   * @return ジョブの処理結果となるDataFrame。outputFilesで定義したDataListのリストの順番にDataFrameのリストを渡す必要がある。
+   * @param inputs inputFilesで定義したDataFileのリストの順番にDataFrameのリストが渡される。
+   * @param sparkSession SparkSession。当該メソッド内でDatasetを扱うために
+   *                     {{{ import sparkSession.implicits._ }}}
+   *                     を指定できる。
+   * @return ジョブの処理結果となるDataFrame。outputFilesで定義したDataFileのリストの順番にDataFrameのリストを渡す必要がある。
    */
   def process(inputs: Seq[DataFrame], sparkSession: SparkSession): Seq[DataFrame]
 
   /**
-   * processメソッドで返却されたDataFrameのリストから、出力ファイルのDataFilesのリストで指定されたファイルを出力する
-   * @param outputs
+   * processメソッドで返却されたDataFrameのリストからoutputFilesのDataFileのリストで指定されたファイルを出力する
+   * @param outputs processメソッドで返却されたDataFrame
    */
   final def output(outputs: Seq[DataFrame]): Unit = {
     outputs.zip(outputFiles).foreach(tuple => {

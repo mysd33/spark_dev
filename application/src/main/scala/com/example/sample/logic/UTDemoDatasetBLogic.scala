@@ -29,10 +29,10 @@ class UTDemoDatasetBLogic(dataFileReaderWriter: DataFileReaderWriter) extends
   )
   override val outputFile: DataFile[Person] = ParquetModel[Person]("person.parquet")
 
-  override def process(ds: Dataset[Person], sparkSession: SparkSession): Dataset[Person] = {
+  override def process(input: Dataset[Person], sparkSession: SparkSession): Dataset[Person] = {
     import sparkSession.implicits._
     //共通処理の呼び出し
-    val tempDs = sampleSharedLogic.execute(ds)
+    val tempDs = sampleSharedLogic.execute(input)
     //NotSerializableException(Task not Serialzable)を回避するため、いったんビジネスルールオブジェクトをローカル変数に格納
     val rule = personRule
     val result = tempDs.map(p => {
@@ -41,7 +41,7 @@ class UTDemoDatasetBLogic(dataFileReaderWriter: DataFileReaderWriter) extends
       Person("hoge", Some(age))
     })
     result.show()
-    ds
+    input
   }
 
 }

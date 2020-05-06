@@ -12,10 +12,10 @@ class SampleDatasetBLogic(dataFileReaderWriter: DataFileReaderWriter)
   override val inputFile = JsonModel[Person]("person.json")
   override val outputFile = ParquetModel[Person]("person.parquet")
 
-  override def process(ds: Dataset[Person], sparkSession: SparkSession): Dataset[Person] = {
+  override def process(input: Dataset[Person], sparkSession: SparkSession): Dataset[Person] = {
     //DataSetで扱おうとするとimport文が必要なのでsparkSessionが引数に必要
     import sparkSession.implicits._
-    ds.show()
-    ds
+    input.show()
+    input
   }
 }
