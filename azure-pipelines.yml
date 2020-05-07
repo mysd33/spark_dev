@@ -8,23 +8,35 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
+variables:
+  IVY_CACHE_FOLDER: $(Pipeline.Workspace)/.ivy2/
+
 steps:
+- task: Cache@2
+  inputs:
+    key: 'sbt | "$(Agent.OS)" | **/build.sbt'
+    restoreKeys: |
+      sbt | "$(Agent.OS)
+      sbt
+    path: $(IVY_CACHE_FOLDER)
+  displayName: sbt build cache
+
 - script: |
     echo build
     sbt clean package
-  displayName: 'Build'
+  displayName: Build
 
 - script: |
     echo scaladoc
     sbt doc
-  displayName: 'Create API Document'
+  displayName: Create API Document
 
 - script: |
     echo test
     sbt -Dactive.profile=ut test
-  displayName: 'Unit Test'
+  displayName: Unit Test
 
 - script: |
     echo assembly
     sbt assembly
-  displayName: 'Create Assembly'
+  displayName: Create Assembly
