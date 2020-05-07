@@ -10,6 +10,7 @@ pool:
 
 variables:
   IVY_CACHE_FOLDER: $(Pipeline.Workspace)/.ivy2/
+  SBT_IVY_OPTION: "--ivy $(IVY_CACHE_FOLDER)"
 
 steps:
 - task: Cache@2
@@ -23,20 +24,20 @@ steps:
 
 - script: |
     echo build
-    sbt clean package
+    sbt $(SBT_IVY_OPTION) clean package
   displayName: Build
 
 - script: |
     echo scaladoc
-    sbt doc
+    sbt $(SBT_IVY_OPTION) doc
   displayName: Create API Document
 
 - script: |
     echo test
-    sbt -Dactive.profile=ut test
+    sbt $(SBT_IVY_OPTION) -Dactive.profile=ut test
   displayName: Unit Test
 
 - script: |
     echo assembly
-    sbt assembly
+    sbt $(SBT_IVY_OPTION) assembly
   displayName: Create Assembly
