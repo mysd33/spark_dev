@@ -34,24 +34,22 @@ steps:
 
 - script: |
     echo test
-    sbt $(SBT_IVY_OPTION) -Dactive.profile=ut jacocoAggregate
+    sbt $(SBT_IVY_OPTION) -Dactive.profile=ut coverage test
   displayName: Unit Test
 
 ##https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/test/publish-test-results?view=azure-devops
 - task: PublishTestResults@2
 
+- script: |
+    echo test
+    sbt $(SBT_IVY_OPTION) -Dactive.profile=ut coverageReport coverageAggregate
+  displayName: Create Coverage Report
 
-##https://docs.microsoft.com/en-us/azure/devops/pipelines/customize-pipeline?view=azure-devops#add-steps
 ##https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/test/publish-code-coverage-results?view=azure-devops
-##https://developercommunity.visualstudio.com/content/problem/363333/jacoco-css-and-resources-missing-after-publishcode.html
-##
-##reportDirectory: "$(System.DefaultWorkingDirectory)/target/**/jacoco/report/aggregate/html"
-##additionalCodeCoverageFiles: "$(System.DefaultWorkingDirectory)/target/**/jacoco/data/jacoco.exec"
 - task: PublishCodeCoverageResults@1
   inputs:
-    codeCoverageTool: "JaCoCo"
-    summaryFileLocation: "$(System.DefaultWorkingDirectory)/target/**/jacoco/report/aggregate/jacoco.xml"
-    pathToSources: "$(System.DefaultWorkingDirectory)/application/src/main/"
+    codeCoverageTool: "cobertura"
+    summaryFileLocation: "$(System.DefaultWorkingDirectory)/target/**/coverage-report/cobertura.xml"
   displayName: Publish Code Coverage Results
 
 - script: |

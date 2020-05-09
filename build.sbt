@@ -27,17 +27,7 @@ lazy val root = (project in file("."))
   .dependsOn(application, databricksFramework)
   .settings(
     commonSettings,
-    name := "databricks_dev",
-    jacocoAggregateReportSettings in Test := JacocoReportSettings()
-      .withTitle("Jacoco Unit Tests Coverage Report")
-      .withFileEncoding("UTF-8")
-      .withFormats(JacocoReportFormats.ScalaHTML, JacocoReportFormats.XML),
-    /*
-    jacocoAggregateReportSettings in IntegrationTest := JacocoReportSettings()
-      .withTitle("Jacoco IntegrationTest Tests Coverage Report")
-      .withFileEncoding("UTF-8")
-      .withFormats(JacocoReportFormats.ScalaHTML, JacocoReportFormats.XML)
-*/
+    name := "databricks_dev"
   )
 
 lazy val dbconnectApplication = (project in file("dbconnectApplication"))
