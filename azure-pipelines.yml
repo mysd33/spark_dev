@@ -34,7 +34,6 @@ steps:
 
 - script: |
     echo test
-## sbt $(SBT_IVY_OPTION) -Dactive.profile=ut test
     sbt $(SBT_IVY_OPTION) -Dactive.profile=ut jacoco
   displayName: Unit Test
 
