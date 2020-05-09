@@ -46,12 +46,12 @@ steps:
 ##https://developercommunity.visualstudio.com/content/problem/363333/jacoco-css-and-resources-missing-after-publishcode.html
 ##
 ##reportDirectory: "$(System.DefaultWorkingDirectory)/target/**/jacoco/report/aggregate/html"
-
+##additionalCodeCoverageFiles: "$(System.DefaultWorkingDirectory)/target/**/jacoco/data/jacoco.exec"
 - task: PublishCodeCoverageResults@1
   inputs:
     codeCoverageTool: "JaCoCo"
     summaryFileLocation: "$(System.DefaultWorkingDirectory)/target/**/jacoco/report/aggregate/jacoco.xml"
-    additionalCodeCoverageFiles: "$(System.DefaultWorkingDirectory)/target/**/jacoco/data/jacoco.exec"
+    pathToSources: "$(System.DefaultWorkingDirectory)/application/src/main/"
   displayName: Publish Code Coverage Results
 
 - script: |
