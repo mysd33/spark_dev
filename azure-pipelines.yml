@@ -40,14 +40,19 @@ steps:
 ##https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/test/publish-test-results?view=azure-devops
 - task: PublishTestResults@2
 
-## https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/test/publish-code-coverage-results?view=azure-devops
+
+##https://docs.microsoft.com/en-us/azure/devops/pipelines/customize-pipeline?view=azure-devops#add-steps
+##https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/test/publish-code-coverage-results?view=azure-devops
+##https://developercommunity.visualstudio.com/content/problem/363333/jacoco-css-and-resources-missing-after-publishcode.html
+##
+##reportDirectory: "$(System.DefaultWorkingDirectory)/target/**/jacoco/report/aggregate/html"
+##additionalCodeCoverageFiles: "$(System.DefaultWorkingDirectory)/target/**/jacoco/data/jacoco.exec"
 - task: PublishCodeCoverageResults@1
   inputs:
     codeCoverageTool: "JaCoCo"
     summaryFileLocation: "$(System.DefaultWorkingDirectory)/target/**/jacoco/report/aggregate/jacoco.xml"
-    reportDirectory: "$(System.DefaultWorkingDirectory)/target/**/jacoco/report/aggregate/html"
-    additionalCodeCoverageFiles: "$(System.DefaultWorkingDirectory)/target/**/jacoco/data/jacoco.exec, $(System.DefaultWorkingDirectory)/target/**/jacoco/report/aggregate/html/jacoco-resources/*.gif"
   displayName: Publish Code Coverage Results
+
 
 - script: |
     echo assembly
