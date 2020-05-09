@@ -21,8 +21,16 @@ lazy val commonSettings = Seq(
     .copy(includeScala = false, includeDependency = false),
   //sbt assemblyで、テストをスキップ
   test in assembly := {},
-  //外部のscaladocへのリンクの自動マッピング設定
-  autoAPIMappings := true
+  //sbt-jacoco
+  jacocoReportSettings in Test := JacocoReportSettings()
+    .withTitle("Jacoco Unit Tests Coverage Report")
+    .withFileEncoding("UTF-8")
+    .withFormats(JacocoReportFormats.ScalaHTML, JacocoReportFormats.XML)
+  /*,
+    jacocoReportSettings in IntegrationTest := JacocoReportSettings()
+    .withTitle("Jacoco Integration Tests Coverage Report")
+    .withFileEncoding("UTF-8")
+    .withFormats(JacocoReportFormats.ScalaHTML, JacocoReportFormats.XML)*/
 )
 
 lazy val root = (project in file("."))
@@ -30,7 +38,8 @@ lazy val root = (project in file("."))
   .dependsOn(application, databricksFramework)
   .settings(
     commonSettings,
-    name := "databricks_dev"
+    name := "databricks_dev",
+
   )
 
 lazy val dbconnectApplication = (project in file("dbconnectApplication"))
@@ -74,6 +83,9 @@ lazy val sparkFramework = (project in file("sparkFramework"))
       "org.apache.spark" %% "spark-sql" % sparkVersion,
       //TODO: 以下のspark-xmlの依存jarをすべてDatabricksクラスタにインストールしないと動作しないので本番開発では使用しない
       //spark-xml_2.11.0-0.9.0.jar, txw2-2.3.2.jar
+      //Databricksの場合Mavenリポジトリから直接ライブラリ登録も可能
+      //com.databricks:spark-xml_2.11:0.9.0
+      //org.glassfish.jaxb:txw2:2.3.2
       "com.databricks" %% "spark-xml" % sparkXmlVersion
     )
   )
@@ -89,3 +101,4 @@ lazy val sparkTestFramework = (project in file("sparkTestFramework"))
       "org.scalatestplus" %% "scalatestplus-mockito" % "1.0.0-M2" % Test
     )
   )
+

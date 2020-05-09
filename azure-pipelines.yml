@@ -34,8 +34,16 @@ steps:
 
 - script: |
     echo test
-    sbt $(SBT_IVY_OPTION) -Dactive.profile=ut test
+## sbt $(SBT_IVY_OPTION) -Dactive.profile=ut test
+    sbt $(SBT_IVY_OPTION) -Dactive.profile=ut jacoco
   displayName: Unit Test
+
+## https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/test/publish-code-coverage-results?view=azure-devops
+- task: PublishCodeCoverageResults@1
+  inputs:
+    codeCoverageTool: "JaCoCo"
+    summaryFileLocation: "$(System.DefaultWorkingDirectory)/**/jacoco/report/jacoco.xml"
+  displayName: Publish Code Coverage Results
 
 - script: |
     echo assembly
