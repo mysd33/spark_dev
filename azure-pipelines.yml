@@ -45,7 +45,7 @@ steps:
   inputs:
     codeCoverageTool: "JaCoCo"
     summaryFileLocation: "$(System.DefaultWorkingDirectory)/target/**/jacoco/report/aggregate/jacoco.xml"
-    reportDirectory: "$(System.DefaultWorkingDirectory)/target/**/jacoco/report/aggregate"
+    reportDirectory: "$(System.DefaultWorkingDirectory)/target/**/jacoco/report/aggregate/html"
   displayName: Publish Code Coverage Results
 
 - script: |

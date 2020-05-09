@@ -31,7 +31,7 @@ lazy val root = (project in file("."))
     jacocoAggregateReportSettings in Test := JacocoReportSettings()
       .withTitle("Jacoco Unit Tests Coverage Report")
       .withFileEncoding("UTF-8")
-      .withFormats(JacocoReportFormats.HTML, JacocoReportFormats.XML),
+      .withFormats(JacocoReportFormats.ScalaHTML, JacocoReportFormats.XML),
     /*
     jacocoAggregateReportSettings in IntegrationTest := JacocoReportSettings()
       .withTitle("Jacoco IntegrationTest Tests Coverage Report")
