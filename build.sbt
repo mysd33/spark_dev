@@ -13,24 +13,13 @@ lazy val unmanagedJarFiles = "lib"
 //sbt -Dactive.profile=ut test以下のように起動すること
 //IntelliJの場合には、設定で、sbtのVM起動オプションを設定しておく。
 //ちなみに、sbtのfork機能でのjavaOptions設定は有効にならなかった
-
 lazy val commonSettings = Seq(
   //共通のsettingsを記述
   //sbt assemblyで、scalaのjarや、sbtでlibraryDependencies定義した依存ライブラリのクラスはjarに含めない
   assemblyOption in assembly := (assemblyOption in assembly).value
     .copy(includeScala = false, includeDependency = false),
   //sbt assemblyで、テストをスキップ
-  test in assembly := {},
-  //sbt-jacoco
-  jacocoReportSettings in Test := JacocoReportSettings()
-    .withTitle("Jacoco Unit Tests Coverage Report")
-    .withFileEncoding("UTF-8")
-    .withFormats(JacocoReportFormats.ScalaHTML, JacocoReportFormats.XML)
-  /*,
-    jacocoReportSettings in IntegrationTest := JacocoReportSettings()
-    .withTitle("Jacoco Integration Tests Coverage Report")
-    .withFileEncoding("UTF-8")
-    .withFormats(JacocoReportFormats.ScalaHTML, JacocoReportFormats.XML)*/
+  test in assembly := {}
 )
 
 lazy val root = (project in file("."))
@@ -39,7 +28,16 @@ lazy val root = (project in file("."))
   .settings(
     commonSettings,
     name := "databricks_dev",
-
+    jacocoAggregateReportSettings in Test := JacocoReportSettings()
+      .withTitle("Jacoco Unit Tests Coverage Report")
+      .withFileEncoding("UTF-8")
+      .withFormats(JacocoReportFormats.ScalaHTML, JacocoReportFormats.XML),
+    /*
+    jacocoAggregateReportSettings in IntegrationTest := JacocoReportSettings()
+      .withTitle("Jacoco IntegrationTest Tests Coverage Report")
+      .withFileEncoding("UTF-8")
+      .withFormats(JacocoReportFormats.ScalaHTML, JacocoReportFormats.XML)
+*/
   )
 
 lazy val dbconnectApplication = (project in file("dbconnectApplication"))
