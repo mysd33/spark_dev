@@ -46,8 +46,7 @@ steps:
     codeCoverageTool: "JaCoCo"
     summaryFileLocation: "$(System.DefaultWorkingDirectory)/target/**/jacoco/report/aggregate/jacoco.xml"
     reportDirectory: "$(System.DefaultWorkingDirectory)/target/**/jacoco/report/aggregate/html"
-    additionalCodeCoverageFiles: "$(System.DefaultWorkingDirectory)/target/**/jacoco/data/jacoco.exec,$(System.DefaultWorkingDirectory)/target/**/jacoco/report/aggregate/html/jacoco-resources"
-    pathToSources: "$(System.DefaultWorkingDirectory)/application/src/main/scala"
+    additionalCodeCoverageFiles: "$(System.DefaultWorkingDirectory)/target/**/jacoco/data/jacoco.exec"
   displayName: Publish Code Coverage Results
 
 - script: |
