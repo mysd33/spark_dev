@@ -1,5 +1,7 @@
 #AP基盤プロトタイプについて
 
+[![Build Status](https://dev.azure.com/Masashi11Yoshida/scala_dev/_apis/build/status/databricks_dev?branchName=master)](https://dev.azure.com/Masashi11Yoshida/scala_dev/_build/latest?definitionId=1&branchName=master)
+
 ##プロジェクト構成
 * databricks_dev ルートプロジェクト
   * application 業務APサブプロジェクト
