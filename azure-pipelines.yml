@@ -37,6 +37,10 @@ steps:
     sbt $(SBT_IVY_OPTION) -Dactive.profile=ut jacocoAggregate
   displayName: Unit Test
 
+##https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/test/publish-test-results?view=azure-devops
+- task: PublishTestResults@2
+  inputs:
+
 ## https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/test/publish-code-coverage-results?view=azure-devops
 - task: PublishCodeCoverageResults@1
   inputs:
