@@ -61,5 +61,3 @@ steps:
     echo assembly
     sbt $(SBT_IVY_OPTION) assembly
   displayName: Create Assembly
--Dfile:
-  encoding=UTF-8:
