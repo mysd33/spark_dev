@@ -2,14 +2,16 @@ package com.example.sample.logic
 
 import com.example.fw.domain.dataaccess.DataFileReaderWriter
 import com.example.fw.domain.logic.DataFrameBLogic
-import com.example.fw.domain.model.{CsvModel, DataFile, MultiFormatCsvModel}
-import com.example.sample.common.receipt.{MedMN, MedRE, MedReceiptRecordMapper, ReceiptConst, ReceiptRecord}
-import org.apache.spark.sql.{DataFrame, Dataset, Row, SparkSession}
+import com.example.fw.domain.model.{CsvModel, DataFile}
 import com.example.fw.domain.utils.OptionImplicit._
-
+import com.example.sample.common.receipt.MedReceiptRecordMapper.{delimiter, lineSeparator}
+import com.example.sample.common.receipt._
+import org.apache.spark.sql.types.{StringType, StructField, StructType}
+import org.apache.spark.sql.{DataFrame, Dataset, Row, SparkSession}
 
 import scala.collection.immutable.Nil
 
+//TODO: コンパイルは通るが、動作しないので、使えない
 /**
  * AP基盤を使ったサンプル
  *
@@ -17,17 +19,23 @@ import scala.collection.immutable.Nil
  * 事前にシェルで、レセプト区切り文字は改行コードのまま、
  * 各レセプトレコードの区切り文字をとして\x00で設定しておいたレセプトファイル（レセ電コード情報）の読み込み
  * を試行してみた例
- * RDDを使わずにDataFrame/Datasetのみで実現している
  *
+ * @deprecated RDDを使わずにDataFrame/Datasetのみで実現しようとしたが、前処理とかCsvModelの定義とか少し煩雑なのと
+ *             汎用的に処理しようとすると型パラメータの問題で、Encoderが働かず動作しないので、使えない。
  * @param dataFileReaderWriter Logicクラスが使用するDataFileReaderWriter
  */
 class SampleMedReceiptDataFrameBLogic(dataFileReaderWriter: DataFileReaderWriter)
   extends DataFrameBLogic(dataFileReaderWriter) {
 
-  //TODO: MultiFormatCsvModelのDataFrame対応の実装
-  override val inputFiles: Seq[DataFile[Row]] = MultiFormatCsvModel[Row](
-    //TODO: テストデータの作成
+  //区切り文字を\u0000とするCSVファイルとみて、CsvModelとして扱う
+  override val inputFiles: Seq[DataFile[Row]] = CsvModel[Row](
     relativePath = "receipt/11_RECODEINFO_MED_result2.CSV",
+    sep = "\u0000",
+    schema = StructType(
+      Array(
+        StructField("value", StringType, false)
+      )
+    ),
     //Shift_JIS形式
     encoding = ReceiptConst.ReceiptEncoding) :: Nil
 
@@ -45,19 +53,25 @@ class SampleMedReceiptDataFrameBLogic(dataFileReaderWriter: DataFileReaderWriter
   override def process(inputs: Seq[DataFrame], sparkSession: SparkSession): Seq[DataFrame] = {
     import sparkSession.implicits._
     val receipts = inputs(0)
-    val result = receipts.flatMap(receipt => {
+    val result = receipts.flatMap(row => {
+
+      //TODO: 具体的なcaseクラスでジェネリクスを扱えないのに、Datasetで扱おうとして、(string, ReceiptReord)のEncoderがないというエラーが出てしまい動作しない
+      // java.lang.UnsupportedOperationException: No Encoder found for com.example.sample.common.receipt.ReceiptRecord
+      //　- field (class: "com.example.sample.common.receipt.ReceiptRecord", name: "_2")
+      //  - root class: "scala.Tuple2"
       //1レセプトを、(レコード種別文字列,ReceiptRecord)のタプルにマッピング
-      MedReceiptRecordMapper.mapToReceiptRecordTuples(receipt.getAs[String]("value"))
+      MedReceiptRecordMapper.mapToReceiptRecordTuples(row.getAs[String]("value"))
     })
+
     //レコード種別ごとにDataset/DataFrameを作成しファイル出力
     //何度も使用するのでキャッシュしておく
     cached = result.cache()
 
-    //TODO:DatasetをDataFrameに変換しないといけないのがイケてない
+    //DatasetをDataFrameに変換しないといけないのがイケてない
     val mnDF = MedReceiptRecordMapper.extractDataset[MedMN](ReceiptConst.MN, cached, sparkSession).toDF()
     val reDF = MedReceiptRecordMapper.extractDataset[MedRE](ReceiptConst.RE, cached, sparkSession).toDF()
 
-    //TODO:レコード種別ごとに処理を追加していく
+    //TODO: レコード種別ごとに処理を追加していく
     mnDF :: reDF :: Nil
   }
 }
