@@ -105,5 +105,5 @@
   
 ##Azure DevOps PipelineでのCI
 * Azure Reposでソースコード管理し、Azure Pipelineでパイプラインを作成することでazure-pipelines.ymlの定義に基づきPipeline実行できます
-* ビルド、scaladoc、単体テスト、実行可能jar作成、テスト結果レポート、カバレッジレポートに対応しています。
+* ビルド、scaladoc、単体テスト実行、結合テスト実行、実行可能jar作成、テスト結果レポート、カバレッジレポートに対応しています。
 * また、ivyローカルリポジトリのjarをキャッシュしビルド時間を短縮する設定もしています。

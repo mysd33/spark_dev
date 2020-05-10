@@ -37,11 +37,16 @@ steps:
     sbt $(SBT_IVY_OPTION) -Dactive.profile=ut coverage test
   displayName: Unit Test
 
+- script: |
+    echo test
+    sbt $(SBT_IVY_OPTION) -Dactive.profile=ut it:test
+  displayName: Integration Test
+
 ##https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/test/publish-test-results?view=azure-devops
 - task: PublishTestResults@2
 
 - script: |
-    echo test
+    echo coverageReport
     sbt $(SBT_IVY_OPTION) -Dactive.profile=ut coverageReport coverageAggregate
   displayName: Create Coverage Report
 
@@ -56,3 +61,5 @@ steps:
     echo assembly
     sbt $(SBT_IVY_OPTION) assembly
   displayName: Create Assembly
+-Dfile:
+  encoding=UTF-8:

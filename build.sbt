@@ -9,6 +9,8 @@ lazy val scalatestVersion = "3.1.1"
 //lazy val unmanagedJarFiles = "c:\\users\\masas\\.conda\\envs\\dbconnect\\lib\\site-packages\\pyspark\\jars"
 lazy val unmanagedJarFiles = "lib"
 
+lazy val IT_TEST = "it,test"
+
 //sbt testのプロファイル設定するため
 //sbt -Dactive.profile=ut test以下のように起動すること
 //IntelliJの場合には、設定で、sbtのVM起動オプションを設定しておく。
@@ -47,9 +49,12 @@ lazy val dbconnectApplication = (project in file("dbconnectApplication"))
   )
 
 lazy val application = (project in file("application"))
+  //Integration Test対応(sbt it:test)
+  .configs(IntegrationTest)
   .dependsOn(sparkFramework)
-  .dependsOn(sparkTestFramework % "test->test;compile->compile")
+  .dependsOn(sparkTestFramework % "it->test,test->test;compile->compile")
   .settings(
+    Defaults.itSettings,
     commonSettings,
     name := "application",
     version := "0.1"
@@ -79,14 +84,16 @@ lazy val sparkFramework = (project in file("sparkFramework"))
   )
 
 lazy val sparkTestFramework = (project in file("sparkTestFramework"))
+  //Integration Test対応(sbt it:test)
+  .configs(IntegrationTest)
   .dependsOn(sparkFramework)
   .settings(
     commonSettings,
     name := "sparkTestFramework",
     libraryDependencies ++= Seq(
-      "org.scalatest" %% "scalatest" % scalatestVersion % Test,
-      "org.mockito" % "mockito-core" % "3.3.3" % Test,
-      "org.scalatestplus" %% "scalatestplus-mockito" % "1.0.0-M2" % Test
+      "org.scalatest" %% "scalatest" % scalatestVersion % IT_TEST,
+      "org.mockito" % "mockito-core" % "3.3.3" % IT_TEST,
+      "org.scalatestplus" %% "scalatestplus-mockito" % "1.0.0-M2" % IT_TEST
     )
   )
 
