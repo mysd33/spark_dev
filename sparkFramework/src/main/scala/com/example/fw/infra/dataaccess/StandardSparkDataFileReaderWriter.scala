@@ -43,6 +43,7 @@ trait StandardSparkDataFileReaderWriter extends DataFileReaderWriterImpl {
       case f: CsvModel[Row] => new CsvReaderWriter().readToDf(f, sparkSession)
       case f: JsonModel[Row] => new JsonReaderWriter().readToDf(f, sparkSession)
       case f: ParquetModel[Row] => new StandardParquetReaderWriter().readToDf(f, sparkSession)
+      case f: TextLineModel[Row] => new TextLineFileReaderWriter().readToDf(f, sparkSession)
       //TODO: spark-xmlの依存jarをすべてDatabricksクラスタにインストールしないと動作しないので本番開発では使用しない
       case f: XmlModel[Row] => new XmlReaderWriter().readToDf(f, sparkSession)
       case _ => ???
@@ -50,7 +51,7 @@ trait StandardSparkDataFileReaderWriter extends DataFileReaderWriterImpl {
   }
 
   /**
-   * @see [[com.example.fw.domain.dataaccess.DataFileReaderWriterImpl.readToDs]]
+   * @see com.example.fw.domain.dataaccess.DataFileReaderWriterImpl.readToDs(DataFile[T], SparkSession)
    * @param inputFile    入力ファイルのDataFile
    * @param sparkSession SparkSession
    * @tparam T DataFileおよびDatasetの型パラメータ
@@ -61,6 +62,19 @@ trait StandardSparkDataFileReaderWriter extends DataFileReaderWriterImpl {
       case f: CsvModel[T] => new CsvReaderWriter().readToDs(f, sparkSession)
       case f: JsonModel[T] => new JsonReaderWriter().readToDs(f, sparkSession)
       case f: ParquetModel[T] => new StandardParquetReaderWriter().readToDs(f, sparkSession)
+      case _ => ???
+    }
+  }
+
+  /**
+   *　@see com.example.fw.domain.dataaccess.DataFileReaderWriterImpl.readToDs(DataFile[String], SparkSession)
+   * @param inputFile TextLineModel
+   * @param sparkSession TextLineModel
+   * @return Dataset
+   */
+  override def readToDs(inputFile: DataFile[String], sparkSession: SparkSession): Dataset[String] = {
+    inputFile match {
+      case f: TextLineModel[String] => new TextLineFileReaderWriter().readToDs(f, sparkSession)
       case _ => ???
     }
   }

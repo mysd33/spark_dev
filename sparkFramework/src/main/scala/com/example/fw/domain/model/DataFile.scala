@@ -98,12 +98,15 @@ trait HavingDateFormat {
  * 各行をテキストとして扱うファイルのModel
  *
  * @param relativePath ファイルの相対パス
+ * @param compression  @see [[com.example.fw.domain.model.Compressable]]
  * @param encoding     @see [[com.example.fw.domain.model.TextFormat]]
  * @tparam T データセットが扱うデータ型。RDDやDataFrame、Dataset等で扱う型パラメータと対応する。
  */
 case class TextLineModel[T](override val relativePath: String,
-                            override val encoding: Option[String] = None)
-  extends DataFile[T] with TextFormat
+                            override val compression: Option[String] = None,
+                            override val encoding: Option[String] = None
+                           )
+  extends DataFile[T] with TextFormat with Compressable
 
 /**
  * マルチフォーマットCSVファイルのModel

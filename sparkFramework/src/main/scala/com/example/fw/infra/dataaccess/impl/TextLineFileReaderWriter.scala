@@ -2,8 +2,9 @@ package com.example.fw.infra.dataaccess.impl
 
 import com.example.fw.domain.model.TextLineModel
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.SparkSession
-
+import org.apache.spark.sql.{DataFrame, Dataset, Row, SparkSession}
+import com.example.fw.infra.dataaccess.impl.ReaderMethodBuilder._
+import com.example.fw.infra.dataaccess.impl.WriterMethodBuilder._
 /**
  * TextLineModelに対応したファイルアクセス機能を提供するクラス
  *
@@ -20,7 +21,36 @@ class TextLineFileReaderWriter {
    * @return RDD
    */
   def readToRDD(inputFile: TextLineModel[String], sparkSession: SparkSession): RDD[String] = {
-    sparkSession.sparkContext.textFile(inputFile.absolutePath)
+    val rdd = sparkSession.sparkContext.textFile(inputFile.absolutePath)
+    //encoding
+    inputFile.encoding match {
+      case Some(encoding) => rdd.map(s => new String(s.getBytes, encoding))
+      case _ => rdd
+    }
+  }
+
+  def readToDf(inputFile: TextLineModel[Row], sparkSession: SparkSession): DataFrame = {
+    import sparkSession.implicits._
+    val df = sparkSession.read.text(inputFile.absolutePath)
+    //encoding
+    inputFile.encoding match {
+      case Some(encoding) => df.map(row => {
+        val s = row.getAs[String]("value")
+        new String(s.getBytes(), encoding)
+      }).toDF()
+      case _ => df
+    }
+
+  }
+
+  def readToDs(inputFile: TextLineModel[String], sparkSession: SparkSession): Dataset[String] = {
+    import sparkSession.implicits._
+    val ds = sparkSession.read.textFile(inputFile.absolutePath)
+    //encoding
+    inputFile.encoding match {
+      case Some(encoding) => ds.map(s => new String(s.getBytes, encoding))
+      case _ => ds
+    }
   }
 
   /**

@@ -36,6 +36,16 @@ trait DataFileReaderWriterImpl {
    */
   def readToDs[T <: Product : TypeTag](inputFile: DataFile[T], sparkSession: SparkSession): Dataset[T]
 
+
+  /**
+   * ファイルを読み込みDatasetを返却する
+   *
+   * @param inputFile    入力ファイルのDataFile
+   * @param sparkSession SparkSession
+   * @return Dataset
+   */
+  def readToDs(inputFile: DataFile[String], sparkSession: SparkSession): Dataset[String]
+
   /**
    * ファイルを読み込みDataFrameを返却する
    *

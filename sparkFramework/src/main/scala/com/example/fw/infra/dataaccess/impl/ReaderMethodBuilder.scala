@@ -12,6 +12,7 @@ import org.apache.spark.sql.DataFrameReader
  *   import com.example.fw.infra.dataaccess.impl.ReaderMethodBuilder._
  * }}}
  *
+ * @see [[https://spark.apache.org/docs/latest/api/scala/index.html#org.apache.spark.sql.DataFrameReader@textFile(paths:String*):org.apache.spark.sql.Dataset[String]]]
  * @see [[http://spark.apache.org/docs/latest/api/scala/index.html#org.apache.spark.sql.DataFrameReader@csv(paths:String*):org.apache.spark.sql.DataFrame]]
  * @see [[http://spark.apache.org/docs/latest/api/scala/index.html#org.apache.spark.sql.DataFrameReader@json(paths:String*):org.apache.spark.sql.DataFrame]]
  * @see [[http://spark.apache.org/docs/latest/api/scala/index.html#org.apache.spark.sql.DataFrameReader@parquet(paths:String*):org.apache.spark.sql.DataFrame]]
