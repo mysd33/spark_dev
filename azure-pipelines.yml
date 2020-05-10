@@ -39,7 +39,7 @@ steps:
 
 - script: |
     echo test
-    sbt $(SBT_IVY_OPTION) -Dactive.profile=ut it:test
+    sbt $(SBT_IVY_OPTION) -Dactive.profile=it it:test
   displayName: Integration Test
 
 ##https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/test/publish-test-results?view=azure-devops
@@ -47,7 +47,7 @@ steps:
 
 - script: |
     echo coverageReport
-    sbt $(SBT_IVY_OPTION) -Dactive.profile=ut coverageReport coverageAggregate
+    sbt $(SBT_IVY_OPTION) coverageReport coverageAggregate
   displayName: Create Coverage Report
 
 ##https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/test/publish-code-coverage-results?view=azure-devops

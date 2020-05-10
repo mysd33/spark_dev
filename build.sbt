@@ -52,7 +52,7 @@ lazy val application = (project in file("application"))
   //Integration Test対応(sbt it:test)
   .configs(IntegrationTest)
   .dependsOn(sparkFramework)
-  .dependsOn(sparkTestFramework % "it->test,test->test;compile->compile")
+  .dependsOn(sparkTestFramework % "it->test;test->test;compile->compile")
   .settings(
     Defaults.itSettings,
     commonSettings,
