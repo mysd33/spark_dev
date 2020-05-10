@@ -3,8 +3,7 @@ package com.example.fw.infra.dataaccess.impl
 import com.example.fw.domain.model.TextLineModel
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{DataFrame, Dataset, Row, SparkSession}
-import com.example.fw.infra.dataaccess.impl.ReaderMethodBuilder._
-import com.example.fw.infra.dataaccess.impl.WriterMethodBuilder._
+
 /**
  * TextLineModelに対応したファイルアクセス機能を提供するクラス
  *

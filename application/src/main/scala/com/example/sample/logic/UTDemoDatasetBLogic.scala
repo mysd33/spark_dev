@@ -10,7 +10,15 @@ import org.apache.spark.sql.{Dataset, SparkSession}
 import org.apache.spark.sql.types.{LongType, StringType, StructField, StructType}
 import com.example.fw.domain.utils.OptionImplicit._
 
-//単体テストコードデモ用
+
+/**
+ * AP基盤を使ったサンプル
+ *
+ * 単体テストコードデモ用に作成
+ * @see com.example.sample.logic.UTDemoDatasetBLogicTest
+ *
+ * @param dataFileReaderWriter Logicクラスが使用するDataFileReaderWriter
+ */
 class UTDemoDatasetBLogic(dataFileReaderWriter: DataFileReaderWriter) extends
   DatasetBLogic1to1[Person, Person](dataFileReaderWriter) {
 

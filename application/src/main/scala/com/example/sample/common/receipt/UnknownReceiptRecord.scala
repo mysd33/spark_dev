@@ -1,5 +1,12 @@
 package com.example.sample.common.receipt
 
+/**
+ * 不明のレセプトレコードクラス
+ * レセプトレコードクラスとマッピングオブジェクトが未定義の場合
+ * 当該クラスとして扱われる
+ *
+ * @param items
+ */
 case class UnknownReceiptRecord(items: Array[String]) extends ReceiptRecord {
   private val EMPTY_STRING = ""
   override val dataShikibetsu = if (items.length > 0) items(0) else EMPTY_STRING

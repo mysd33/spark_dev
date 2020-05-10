@@ -5,6 +5,9 @@ import org.apache.spark.rdd.RDD
 import scala.reflect.ClassTag
 import scala.xml.Elem
 
+/**
+ * 特定検診XMLのマッピングクラス
+ */
 object TokuteiKenshinMapper {
   def mapToTokuteiKennshinTuples(xml: Elem): Seq[(String, TokuteiKenshin)] = {
     val code: TokuteiKenshin = CodeTokuteiKenshinMapper.map(xml)

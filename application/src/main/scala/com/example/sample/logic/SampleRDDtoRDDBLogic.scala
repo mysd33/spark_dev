@@ -6,6 +6,12 @@ import com.example.fw.domain.model.{DataFile, TextLineModel}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
 
+/**
+ * AP基盤を使ったサンプル
+ *
+ * RDDToRDDBLogicを継承し、テキスト行形式のファイルを読み込んで、テキスト行形式のファイルを出力するサンプル
+ * @param dataFileReaderWriter Logicクラスが使用するDataFileReaderWriter
+ */
 class SampleRDDtoRDDBLogic(dataFileReaderWriter: DataFileReaderWriter)
   extends RDDToRDDBLogic[(String, Int)](dataFileReaderWriter) {
   override val inputFiles: Seq[DataFile[String]] = TextLineModel[String]("README.md") :: Nil

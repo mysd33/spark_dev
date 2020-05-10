@@ -98,15 +98,12 @@ trait HavingDateFormat {
  * 各行をテキストとして扱うファイルのModel
  *
  * @param relativePath ファイルの相対パス
- * @param compression  @see [[com.example.fw.domain.model.Compressable]]
  * @param encoding     @see [[com.example.fw.domain.model.TextFormat]]
  * @tparam T データセットが扱うデータ型。RDDやDataFrame、Dataset等で扱う型パラメータと対応する。
  */
 case class TextLineModel[T](override val relativePath: String,
-                            override val compression: Option[String] = None,
-                            override val encoding: Option[String] = None
-                           )
-  extends DataFile[T] with TextFormat with Compressable
+                            override val encoding: Option[String] = None)
+  extends DataFile[T] with TextFormat
 
 /**
  * マルチフォーマットCSVファイルのModel
@@ -144,6 +141,7 @@ case class CsvModel[T](override val relativePath: String,
                        override val encoding: Option[String] = None,
                        override val dateFormat: Option[String] = None,
                        override val timestampFormat: Option[String] = None,
+                       //TODO:emptyValue,nullValue,nanValueのCSVでの扱い
                        override val compression: Option[String] = None)
   extends DataFile[T] with TextFormat with Partitionable with HavingSchema with HavingDateFormat with Compressable
 
@@ -191,6 +189,7 @@ case class ParquetModel[T](override val relativePath: String,
  * @param schema       @see [[com.example.fw.domain.model.HavingSchema.schema]]
  * @param encoding     @see [[com.example.fw.domain.model.TextFormat.encoding]]
  * @param compression  @see [[com.example.fw.domain.model.Compressable.compression]]
+ * @deprecated spark-xmlの依存jarをすべてDatabricksクラスタにインストールしないと動作しないので本番開発では使用しない
  * @tparam T データセットが扱うデータ型。RDDやDataFrame、Dataset等で扱う型パラメータと対応する。
  */
 case class XmlModel[T](override val relativePath: String,

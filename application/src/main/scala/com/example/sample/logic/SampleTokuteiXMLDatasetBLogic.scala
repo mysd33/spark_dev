@@ -9,8 +9,19 @@ import com.example.sample.common.tokutei.{Code, PatientRole, TokuteiKenshinConst
 
 import scala.collection.mutable
 
-//TODO: spark-xmlの依存jarをすべてDatabricksクラスタにインストールしないと動作しないので本番開発では使用しない
 //TODO: spark-xmlは、ネストした複雑なXMLデータ構造だと煩雑なコードになってしまうし、ファイルを読んで逐次動作させながらでないと実装が難しいので使わない
+/**
+ * AP基盤を使ったサンプル
+ *
+ * 事前にシェルで、1行1特定検診XMLで複数特定検診のXMLを連結したテキストファイルを
+ * 読み込み、各タグごとに、CSVファイルに書き込みを試行した例
+ *
+ * spark-xmlの依存jarをすべてDatabricksクラスタにインストールしないと動作しないので注意。
+ *
+ * @deprecated spark-xmlは、ネストした複雑なXMLデータ構造だと煩雑なコードになってしまうし、ファイルを読んで逐次動作させながらでないと実装が難しいので使わない
+ *
+ * @param dataFileReaderWriter Logicクラスが使用するDataFileReaderWriter
+ */
 class SampleTokuteiXMLDatasetBLogic(dataFileReaderWriter: DataFileReaderWriter)
   extends DataFrameBLogic(dataFileReaderWriter) {
   private val outputDir = "tokutei/output/"

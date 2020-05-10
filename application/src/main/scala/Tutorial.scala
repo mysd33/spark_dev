@@ -1,5 +1,10 @@
 import org.apache.spark.sql.SparkSession
 
+/**
+ * Sparkのもっとも簡単なサンプル
+ *
+ *
+ */
 object Tutorial {
   def main(args: Array[String]): Unit = {
     val file = "C:\\temp\\README.md"

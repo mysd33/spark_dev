@@ -6,6 +6,9 @@ import com.example.fw.infra.dataaccess.StandardSparkDataFileReaderWriter
 import com.example.fw.test.SparkTestFunSuite
 import com.example.sample.common.entity.Person
 
+/**
+ * AP基盤のテストフレームワークを利用したテストコードの例
+ */
 class SampleDataSetBLogic3Test extends SparkTestFunSuite {
   test("SampleDatasetBLogic3.process") {
     println("active.profile:" + ResourceBundleManager.getActiveProfile())

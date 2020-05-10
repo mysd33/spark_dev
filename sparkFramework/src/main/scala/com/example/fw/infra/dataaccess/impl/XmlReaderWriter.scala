@@ -7,12 +7,17 @@ import org.apache.spark.sql._
 import com.example.fw.infra.dataaccess.impl.ReaderMethodBuilder._
 import com.example.fw.infra.dataaccess.impl.WriterMethodBuilder._
 
-//TODO: spark-xmlの依存jarをすべてDatabricksクラスタにインストールしないと動作しないので本番開発では使用しない
+//TODO: spark-xmlは、ネストした複雑なXMLデータ構造だと煩雑なコードになってしまうし、ファイルを読んで逐次動作させながらでないと実装が難しいので使わない
 /**
  * XmlModelに対応したファイルアクセス機能
  *
  * spark-xmlを利用しており、xmlメソッドに対応する
+ *
+ * spark-xmlの依存jarをすべてDatabricksクラスタにインストールしないと動作しないので注意
+ *
  * @see [[https://github.com/databricks/spark-xml/blob/master/README.md]]
+ *
+ * @deprecated spark-xmlは、ネストした複雑なXMLデータ構造だと煩雑なコードになってしまうし、ファイルを読んで逐次動作させながらでないと実装が難しいので使わない
  */
 class XmlReaderWriter {
   //Optionの実装

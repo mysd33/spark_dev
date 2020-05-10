@@ -11,6 +11,11 @@ import org.mockito.Mockito._
 import org.scalatestplus.mockito._
 import org.mockito.ArgumentMatchers._
 
+/**
+ * AP基盤のテストフレームワークを利用したテストコードの例
+ *
+ * 呼び出す共通処理や共通部品は、Mockitoを使用してモックに置き換え
+ */
 class UTDemoDatasetBLogicTest extends SparkTestFunSuite with MockitoSugar {
   test("UTDemoDatasetBLogicTest.process") {
     println("active.profile:" + ResourceBundleManager.getActiveProfile())

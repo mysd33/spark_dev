@@ -1,13 +1,16 @@
 package com.example.sample.common.receipt
 
 import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.{Dataset, SparkSession}
+
 import scala.reflect.ClassTag
+import scala.reflect.runtime.universe.TypeTag
 
 object MedReceiptRecordMapper {
   private val delimiter = ","
   private val lineSeparator = "\r\n"
 
-  def mapToReceiptRecordTuples(receipt: String):Array[(String, ReceiptRecord)] = {
+  def mapToReceiptRecordTuples(receipt: String): Array[(String, ReceiptRecord)] = {
     //1レセプトを改行コードでレコードごとに分解
     val records = receipt.split(lineSeparator)
     //最初のMNレコードからレセプト管理番号を取得
@@ -44,6 +47,13 @@ object MedReceiptRecordMapper {
   def extractRDD[T <: ReceiptRecord : ClassTag]
   (recordTypeName: String, rdd: RDD[(String, ReceiptRecord)]): RDD[T] = {
     rdd.filter(t => t._1 == recordTypeName)
+      .map(t => t._2.asInstanceOf[T])
+  }
+
+  def extractDataset[T <: Product with ReceiptRecord : TypeTag]
+  (recordTypeName: String, ds: Dataset[(String, ReceiptRecord)], sparkSession: SparkSession): Dataset[T] = {
+    import sparkSession.implicits._
+    ds.filter(t => t._1 == recordTypeName)
       .map(t => t._2.asInstanceOf[T])
   }
 

@@ -1,4 +1,4 @@
-package com.example.sample.utils
+package com.example.sample.common.utils
 
 class SampleUtils {
   def helloWorld(): Unit = {

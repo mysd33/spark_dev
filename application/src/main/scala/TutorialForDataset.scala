@@ -1,5 +1,10 @@
 import org.apache.spark.sql.SparkSession
 
+/**
+ * もっとも簡単なDatasetサンプル
+ *
+ * AP基盤機能も使っていない。
+ */
 object TutorialForDataset {
   def main(args: Array[String]): Unit = {
     val file = "C:\\temp\\person.json"
@@ -23,11 +28,6 @@ object TutorialForDataset {
     val primitiveDS = Seq(1, 2, 3).toDS()
     primitiveDS.map(_ + 1).collect().foreach(printf("%s,", _))
 
-    //TODO: Interoperating with RDDs
-    // http://spark.apache.org/docs/latest/sql-getting-started.html#interoperating-with-rdds
-
-    //TODO: UDF
-    // http://spark.apache.org/docs/latest/sql-getting-started.html#untyped-user-defined-aggregate-functions
   }
 }
 

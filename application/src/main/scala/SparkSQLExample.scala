@@ -1,5 +1,10 @@
 import org.apache.spark.sql.SparkSession
 
+/**
+ * もっとも簡単なDataFrameのサンプル。
+ *
+ * AP基盤機能も使っていない。
+ */
 object SparkSQLExample {
   def main(args: Array[String]): Unit = {
     val file = "C:\\temp\\person.json"
@@ -21,6 +26,5 @@ object SparkSQLExample {
     val sqlDF = spark.sql("SELECT * FROM people")
     sqlDF.show()
 
-    //TODO: Global Temporary View
   }
 }

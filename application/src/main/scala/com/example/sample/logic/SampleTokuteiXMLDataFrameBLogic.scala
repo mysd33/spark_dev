@@ -10,20 +10,29 @@ import scala.xml.XML
 
 import com.example.fw.domain.utils.OptionImplicit._
 
+/**
+ * AP基盤を使ったサンプル
+ *
+ * 事前にシェルで、1行1特定検診XMLで複数特定検診のXMLを連結したテキストファイルを
+ * 読み込み、各タグごとに、CSVファイルに書き込みを試行した例
+ *
+ * @param dataFileReaderWriter Logicクラスが使用するDataFileReaderWriter
+ */
 class SampleTokuteiXMLDataFrameBLogic(dataFileReaderWriter: DataFileReaderWriter)
   extends RDDToDataFrameBLogic(dataFileReaderWriter) {
-  private val outputDir = "tokutei/output2/"
 
-  //1行1特定検診XMLのテキストファイルとして扱う
+  //1行1特定検診XMLで複数特定検診のXMLを連結したテキストファイルを読み込む例。TextLineModelで扱う
   override val inputFiles: Seq[DataFile[String]] =
     TextLineModel[String]("tokutei/kensin_kihon_tokutei_result2.xml") :: Nil
 
+  //CSVファイルに書き込む例。bzip2でファイル圧縮
+  private val outputDir = "tokutei/output2/"
   override val outputFiles: Seq[DataFile[Row]] =
     CsvModel[Row](outputDir + TokuteiKenshinConst.Code, compression = "bzip2"
     ) :: CsvModel[Row](outputDir + TokuteiKenshinConst.PatientRole, compression = "bzip2"
     ) :: Nil
 
-  var cached: RDD[(String, TokuteiKenshin)] = null
+  private var cached: RDD[(String, TokuteiKenshin)] = null
 
   override def process(inputs: Seq[RDD[String]], sparkSession: SparkSession): Seq[DataFrame] = {
     // scala xmlで特定検診XMLのデータを操作

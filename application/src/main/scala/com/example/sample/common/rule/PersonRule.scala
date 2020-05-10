@@ -2,7 +2,9 @@ package com.example.sample.common.rule
 
 import com.example.sample.common.entity.Person
 
-
+/**
+ * 共通部品（ビジネスルール）クラスの例
+ */
 class PersonRule extends Serializable {
   //mapメソッド内でも実行可能なようSerializableを実装
   def calcAge(person: Person): Long = {

@@ -9,15 +9,25 @@ import org.apache.spark.sql.{Dataset, SparkSession}
 
 import com.example.fw.domain.utils.OptionImplicit._
 
+/**
+ * AP基盤を使ったサンプル
+ *
+ * DataSetBLogic1to1クラスを継承し、ヘッダなしCsvファイルを読み込んでParquetファイルを出力するサンプル
+ *
+ * @param dataFileReaderWriter Logicクラスが使用するDataFileReaderWriter
+ */
 class SampleDataSetBLogic3(dataFileReaderWriter: DataFileReaderWriter)
   extends DatasetBLogic1to1[Person, Person](dataFileReaderWriter) {
+  //ヘッダなしのCSVファイルの読み込みの例
   override val inputFile: DataFile[Person] = CsvModel[Person](
     "person_noheader.csv",
+    //caseクラス（Person）とマッピングさせるようスキーマ定義する
     schema = StructType(Array(
-      StructField("age", LongType, true),
-      StructField("name", StringType, true)
+      StructField("age", LongType, true),     //1列目
+      StructField("name", StringType, true)   //2列目
     ))
   )
+  //Parquetファイルの書き込みの例
   override val outputFile: DataFile[Person] = ParquetModel[Person]("person.parquet")
 
   override def process(input: Dataset[Person], sparkSession: SparkSession): Dataset[Person] = {

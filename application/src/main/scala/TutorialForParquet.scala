@@ -1,5 +1,12 @@
 import org.apache.spark.sql.{SaveMode, SparkSession}
 
+/**
+ * 簡単なDataFrameサンプル
+ *
+ * parquetやjsonを使用
+ *
+ * AP基盤機能も使っていない。
+ */
 object TutorialForParquet {
   def main(args: Array[String]): Unit = {
     val file = "C:\\temp\\person.json"

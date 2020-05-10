@@ -1,5 +1,10 @@
 package com.example.sample.common.receipt
 
+/**
+ * レセプトレコードクラスの例
+ *
+ * caseクラスで作成
+ */
 case class MedRE(receiptKanriNo: String,
                  dataShikibetsu: String,
                  gyoNo: String,
@@ -44,7 +49,9 @@ case class MedRE(receiptKanriNo: String,
                  patientStatus: String) extends ReceiptRecord {
 }
 
-//CSVのマッピング定義
+/**
+ * CSVのマッピング定義
+ */
 object MedREReceiptRecordMapper {
   def map(receiptKanriNo: String, items: Array[String]): MedRE = {
     MedRE(

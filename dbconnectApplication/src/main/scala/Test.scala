@@ -1,4 +1,4 @@
-//import com.example.sample.utils.SampleUtils
+//import com.example.sample.common.utils.SampleUtils
 import org.apache.spark.sql.SparkSession
 
 object Test {
