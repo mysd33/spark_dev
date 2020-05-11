@@ -66,6 +66,10 @@ steps:
 
 - task: SonarQubeAnalyze@4
 
+- task: SonarQubePublish@4
+  inputs:
+    pollingTimeoutSec: '300'
+
 - script: |
     echo assembly
     sbt $(SBT_IVY_OPTION) assembly
