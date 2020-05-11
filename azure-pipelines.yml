@@ -27,6 +27,12 @@ steps:
     sbt $(SBT_IVY_OPTION) clean package
   displayName: Build
 
+- task: SonarQubePrepare@4
+  inputs:
+    SonarQube: 'SonarQube'
+    scannerMode: 'CLI'
+    configMode: 'file'
+
 - script: |
     echo scaladoc
     sbt $(SBT_IVY_OPTION) doc
@@ -56,6 +62,8 @@ steps:
     codeCoverageTool: "cobertura"
     summaryFileLocation: "$(System.DefaultWorkingDirectory)/target/**/coverage-report/cobertura.xml"
   displayName: Publish Code Coverage Results
+
+- task: SonarQubeAnalyze@4
 
 - script: |
     echo assembly
