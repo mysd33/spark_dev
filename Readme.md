@@ -105,5 +105,30 @@
   
 ##Azure DevOps PipelineでのCI
 * Azure Reposでソースコード管理し、Azure Pipelineでパイプラインを作成することでazure-pipelines.ymlの定義に基づきPipeline実行できます
-* ビルド、scaladoc、単体テスト実行、結合テスト実行、実行可能jar作成、テスト結果レポート、カバレッジレポートに対応しています。
-* また、ivyローカルリポジトリのjarをキャッシュしビルド時間を短縮する設定もしています。
+* ビルド、scaladoc、単体テスト実行、結合テスト実行、実行可能jar作成、テスト結果レポート、カバレッジレポートに対応しています
+* また、ivyローカルリポジトリのjarをキャッシュしビルド時間を短縮する設定もしています
+* 本サンプルではAzure DevOps Serviceを使って動作確認しています
+  * 本番開発では、東日本リージョン内でのDevOps Serverの構築が必要です
+
+##Sonar Qube
+* Azure DevOps Pipelineで、SonarQubeを使用した静的コードチェックを実施しています
+* 利用しない場合は、azure-pipeline.ymlの該当箇所をコメントアウトしてください
+* Azure Sonar Qubeの簡単な構築方法は、以下の通りです（本番ではそのままの手順で構築しないこと）
+  * （参考ページ）https://azuredevopslabs.com/labs/vstsextend/sonarqube/
+  * TBD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

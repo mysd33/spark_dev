@@ -32,6 +32,7 @@ steps:
     SonarQube: 'SonarQube'
     scannerMode: 'CLI'
     configMode: 'file'
+    configFile: $(System.DefaultWorkingDirectory)/sonar-project.properties
 
 - script: |
     echo scaladoc
