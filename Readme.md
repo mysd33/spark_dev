@@ -105,28 +105,48 @@
   
 ##Azure DevOps PipelineでのCI
 * Azure Reposでソースコード管理し、Azure Pipelineでパイプラインを作成することでazure-pipelines.ymlの定義に基づきPipeline実行できます
-* ビルド、scaladoc、単体テスト実行、結合テスト実行、実行可能jar作成、テスト結果レポート、カバレッジレポートに対応しています
+* ビルド、scaladoc、単体テスト実行、結合テスト実行、実行可能jar作成、テスト結果レポート、カバレッジレポート、SonarQubeによる静的コード解析レポートに対応しています
 * また、ivyローカルリポジトリのjarをキャッシュしビルド時間を短縮する設定もしています
 * 本サンプルではAzure DevOps Serviceを使って動作確認しています
   * 本番開発では、東日本リージョン内でのDevOps Serverの構築が必要です
 
-##Sonar Qube
+##Azure DevOps PipelineからのSonar Qubeの実行
 * Azure DevOps Pipelineで、SonarQubeを使用した静的コードチェックを実施しています
 * 利用しない場合は、azure-pipeline.ymlの該当箇所をコメントアウトしてください
-* Azure Sonar Qubeの簡単な構築方法は、以下の通りです（本番ではそのままの手順で構築しないこと）
+  * 「task: SonarQubePrepare@4」、「task: SonarQubePrepare@4」、「task: SonarQubePublish@4」
+* Azure上でのSonarQubeの簡単な構築方法は、以下の通りです
+  * 本番ではそのままの手順で構築しないこと
   * （参考ページ）https://azuredevopslabs.com/labs/vstsextend/sonarqube/
-  * TBD
 
+* Azure Container InstancesでSonarQubeのコンテナを起動します
+```
+az container create -g (リソースグループ名)  --name sonarqubeaci --image sonarqube --ports 9000 --dns-name-label （DNSラベル名）--cpu 2 --memory 3.5
+（例）
+az container create -g RG_MYSD_DEV  --name sonarqubeaci --image sonarqube --ports 9000 --dns-name-label myd33sonarqube --cpu 2 --memory 3.5
+```
+* SonarQubeのコンテナのFQDNを調べて、ブラウザ起動します
+  * 「http://（az containerコマンドの--dns-name-labelオプションの値）.（リージョン）.azurecontainer.io:9000」になります  
+  * （例）http://myd33sonarqube.japaneast.azurecontainer.io:9000
 
+* SonarQubeにログインしプロジェクトを作成します
+  * admin/adminでログイン（ログイン後、パスワード変更しておくこと）
+  * プロジェクトを作成
+    * name: databricks_dev
+    * projectkey: databricks_dev
+    * visibility: private
+  * プロジェクトのページに移動し、トークンを生成し、端末にコピーし保管します
+  * nameやprojectkeyはsonar-project.propertiesの値と合わせていますので変更する場合は、sonar-project.propertiesの値も修正してください
+    
+* Azure PipelineのExtensionとしてSonarQubeをインストール
+  * Azure DevOpsのOrganization Sttings->Exntensionsで「Browse MarketPlace」から「SonarQube」を取得
+    * Azure DevOps Organizaiont管理者へのExtensionインストールの承認フローが入りインストールを完了させます
 
-
-
-
-
-
-
-
-
+* SonarQube Serverの接続情報を登録します 
+  * Project Setting -> Piplines -> Service connectionsへ移動
+  * Create Service Connectionをクリック
+  * 「SonarQube Server」を選択し、「Server Url」と「Token」「Service connection name」を入力します
+  * 「Service connection name」はazure-pipelines.yamlの「task: SonarQubePrepare@4」の「SonarQube」の設定と合わせて'SonarQube'とします。
+    *  'SonarQube'以外の名前にしたい場合は、azure-pipeline.yamlの値を直してください
 
 
 
