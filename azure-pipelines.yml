@@ -74,3 +74,13 @@ steps:
     echo assembly
     sbt $(SBT_IVY_OPTION) assembly
   displayName: Create Assembly
+
+- task: CopyFiles@2
+  inputs:
+    contents: "$(System.DefaultWorkingDirectory)/target/**/databricks_dev_**.jar"
+    targetFolder: $(Build.ArtifactStagingDirectory)
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathToPublish: $(Build.ArtifactStagingDirectory)
+    artifactName: applicationAssembly
