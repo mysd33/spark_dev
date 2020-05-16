@@ -20,7 +20,7 @@ steps:
       sbt | "$(Agent.OS)
       sbt
     path: $(IVY_CACHE_FOLDER)
-  displayName: sbt build cache
+  displayName: Cache IVY Local Repository
 
 - script: |
     echo build
@@ -33,11 +33,12 @@ steps:
     scannerMode: 'CLI'
     configMode: 'file'
     configFile: $(System.DefaultWorkingDirectory)/sonar-project.properties
+  displayName: SonarQube Prepare
 
 - script: |
     echo scaladoc_unidoc
     sbt $(SBT_IVY_OPTION) unidoc
-  displayName: Create API Document
+  displayName: Create Scaladoc API Document
 
 - script: |
     echo test
@@ -51,6 +52,7 @@ steps:
 
 ##https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/test/publish-test-results?view=azure-devops
 - task: PublishTestResults@2
+  displayName: Publish Test Results
 
 - script: |
     echo coverageReport
@@ -65,10 +67,12 @@ steps:
   displayName: Publish Code Coverage Results
 
 - task: SonarQubeAnalyze@4
+  displayName: SonarQube Analyze
 
 - task: SonarQubePublish@4
   inputs:
     pollingTimeoutSec: '300'
+  displayName: SonarQube Publish
 
 - script: |
     echo assembly
@@ -83,8 +87,10 @@ steps:
       $(System.DefaultWorkingDirectory)/target/**/coverage-report/cobertura.xml
       $(System.DefaultWorkingDirectory)/target/**/scoverage-report/**/?(*.html|*.xml)
     targetFolder: $(Build.ArtifactStagingDirectory)
+  displayName: Copy Artifacts
 
 - task: PublishBuildArtifacts@1
   inputs:
     pathToPublish: $(Build.ArtifactStagingDirectory)
     artifactName: applicationAssembly
+  displayName: Publish Artifacts
