@@ -31,7 +31,7 @@ trait DatabricksDataFileReaderWriter extends StandardSparkDataFileReaderWriter {
   }
 
   /**
-   * @see com.example.fw.domain.dataaccess.DataFileReaderWriterImpl.readToDf
+   * @see com.example.fw.domain.dataaccess.DataFileReaderWriterImpl.readToDs[T](DataFile[T], SparkSession)
    * @param inputFile    入力ファイルのDataFile
    * @param sparkSession SparkSession
    * @return DataFrame
@@ -45,7 +45,7 @@ trait DatabricksDataFileReaderWriter extends StandardSparkDataFileReaderWriter {
   }
 
   /**
-   * @see com.example.fw.domain.dataaccess.DataFileReaderWriterImpl.writeFromDsDf
+   * @see [[com.example.fw.domain.dataaccess.DataFileReaderWriterImpl.writeFromDsDf]]
    * @param ds         出力対象のDataset/DataFrame
    * @param outputFile 出力先ファイルのDataFile
    * @param saveMode   出力時のSaveMode

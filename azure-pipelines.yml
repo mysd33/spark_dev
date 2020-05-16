@@ -35,8 +35,8 @@ steps:
     configFile: $(System.DefaultWorkingDirectory)/sonar-project.properties
 
 - script: |
-    echo scaladoc
-    sbt $(SBT_IVY_OPTION) doc
+    echo scaladoc_unidoc
+    sbt $(SBT_IVY_OPTION) unidoc
   displayName: Create API Document
 
 - script: |
@@ -45,7 +45,7 @@ steps:
   displayName: Unit Test
 
 - script: |
-    echo test
+    echo integration_test
     sbt $(SBT_IVY_OPTION) -Dactive.profile=it it:test
   displayName: Integration Test
 

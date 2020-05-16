@@ -51,7 +51,7 @@ trait StandardSparkDataFileReaderWriter extends DataFileReaderWriterImpl {
   }
 
   /**
-   * @see com.example.fw.domain.dataaccess.DataFileReaderWriterImpl.readToDs(DataFile[T], SparkSession)
+   * @see com.example.fw.domain.dataaccess.DataFileReaderWriterImpl.readToDs[T](DataFile[T], SparkSession)
    * @param inputFile    入力ファイルのDataFile
    * @param sparkSession SparkSession
    * @tparam T DataFileおよびDatasetの型パラメータ

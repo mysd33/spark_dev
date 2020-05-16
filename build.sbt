@@ -11,8 +11,10 @@ lazy val unmanagedJarFiles = "lib"
 
 lazy val IT_TEST = "it,test"
 
-//sbt testのプロファイル設定するため
-//sbt -Dactive.profile=ut test以下のように起動すること
+//sbt test、it:testを実行する場合、プロファイル設定するため
+//「sbt -Dactive.profile=ut test」
+//「sbt -Dactive.profile=it it:test」
+//のように起動すること
 //IntelliJの場合には、設定で、sbtのVM起動オプションを設定しておく。
 //ちなみに、sbtのfork機能でのjavaOptions設定は有効にならなかった
 lazy val commonSettings = Seq(
@@ -21,15 +23,21 @@ lazy val commonSettings = Seq(
   assemblyOption in assembly := (assemblyOption in assembly).value
     .copy(includeScala = false, includeDependency = false),
   //sbt assemblyで、テストをスキップ
-  test in assembly := {}
+  test in assembly := {},
+  autoAPIMappings := true
 )
 
 lazy val root = (project in file("."))
   .aggregate(application, sparkFramework, databricksFramework, dbconnectApplication)
   .dependsOn(application, databricksFramework)
+  //enabled sbt-unidoc
+  //https://github.com/sbt/sbt-unidoc#how-to-unify-scaladoc
+  .enablePlugins(ScalaUnidocPlugin)
   .settings(
     commonSettings,
-    name := "databricks_dev"
+    name := "databricks_dev",
+    //https://github.com/sbt/sbt-unidoc#how-to-include-multiple-configurations
+    unidocProjectFilter in (ScalaUnidoc, unidoc) := inAnyProject -- inProjects(application, dbconnectApplication)
   )
 
 lazy val dbconnectApplication = (project in file("dbconnectApplication"))
@@ -74,12 +82,14 @@ lazy val sparkFramework = (project in file("sparkFramework"))
     libraryDependencies ++= Seq(
       "org.apache.spark" %% "spark-core" % sparkVersion,
       "org.apache.spark" %% "spark-sql" % sparkVersion,
-      //TODO: 以下のspark-xmlの依存jarをすべてDatabricksクラスタにインストールしないと動作しないので本番開発では使用しない
+      //TODO: spark-xmlは複雑なXMLを扱うのに適していないので本番開発では使用しない
+      "com.databricks" %% "spark-xml" % sparkXmlVersion
+      //TODO: 以下のspark-xmlの依存jarをすべてDatabricksクラスタにインストールしないと動作しないので注意
       //spark-xml_2.11.0-0.9.0.jar, txw2-2.3.2.jar
       //Databricksの場合Mavenリポジトリから直接ライブラリ登録も可能
       //com.databricks:spark-xml_2.11:0.9.0
       //org.glassfish.jaxb:txw2:2.3.2
-      "com.databricks" %% "spark-xml" % sparkXmlVersion
+
     )
   )
 
