@@ -77,7 +77,9 @@ steps:
 
 - task: CopyFiles@2
   inputs:
-    contents: "$(System.DefaultWorkingDirectory)/target/**/databricks_dev_*.jar"
+    contents: |
+      $(System.DefaultWorkingDirectory)/target/**/databricks_dev_*.jar
+      $(System.DefaultWorkingDirectory)/target/**/coverage-report/cobertura.xml
     targetFolder: $(Build.ArtifactStagingDirectory)
 
 - task: PublishBuildArtifacts@1
