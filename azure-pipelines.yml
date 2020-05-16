@@ -60,6 +60,7 @@ steps:
 ##https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/test/publish-code-coverage-results?view=azure-devops
 - task: PublishCodeCoverageResults@1
   inputs:
+    codeCoverageTool: "cobertura"
     summaryFileLocation: "$(System.DefaultWorkingDirectory)/target/**/coverage-report/cobertura.xml"
   displayName: Publish Code Coverage Results
 
