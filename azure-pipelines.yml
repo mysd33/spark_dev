@@ -75,11 +75,13 @@ steps:
     sbt $(SBT_IVY_OPTION) assembly
   displayName: Create Assembly
 
+#https://github.com/MicrosoftDocs/azure-devops-docs/blob/master/docs/pipelines/tasks/utility/copy-files.md
 - task: CopyFiles@2
   inputs:
     contents: |
       $(System.DefaultWorkingDirectory)/target/**/databricks_dev_*.jar
       $(System.DefaultWorkingDirectory)/target/**/coverage-report/cobertura.xml
+      $(System.DefaultWorkingDirectory)/target/**/scoverage-report/**/?(*.html|*.xml)
     targetFolder: $(Build.ArtifactStagingDirectory)
 
 - task: PublishBuildArtifacts@1
