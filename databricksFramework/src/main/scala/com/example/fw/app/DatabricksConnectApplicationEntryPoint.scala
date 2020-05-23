@@ -14,7 +14,7 @@ import org.apache.spark.internal.Logging
  *     run(args)
  *   }
  *
- *   //override addJar method*
+ *   //override addJar method
  *   override protected def addJar(sc: SparkContext): Unit = {
  *     // add project jar
  *     sc.addJar("target/scala-2.11/xxxxx-assembly-0.1.jar")
