@@ -6,6 +6,7 @@ import org.apache.spark.sql.types.StructType
 
 /**
  * Spark APで扱うファイルを表す最上位のトレイト
+ *
  * ファイルのパスやデータセットが扱うデータ形式を保持する
  *
  * @tparam T データセットが扱うデータ型。RDDやDataFrame、Dataset等で扱う型パラメータと対応する。
@@ -28,7 +29,7 @@ sealed trait DataFile[+T] extends Serializable {
 }
 
 /**
- * ファイルがパーティション可能であることを示すトレイト
+ * ファイルがパーティショニング（partitionBy）可能であることを示すトレイト
  */
 trait Partitionable {
   /** パーティション列
@@ -109,7 +110,7 @@ case class TextLineModel[T](override val relativePath: String,
  * マルチフォーマットCSVファイルのModel
  *
  * @param relativePath    ファイルの相対パス
- * @param recordDelimiter 処理単位のレコードの区切り文字列。
+ * @param recordDelimiter 処理単位のレコードの区切り文字列。デフォルトは、NUL（\\u0000）
  *                        Hadoopの"textinputformat.record.delimiter"に対応する。
  * @param encoding        @see [[com.example.fw.domain.model.TextFormat]]
  * @tparam T データセットが扱うデータ型。RDDやDataFrame、Dataset等で扱う型パラメータと対応する。
@@ -179,9 +180,12 @@ case class ParquetModel[T](override val relativePath: String,
                            override val compression: Option[String] = None)
   extends DataFile[T] with Partitionable with Compressable
 
-//TODO: spark-xmlの依存jarをすべてDatabricksクラスタにインストールしないと動作しないので本番開発では使用しない
+//TODO: spark-xmlは、ネストした複雑なXMLデータ構造だと煩雑なコードになってしまうし、ファイルを読んで逐次動作させながらでないと実装が難しいので使わない
 /**
  * XMLファイルのModel
+ *
+ * spark-xmlの依存jarをすべてDatabricksクラスタにインストールしないと動作しないので注意
+ * @see [[https://github.com/databricks/spark-xml/blob/master/README.md]]
  *
  * @param relativePath ファイルの相対パス
  * @param rowTag       spark-xmlのoptionメソッドの"rowTag"と対応
@@ -189,7 +193,7 @@ case class ParquetModel[T](override val relativePath: String,
  * @param schema       @see [[com.example.fw.domain.model.HavingSchema.schema]]
  * @param encoding     @see [[com.example.fw.domain.model.TextFormat.encoding]]
  * @param compression  @see [[com.example.fw.domain.model.Compressable.compression]]
- * @deprecated spark-xmlの依存jarをすべてDatabricksクラスタにインストールしないと動作しないので本番開発では使用しない
+ * @deprecated spark-xmlは、ネストした複雑なXMLデータ構造だと煩雑なコードになってしまうし、ファイルを読んで逐次動作させながらでないと実装が難しいので使わない
  * @tparam T データセットが扱うデータ型。RDDやDataFrame、Dataset等で扱う型パラメータと対応する。
  */
 case class XmlModel[T](override val relativePath: String,

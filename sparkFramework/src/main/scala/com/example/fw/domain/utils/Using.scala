@@ -8,6 +8,16 @@ import org.apache.spark.internal.Logging
  *
  * try-finally構文をラップし、例外の発生有無に係わらず
  * 利用者が忘れずにリソースをclose（解放）するようにする糖衣構文を実装する。
+ * {{{
+ *   //using句で生成したインスタンス
+ *   using(createSparkSession(logicClassFQDN)) {
+ *       sparkSession => {
+ *         val logic = LogicCreator.newInstance(logicClassFQDN,
+ *           StandardSparkDataFileReaderWriterFactory.createDataFileReaderWriter(), args)
+ *         logic.execute(sparkSession)
+ *       }
+ *     }
+ * }}}
  *
  * scala2.13.0からは標準でUsingクラスをサポートしているが、
  * Spark2.4.5は、scala2.12（Databricksは2.11）サポートのため
@@ -17,7 +27,7 @@ object Using extends Logging {
   /**
    * using句を提供する
    *
-   * @param resource 処理終了後、closeしたいリソース
+   * @param resource 処理終了後、closeしたいリソース。closeメソッドを定義している必要がある。
    * @param func     リソースを入力とする処理を実装する関数
    * @tparam A resoucrceの型
    * @tparam B funcの戻り値の型
