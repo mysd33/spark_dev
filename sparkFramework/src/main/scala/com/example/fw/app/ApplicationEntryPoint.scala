@@ -1,7 +1,7 @@
 package com.example.fw.app
 
 /**
- * 標準的なSparkApのエントリポイントオブジェクト
+ * 標準的なSparkアプリケーションのエントリポイントオブジェクト
  */
 object ApplicationEntryPoint {
   /**

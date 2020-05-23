@@ -20,30 +20,9 @@ object DatabricksJobApplicationEntryPoint {
    */
   def main(args: Array[String]): Unit = {
     assert(args.length > 0)
-    val appName = args(0)
+    val logicClassFQDN = args(0)
     val methodArgs = if (args.length > 1) args.tail else null
-    //TODO:独自のプロパティではなくてSpark実行時のパラメータのほうがよいか？
-    val clusterMode = ResourceBundleManager.get("clustermode")
-    val logLevel = ResourceBundleManager.get("loglevel")
-
-    //Sparkの実行
-    //DatabricksでJARジョブプログラムを実行する場合共有SparkContextを使用するため
-    //SparkSession.close（SparkContext.stop）を呼び出してはいけない
-    //https://docs.microsoft.com/ja-jp/azure/databricks/jobs#%E5%85%B1%E6%9C%89-sparkcontext-%E3%82%92-%E4%BD%BF%E7%94%A8%E3%81%99%E3%82%8B--use-the-shared-sparkcontext
-    val spark = SparkSession.builder()
-      .appName(appName)
-      .getOrCreate()
-    val sc = spark.sparkContext
-    //TODO:ログが多いのでオフしている。log4j.propertiesで設定できるようにするなど検討
-    sc.setLogLevel(logLevel)
-    Logger.getLogger("org").setLevel(Level.OFF)
-    Logger.getLogger("akka").setLevel(Level.OFF)
-
-    //Logicインスタンスの実行
-    val logic = LogicCreator.newInstance(appName,
-      DatabrickDataFileReaderWriterFactory.createDataFileReaderWriter(), methodArgs)
-    logic.execute(spark)
-
+    DatabricksSparkSessionManager.run(logicClassFQDN, methodArgs)
   }
 
 }

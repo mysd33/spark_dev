@@ -4,6 +4,7 @@ import com.example.fw.domain.logic.LogicCreator
 import com.example.fw.domain.utils.ResourceBundleManager
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.SparkContext
+import org.apache.spark.internal.Logging
 import org.apache.spark.sql.SparkSession
 
 /**
@@ -24,7 +25,7 @@ import org.apache.spark.sql.SparkSession
  * }
  * }}}
  */
-abstract class DatabricksConnectApplicationEntryPoint {
+abstract class DatabricksConnectApplicationEntryPoint extends Logging {
 
   /**
    * SparkAPを起動する
@@ -35,29 +36,21 @@ abstract class DatabricksConnectApplicationEntryPoint {
    */
   final def run(args: Array[String]): Unit = {
     assert(args.length > 0)
-    val appName = args(0)
+    val logicClassFQDN = args(0)
     val methodArgs = if (args.length > 1) args.tail else null
-    //TODO:独自のプロパティではなくてSpark実行時のパラメータのほうがよいか？
-    val clusterMode = ResourceBundleManager.get("clustermode")
-    val logLevel = ResourceBundleManager.get("loglevel")
-
     //Sparkの実行
-    val spark = SparkSession.builder()
-      .master(clusterMode)
-      .appName(appName)
-      .getOrCreate()
+    val spark = DatabricksSparkSessionManager.createSparkSession(logicClassFQDN)
     val sc = spark.sparkContext
-    //TODO:ログが多いのでオフしている。log4j.propertiesで設定できるようにするなど検討
-    sc.setLogLevel(logLevel)
-    Logger.getLogger("org").setLevel(Level.OFF)
-    Logger.getLogger("akka").setLevel(Level.OFF)
-    //Jarの追加
+    //DatabricksConnectに必要なJarの追加
     addJar(sc)
-
-    //Logicインスタンスの実行
-    val logic = LogicCreator.newInstance(appName,
-      DatabrickDataFileReaderWriterFactory.createDataFileReaderWriter(), methodArgs)
-    logic.execute(spark)
+    try {
+      //Logicインスタンスの実行
+      val logic = LogicCreator.newInstance(logicClassFQDN,
+        DatabrickDataFileReaderWriterFactory.createDataFileReaderWriter(), methodArgs)
+      logic.execute(spark)
+    } catch {
+      case e: Exception => logError("システムエラーが発生しました", e)
+    }
   }
 
   /**

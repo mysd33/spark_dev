@@ -3,35 +3,37 @@ package com.example.fw.app
 import com.example.fw.domain.const.FWConst
 import com.example.fw.domain.logic.LogicCreator
 import com.example.fw.domain.utils.ResourceBundleManager
-import com.example.fw.domain.utils.Using._
 import org.apache.log4j.{Level, Logger}
+import org.apache.spark.internal.Logging
 import org.apache.spark.sql.SparkSession
 
 /**
- * 標準的なSparkアプリケーション用SparkSession管理オブジェクト
+ * Databricksアプリケーション用SparkSession管理オブジェクト
  */
-object StandardSparkSessionManager {
-
+object DatabricksSparkSessionManager extends Logging {
   /**
    * 指定したLogicクラスを使用しアプリケーションを実行する
+   *
    * @param logicClassFQDN Logicクラスの完全修飾名
    * @param args
    */
   def run(logicClassFQDN: String, args: Array[String]): Unit = {
     assert(logicClassFQDN != null)
-    //Sparkの実行。Spark標準の場合は、SparSessionを最後にクローズする(using句）
-    using(createSparkSession(logicClassFQDN)) {
-      sparkSession => {
-        //Logicインスタンスの実行
-        val logic = LogicCreator.newInstance(logicClassFQDN,
-          StandardSparkDataFileReaderWriterFactory.createDataFileReaderWriter(), args)
-        logic.execute(sparkSession)
-      }
+    try {
+      //Sparkの実行。Databricksの場合は、SparSessionをクローズしてはいけない。
+      val spark = createSparkSession(logicClassFQDN)
+      //Logicインスタンスの実行
+      val logic = LogicCreator.newInstance(logicClassFQDN,
+        DatabrickDataFileReaderWriterFactory.createDataFileReaderWriter(), args)
+      logic.execute(spark)
+    } catch {
+      case e: Exception => logError("システムエラーが発生しました", e)
     }
   }
 
   /**
    * SparkSessionを作成する。
+   *
    * @param appName SparkSessionに渡すアプリケーション名
    * @return SparkSession
    */
