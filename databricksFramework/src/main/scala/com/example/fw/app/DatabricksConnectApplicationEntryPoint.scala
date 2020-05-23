@@ -1,11 +1,8 @@
 package com.example.fw.app
 
 import com.example.fw.domain.logic.LogicCreator
-import com.example.fw.domain.utils.ResourceBundleManager
-import org.apache.log4j.{Level, Logger}
 import org.apache.spark.SparkContext
 import org.apache.spark.internal.Logging
-import org.apache.spark.sql.SparkSession
 
 /**
  * 端末からDatabricks接続する場合のエントリポイントの基底クラス

@@ -21,6 +21,11 @@ import org.apache.spark.sql.SparkSession
  * }}}
  */
 object DatabricksNotebookEntryPoint {
+  /**
+   * Notebookで指定したLogicインスタンスを呼び出しSparkアプリケーションを実行する
+   * @param sparkSession SparkSession
+   * @param logic Logicインスタンス
+   */
   def run(sparkSession: SparkSession, logic: Logic): Unit = {
     logic.execute(sparkSession)
   }

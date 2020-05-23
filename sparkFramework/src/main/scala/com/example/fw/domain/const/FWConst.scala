@@ -22,8 +22,13 @@ object FWConst {
    */
   val DEFAULT_CSV_DELIMITER = ","
 
-
+  /**
+   * Sparkのクラスタモードを表すプロパティキー
+   */
   val CLUSTER_MODE_KEY = "clustermode"
 
+  /**
+   * Sparkのログレベルを表すプロパティキー
+   */
   val LOG_LEVEL_KEY = "loglevel"
 }

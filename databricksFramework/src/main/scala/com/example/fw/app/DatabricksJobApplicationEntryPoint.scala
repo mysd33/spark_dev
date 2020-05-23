@@ -1,12 +1,5 @@
 package com.example.fw.app
 
-import com.example.fw.domain.dataaccess.DataFileReaderWriter
-import com.example.fw.domain.logic.LogicCreator
-import com.example.fw.domain.utils.ResourceBundleManager
-import com.example.fw.infra.dataaccess.DatabricksDataFileReaderWriter
-import org.apache.log4j.{Level, Logger}
-import org.apache.spark.sql.SparkSession
-
 /**
  * Databricksでjarジョブを実行する場合に使用するエントリポイント
  *

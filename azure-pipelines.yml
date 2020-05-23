@@ -86,6 +86,7 @@ steps:
       $(System.DefaultWorkingDirectory)/target/**/databricks_dev_*.jar
       $(System.DefaultWorkingDirectory)/target/**/coverage-report/cobertura.xml
       $(System.DefaultWorkingDirectory)/target/**/scoverage-report/**/?(*.html|*.xml)
+      $(System.DefaultWorkingDirectory)/target/**/unidoc/**/?(*.html|*.js|*.css|*.png|*.gif)
     targetFolder: $(Build.ArtifactStagingDirectory)
   displayName: Copy Artifacts
 
