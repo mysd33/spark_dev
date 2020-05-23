@@ -15,7 +15,7 @@ object ApplicationEntryPoint {
     assert(args.length > 0)
     val logicClassFQDN = args(0)
     val methodArgs = if (args.length > 1) args.tail else null
-    StandardSparkApplicationRunner.run(logicClassFQDN, methodArgs)
+    StandardSparkSessionManager.run(logicClassFQDN, methodArgs)
   }
 
 }
