@@ -185,8 +185,8 @@ case class ParquetModel[T](override val relativePath: String,
  * XMLファイルのModel
  *
  * spark-xmlの依存jarをすべてDatabricksクラスタにインストールしないと動作しないので注意
- * @see [[https://github.com/databricks/spark-xml/blob/master/README.md]]
  *
+ * @see [[https://github.com/databricks/spark-xml/blob/master/README.md]]
  * @param relativePath ファイルの相対パス
  * @param rowTag       spark-xmlのoptionメソッドの"rowTag"と対応
  * @param rootTag      spark-xmlのoptionメソッドの"rootTag"と対応
@@ -203,3 +203,26 @@ case class XmlModel[T](override val relativePath: String,
                        override val encoding: Option[String] = None,
                        override val compression: Option[String] = None)
   extends DataFile[T] with TextFormat with HavingSchema with Compressable
+
+
+/**
+ * データウェアハウス(データマート)基盤のDBを扱うModel
+ *
+ * Azureの場合、通常、Synapse Analytics(SQL Data Warehouse)に接続することを想定しているが
+ * 業務ロジックを変更せずに、Snowflake等の他のデータウェアハウス基盤でも利用できるよう、
+ * 将来的に特定のクラウドや製品に依存せずにReaderWriterの実装を切り替え可能な作りとしている。
+ *
+ * @param dbTable 読み書きするDBのテーブル名。queryとは同時に指定できない。書き込みの時はdbTableを必ず指定する。
+ * @param query   DBを参照する場合のクエリ。dbTableと同時に指定できない。
+ * @tparam T データセットが扱うデータ型。RDDやDataFrame、Dataset等で扱う型パラメータと対応する。
+ */
+case class DwDmModel[T](dbTable: Option[String] = None,
+                        query: Option[String] = None,
+                        //TODO: DBのためファイルパスがないので暫定でダミー値を格納。
+                        //TODO: 本来はDataFileより一つ上の概念を表すトレイトを追加し全体のリファクタリング要
+                        override val relativePath: String = ???
+                       ) extends DataFile[T] {
+  //いずれか一方が定義されていること
+  assert(!(dbTable.isDefined && query.isDefined))
+  assert(!(dbTable.isEmpty && query.isEmpty))
+}

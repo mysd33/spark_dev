@@ -1,7 +1,7 @@
 package com.example.fw.infra.dataaccess
 
-import com.example.fw.domain.model.{DataFile, ParquetModel}
-import com.example.fw.infra.dataaccess.impl.DeltaLakeReaderWriter
+import com.example.fw.domain.model.{DataFile, DwDmModel, ParquetModel}
+import com.example.fw.infra.dataaccess.impl.{DeltaLakeReaderWriter, SynapseAnalyticsReaderWriter}
 import org.apache.spark.sql.{DataFrame, Dataset, Row, SaveMode, SparkSession}
 
 import scala.reflect.runtime.universe
@@ -26,6 +26,8 @@ trait DatabricksDataFileReaderWriter extends StandardSparkDataFileReaderWriter {
     inputFile match {
       //DeltaLakeのみReaderWriterを差し替え
       case f: ParquetModel[Row] => new DeltaLakeReaderWriter().readToDf(f, sparkSession)
+      //SynapseAnalyticsへの対応
+      case f: DwDmModel[Row] => new SynapseAnalyticsReaderWriter().readToDf(f, sparkSession)
       case _ => super.readToDf(inputFile, sparkSession)
     }
   }
@@ -40,6 +42,8 @@ trait DatabricksDataFileReaderWriter extends StandardSparkDataFileReaderWriter {
     inputFile match {
       //DeltaLakeのみReaderWriterを差し替え
       case f: ParquetModel[T] => new DeltaLakeReaderWriter().readToDs(f, sparkSession)
+      //SynapseAnalyticsへの対応
+      case f: DwDmModel[T] => new SynapseAnalyticsReaderWriter().readToDs(f, sparkSession)
       case _ => super.readToDs(inputFile, sparkSession)
     }
   }
@@ -55,6 +59,8 @@ trait DatabricksDataFileReaderWriter extends StandardSparkDataFileReaderWriter {
     outputFile match {
       //DeltaLakeのみReaderWriterを差し替え
       case f: ParquetModel[T] => new DeltaLakeReaderWriter().writeFromDsDf(ds, f, saveMode)
+      //SynapseAnalyticsへの対応
+      case f: DwDmModel[T] => new SynapseAnalyticsReaderWriter().writeFromDsDf(ds, f)
       case _ => super.writeFromDsDf(ds, outputFile, saveMode)
     }
   }
