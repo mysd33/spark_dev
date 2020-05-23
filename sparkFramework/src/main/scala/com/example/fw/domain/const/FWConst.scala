@@ -21,4 +21,9 @@ object FWConst {
    * CsvModelが扱うデフォルト区切り文字=カンマ(,)
    */
   val DEFAULT_CSV_DELIMITER = ","
+
+
+  val CLUSTER_MODE_KEY = "clustermode"
+
+  val LOG_LEVEL_KEY = "loglevel"
 }
