@@ -46,7 +46,10 @@ abstract class DatabricksConnectApplicationEntryPoint extends Logging {
         DatabrickDataFileReaderWriterFactory.createDataFileReaderWriter(), methodArgs)
       logic.execute(spark)
     } catch {
-      case e: Exception => logError("システムエラーが発生しました", e)
+      case e: Exception => {
+        logError("システムエラーが発生しました", e)
+        throw e
+      }
     }
   }
 

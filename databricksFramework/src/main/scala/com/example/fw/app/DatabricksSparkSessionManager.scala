@@ -32,7 +32,10 @@ object DatabricksSparkSessionManager extends Logging {
         DatabrickDataFileReaderWriterFactory.createDataFileReaderWriter(), args)
       logic.execute(spark)
     } catch {
-      case e: Exception => logError("システムエラーが発生しました", e)
+      case e: Exception => {
+        logError("システムエラーが発生しました", e)
+        throw e
+      }
     }
   }
 

@@ -39,8 +39,10 @@ object Using extends Logging {
     try {
       Some(func(resource))
     } catch {
-      case e: Exception => logError("システムエラーが発生しました", e)
-        None
+      case e: Exception => {
+        logError("システムエラーが発生しました", e)
+        throw e
+      }
     } finally {
       if (resource != null) resource.close()
     }
