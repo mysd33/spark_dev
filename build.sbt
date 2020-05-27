@@ -5,6 +5,7 @@ ThisBuild / organization := "com.example"
 lazy val sparkVersion = "2.4.5"
 lazy val sparkXmlVersion = "0.9.0"
 lazy val scalatestVersion = "3.1.1"
+lazy val dbutlsApiVersion = "0.0.4"
 //lazy val unmanagedJarFiles = "c:\\programdata\\anaconda3\\lib\\site-packages\\pyspark\\jars"
 //lazy val unmanagedJarFiles = "c:\\users\\masas\\.conda\\envs\\dbconnect\\lib\\site-packages\\pyspark\\jars"
 lazy val unmanagedJarFiles = "lib"
@@ -68,11 +69,13 @@ lazy val application = (project in file("application"))
     version := "0.1"
   )
 
+
 lazy val databricksFramework = (project in file("databricksFramework"))
   .dependsOn(sparkFramework)
   .settings(
     commonSettings,
-    name := "databricksFramework"
+    name := "databricksFramework",
+    libraryDependencies ++= Seq("com.databricks" % "dbutils-api_2.11" % dbutlsApiVersion)
   )
 
 lazy val sparkFramework = (project in file("sparkFramework"))

@@ -6,11 +6,16 @@ import com.example.fw.domain.utils.ResourceBundleManager
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.internal.Logging
 import org.apache.spark.sql.SparkSession
+import com.databricks.dbutils_v1.DBUtilsHolder.dbutils
 
 /**
  * Databricksアプリケーション用SparkSession管理オブジェクト
  */
 object DatabricksSparkSessionManager extends Logging {
+  private val SQLDW_BLOB_ACCOUNTKEY_NAME = "sqldw.blob.accountkey.name"
+  private val SQLDW_BLOB_ACCOUNTKEY_SCOPE = "sqldw.blob.accountkey.scope"
+  private val SQLDW_BLOB_ACCOUNTKEY_KEY = "sqldw.blob.accountkey.key"
+
   /**
    * 指定したLogicクラスを使用しアプリケーションを実行する
    *
@@ -59,6 +64,13 @@ object DatabricksSparkSessionManager extends Logging {
     Logger.getLogger("org").setLevel(Level.OFF)
     Logger.getLogger("akka").setLevel(Level.OFF)
 
+    //Synapse Analyticsによる仲介用のBLobストレージアカウントキーの設定
+    val accountKeyName = ResourceBundleManager.get(SQLDW_BLOB_ACCOUNTKEY_NAME)
+    val accountKeyScope = ResourceBundleManager.get(SQLDW_BLOB_ACCOUNTKEY_SCOPE)
+    val accountKeyKey = ResourceBundleManager.get(SQLDW_BLOB_ACCOUNTKEY_KEY)
+    if (accountKeyKey!= null && accountKeyScope != null && accountKeyKey != null) {
+      sparkSession.conf.set(accountKeyName, dbutils.secrets.get(accountKeyScope, accountKeyKey))
+    }
     sparkSession
   }
 
