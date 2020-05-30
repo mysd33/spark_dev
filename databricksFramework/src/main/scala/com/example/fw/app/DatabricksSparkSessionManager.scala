@@ -1,12 +1,12 @@
 package com.example.fw.app
 
+import com.databricks.dbutils_v1.DBUtilsHolder.dbutils
 import com.example.fw.domain.const.FWConst
+import com.example.fw.domain.logging.Log4jConfiguration
 import com.example.fw.domain.logic.LogicCreator
 import com.example.fw.domain.utils.ResourceBundleManager
-import org.apache.log4j.{Level, Logger}
 import org.apache.spark.internal.Logging
 import org.apache.spark.sql.SparkSession
-import com.databricks.dbutils_v1.DBUtilsHolder.dbutils
 
 /**
  * Databricksアプリケーション用SparkSession管理オブジェクト
@@ -46,9 +46,12 @@ object DatabricksSparkSessionManager extends Logging {
    * @return SparkSession
    */
   def createSparkSession(appName: String) = {
-    //TODO:独自のプロパティではなくてSpark実行時のパラメータのほうがよいか？
+
     val clusterMode = ResourceBundleManager.get(FWConst.CLUSTER_MODE_KEY)
-    val logLevel = ResourceBundleManager.get(FWConst.LOG_LEVEL_KEY)
+
+    //log4j.propertiesの適用
+    Log4jConfiguration.configure()
+
     //TODO: Config設定の検討
     //https://spark.apache.org/docs/latest/configuration.html
     val sparkSession = if (clusterMode != null && !clusterMode.isEmpty) {
@@ -61,11 +64,6 @@ object DatabricksSparkSessionManager extends Logging {
         .appName(appName)
         .getOrCreate()
     }
-    //TODO:ログが多いのでオフしている。log4j.propertiesで設定できるようにするなど検討
-    val sc = sparkSession.sparkContext
-    sc.setLogLevel(logLevel)
-    Logger.getLogger("org").setLevel(Level.OFF)
-    Logger.getLogger("akka").setLevel(Level.OFF)
 
     //Synapse Analyticsによる仲介用のBLobストレージアカウントキーの設定
     val accountKeyName = ResourceBundleManager.get(SQLDW_BLOB_ACCOUNTKEY_NAME)

@@ -16,6 +16,7 @@ import com.example.fw.domain.utils.OptionImplicit._
  *
  * @param dataFileReaderWriter Logicクラスが使用するDataFileReaderWriter
  */
+//TODO:クラス名をSampleDataSetBLogic3ではなくSampleDatasetBLogic3(setのsが小文字に変更）
 class SampleDataSetBLogic3(dataFileReaderWriter: DataFileReaderWriter)
   extends DatasetBLogic1to1[Person, Person](dataFileReaderWriter) {
   //ヘッダなしのCSVファイルの読み込みの例

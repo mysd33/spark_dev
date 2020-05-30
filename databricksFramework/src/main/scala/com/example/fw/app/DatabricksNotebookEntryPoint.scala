@@ -27,6 +27,10 @@ object DatabricksNotebookEntryPoint {
    * @param logic Logicインスタンス
    */
   def run(sparkSession: SparkSession, logic: Logic): Unit = {
+
+    //TODO: log4j.propertiesの動的切り替え機能を必要に応じて適用
+    //Log4jConfiguration.configure()
+
     logic.execute(sparkSession)
   }
 }
