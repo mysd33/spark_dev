@@ -5,10 +5,6 @@ package com.example.fw.domain.const
  */
 object FWConst {
   /**
-   * APが扱うファイルの最上位のディレクトリを表すプロパティキー=basepath
-   */
-  val BASE_PATH_KEY = "basepath"
-  /**
    * ファイルのデフォルトエンコーディング名=UTF-8
    */
   val DEFAULT_ENCODING = "UTF-8"
@@ -22,13 +18,24 @@ object FWConst {
    */
   val DEFAULT_CSV_DELIMITER = ","
 
+////以降、application.propertiesに設定するキー
+  /**
+   * APが扱うファイルの最上位のディレクトリを表すプロパティキー=basepath
+   */
+  val BASE_PATH_KEY = "basepath"
+
   /**
    * Sparkのクラスタモードを表すプロパティキー
    */
   val CLUSTER_MODE_KEY = "clustermode"
 
   /**
-   * Sparkのログレベルを表すプロパティキー
+   * log4j.propertiesの上書き機能を有効化することを表すプロパティキー
    */
-  val LOG_LEVEL_KEY = "loglevel"
+  val LOG4J_OVERWRITE = "log4j.overwrite"
+
+  /**
+   * log4j.propertiesの上書き機能を有効にしたときのDirectoryパスを表すプロパティキー
+   */
+  val LOG4J_PROPERTIES_DIR_KEY = "log4j.properties.dir"
 }
