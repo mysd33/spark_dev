@@ -101,6 +101,7 @@ lazy val sparkTestFramework = (project in file("sparkTestFramework"))
   .configs(IntegrationTest)
   .dependsOn(sparkFramework)
   .settings(
+    Defaults.itSettings,
     commonSettings,
     name := "sparkTestFramework",
     libraryDependencies ++= Seq(

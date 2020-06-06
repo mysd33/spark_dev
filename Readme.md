@@ -17,7 +17,7 @@
 * 端末ローカルでSpark実行します
 * この起動方法は、Databricks依存機能は実行できません
 * 別途ローカル実行用の環境セットアップが必要(Teams Wiki参照)です
-* サンプルを動作させる際は、testdataディレクトリにあるデータを「C:\temp」にコピーしてください
+* サンプルを動作させる際は、testdata/inputディレクトリにあるデータを「C:\temp」にコピーしてください
   * applicaitonプロジェクト/src/main/resources/application-dev.propertiesのbasepathプロパティを変更すれば違うディレクトリにも変更可能です
 * AP起動方法
   * 「構成の編集」で「アプリケーション」を作成

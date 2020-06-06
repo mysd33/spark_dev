@@ -1,5 +1,7 @@
 package com.example.fw.domain.model
 
+import java.nio.file.Paths
+
 import com.example.fw.domain.const.FWConst._
 import com.example.fw.domain.utils.ResourceBundleManager
 import org.apache.spark.sql.types.StructType
@@ -24,7 +26,7 @@ sealed trait DataFile[+T] extends Serializable {
   final val absolutePath: String = {
     //プロパティでベースパスの置き換え
     val basePath = ResourceBundleManager.get(BASE_PATH_KEY)
-    basePath + relativePath
+    Paths.get(basePath,relativePath).toString
   }
 }
 
