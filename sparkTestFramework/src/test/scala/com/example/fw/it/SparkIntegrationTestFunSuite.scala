@@ -2,7 +2,7 @@ package com.example.fw.it
 
 import java.io.File
 
-import com.example.fw.app.{ApplicationEntryPoint, StandardSparkSessionManager}
+import com.example.fw.app.StandardSparkSessionManager
 import com.example.fw.domain.const.FWConst
 import com.example.fw.domain.utils.ResourceBundleManager
 import com.example.fw.test.AssertUtils
