@@ -24,7 +24,7 @@ import scala.reflect.runtime.universe.TypeTag
  *
  * @constructor コンストラクタ
  */
-class DataFileReaderWriter extends Serializable {
+class DataFileReaderWriter {
   //自分型アノテーションでDataFileReaderWriterの実装をDI
   self: DataFileReaderWriterImpl =>
   /**
@@ -34,7 +34,7 @@ class DataFileReaderWriter extends Serializable {
    * @return RDD
    */
   def readToRDD(inputFile: DataFile[String], sparkSession: SparkSession): RDD[String] = {
-    self.readToRDD(inputFile, sparkSession)
+    self.readToRDDImpl(inputFile, sparkSession)
   }
 
   /**
@@ -45,7 +45,7 @@ class DataFileReaderWriter extends Serializable {
    * @return Dataset
    */
   def readToDs[T <: Product : TypeTag](inputFile: DataFile[T], sparkSession: SparkSession): Dataset[T] = {
-    self.readToDs(inputFile, sparkSession)
+    self.readToDsImpl(inputFile, sparkSession)
   }
 
   /**
@@ -55,7 +55,7 @@ class DataFileReaderWriter extends Serializable {
    * @return DataFrame
    */
   def readToDf(inputFile: DataFile[Row], sparkSession: SparkSession): DataFrame = {
-    self.readToDf(inputFile, sparkSession)
+    self.readToDfImpl(inputFile, sparkSession)
   }
 
   /**
@@ -65,7 +65,7 @@ class DataFileReaderWriter extends Serializable {
    * @tparam T RDDおよびDataFileの型パラメータ
    */
   def writeFromRDD[T](rdd: RDD[T], outputFile: DataFile[T]): Unit = {
-    self.writeFromRDD(rdd, outputFile)
+    self.writeFromRDDImpl(rdd, outputFile)
   }
 
   /**
@@ -76,7 +76,7 @@ class DataFileReaderWriter extends Serializable {
    * @tparam T DataFileの型パラメータ
    */
   def writeFromDf[T](df: DataFrame, outputFile: DataFile[Row], saveMode: SaveMode = SaveMode.Overwrite): Unit = {
-    self.writeFromDsDf(df, outputFile, saveMode)
+    self.writeFromDsDfImpl(df, outputFile, saveMode)
   }
 
   /**
@@ -87,6 +87,6 @@ class DataFileReaderWriter extends Serializable {
    * @tparam T DatasetおよびDataFileの型パラメータ
    */
   def writeFromDs[T <: Product : TypeTag](ds: Dataset[T], outputFile: DataFile[T], saveMode: SaveMode = SaveMode.Overwrite): Unit = {
-    self.writeFromDsDf(ds, outputFile, saveMode)
+    self.writeFromDsDfImpl(ds, outputFile, saveMode)
   }
 }

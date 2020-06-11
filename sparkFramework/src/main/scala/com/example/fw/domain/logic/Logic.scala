@@ -10,7 +10,7 @@ import org.apache.spark.sql.SparkSession
  *
  * org.apache.spark.internal.Loggingによるロギング機能を持っている。
  */
-trait Logic extends Logging with Serializable {
+trait Logic extends Logging {
   /**
    * ビジネスロジックを実行する
    * @param sparkSession SparkSession

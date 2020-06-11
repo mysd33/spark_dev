@@ -22,13 +22,13 @@ trait DatabricksDataFileReaderWriter extends StandardSparkDataFileReaderWriter {
    * @param sparkSession SparkSession
    * @return RDD
    */
-  override def readToDf(inputFile: DataFile[Row], sparkSession: SparkSession): DataFrame = {
+  override def readToDfImpl(inputFile: DataFile[Row], sparkSession: SparkSession): DataFrame = {
     inputFile match {
       //DeltaLakeのみReaderWriterを差し替え
       case f: ParquetModel[Row] => new DeltaLakeReaderWriter().readToDf(f, sparkSession)
       //SynapseAnalyticsへの対応
       case f: DwDmModel[Row] => new SynapseAnalyticsReaderWriter().readToDf(f, sparkSession)
-      case _ => super.readToDf(inputFile, sparkSession)
+      case _ => super.readToDfImpl(inputFile, sparkSession)
     }
   }
 
@@ -38,30 +38,30 @@ trait DatabricksDataFileReaderWriter extends StandardSparkDataFileReaderWriter {
    * @param sparkSession SparkSession
    * @return DataFrame
    */
-  override def readToDs[T <: Product : universe.TypeTag](inputFile: DataFile[T], sparkSession: SparkSession): Dataset[T] = {
+  override def readToDsImpl[T <: Product : universe.TypeTag](inputFile: DataFile[T], sparkSession: SparkSession): Dataset[T] = {
     inputFile match {
       //DeltaLakeのみReaderWriterを差し替え
       case f: ParquetModel[T] => new DeltaLakeReaderWriter().readToDs(f, sparkSession)
       //SynapseAnalyticsへの対応
       case f: DwDmModel[T] => new SynapseAnalyticsReaderWriter().readToDs(f, sparkSession)
-      case _ => super.readToDs(inputFile, sparkSession)
+      case _ => super.readToDsImpl(inputFile, sparkSession)
     }
   }
 
   /**
-   * @see [[com.example.fw.domain.dataaccess.DataFileReaderWriterImpl.writeFromDsDf]]
+   * @see [[com.example.fw.domain.dataaccess.DataFileReaderWriterImpl.writeFromDsDfImpl]]
    * @param ds         出力対象のDataset/DataFrame
    * @param outputFile 出力先ファイルのDataFile
    * @param saveMode   出力時のSaveMode
    * @tparam T DataFileの型パラメータ
    */
-  override def writeFromDsDf[T](ds: Dataset[T], outputFile: DataFile[T], saveMode: SaveMode): Unit = {
+  override def writeFromDsDfImpl[T](ds: Dataset[T], outputFile: DataFile[T], saveMode: SaveMode): Unit = {
     outputFile match {
       //DeltaLakeのみReaderWriterを差し替え
       case f: ParquetModel[T] => new DeltaLakeReaderWriter().writeFromDsDf(ds, f, saveMode)
       //SynapseAnalyticsへの対応
       case f: DwDmModel[T] => new SynapseAnalyticsReaderWriter().writeFromDsDf(ds, f)
-      case _ => super.writeFromDsDf(ds, outputFile, saveMode)
+      case _ => super.writeFromDsDfImpl(ds, outputFile, saveMode)
     }
   }
 }
