@@ -101,7 +101,7 @@ def main():
         print("install result runjson: " + runjson)
         d = json.loads(runjson)
         #if not install error occurred
-        if (d.get('error_code'):
+        if (d.get('error_code')):
             sys.exit(1)
 
         #print(dbfslib + ' after:' + getLibStatus(shard, token, clusterid, dbfslib))
