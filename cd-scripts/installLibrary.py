@@ -118,6 +118,7 @@ def getLibStatus(shard, token, clusterid, dbfslib):
 
         for status in statuses:
             if (status['library'].get('jar')):
+                print("status['library']['jar']: " status['library']['jar'])
                 if (status['library']['jar'] == 'dbfs:' + dbfslib):
                     return status['status']
                 else:
