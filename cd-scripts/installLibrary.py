@@ -123,8 +123,7 @@ def getLibStatus(shard, token, clusterid, dbfslib):
                     return status['status']
                 else:
                     return "not found"
-            else:
-                return "not found"
+        return "not found"
     else:
         # No libraries found
         return "not found"
