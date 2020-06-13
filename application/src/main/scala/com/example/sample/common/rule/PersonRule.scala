@@ -11,4 +11,10 @@ class PersonRule extends Serializable {
     //実際には生年月日から年齢計算するビジネスルールとかを想定
     person.age.getOrElse(0)
   }
+
+  def calcAgeForStr(birthDayStr: String): Long = {
+    //実際には生年月日から年齢計算するビジネスルールとかを想定
+    20L  //dummy
+  }
+
 }

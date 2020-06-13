@@ -9,6 +9,7 @@ import com.example.sample.common.entity.Person
 import org.apache.spark.sql.{Dataset, SparkSession}
 import org.apache.spark.sql.types.{LongType, StringType, StructField, StructType}
 import com.example.fw.domain.utils.OptionImplicit._
+import com.example.sample.common.udf.PersonRuleUDF
 
 
 /**
@@ -49,6 +50,17 @@ class UTDemoDatasetBLogic(dataFileReaderWriter: DataFileReaderWriter) extends
       Person("hoge", Some(age))
     })
     result.show()
+
+    //UDFサンプル
+    import org.apache.spark.sql.functions.col
+    //UDFの取得
+    val calcAge = PersonRuleUDF.calcAge
+    val ageDs =
+      Seq("20200101", "20100101", "200001010").toDF("value")
+      .select(calcAge(col("value")) as "age")
+    ageDs.show()
+
+
     input
   }
 
