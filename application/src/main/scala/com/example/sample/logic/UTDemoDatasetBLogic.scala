@@ -2,6 +2,7 @@ package com.example.sample.logic
 
 import com.example.fw.domain.dataaccess.DataFileReaderWriter
 import com.example.fw.domain.logic.DatasetBLogic1to1
+import com.example.fw.domain.message.Message
 import com.example.fw.domain.model.{CsvModel, DataFile, ParquetModel}
 import com.example.sample.common.logic.SampleSharedLogic
 import com.example.sample.common.rule.PersonRule
@@ -60,6 +61,10 @@ class UTDemoDatasetBLogic(dataFileReaderWriter: DataFileReaderWriter) extends
       .select(calcAge(col("value")) as "age")
     ageDs.show()
 
+    //メッセージ
+    logInfo(Message.get("i.xxx.001", "hoge"))
+    logWarning(Message.get("w.xxx.001", "fuga"))
+    logError(Message.get("e.xxx.001", "foo"))
 
     input
   }

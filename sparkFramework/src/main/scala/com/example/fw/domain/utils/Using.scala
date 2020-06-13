@@ -1,5 +1,7 @@
 package com.example.fw.domain.utils
 
+import com.example.fw.domain.const.FWMsgConst
+import com.example.fw.domain.message.Message
 import org.apache.spark.internal.Logging
 
 /**
@@ -31,16 +33,14 @@ object Using extends Logging {
    * @param func     リソースを入力とする処理を実装する関数
    * @tparam A resoucrceの型
    * @tparam B funcの戻り値の型
-   * @return funcの戻り値をOption化したもの
-   *         - 成功したらSomeに包んで返却
-   *         - 例外は発生した場合は、エラーログを出力しNoneを返却
+   * @return funcの戻り値
    */
-  def using[A <: {def close()}, B](resource: A)(func: A => B): Option[B] =
+  def using[A <: {def close()}, B](resource: A)(func: A => B): B =
     try {
-      Some(func(resource))
+      func(resource)
     } catch {
       case e: Exception => {
-        logError("システムエラーが発生しました", e)
+        logError(Message.get(FWMsgConst.E_FW_001), e)
         throw e
       }
     } finally {

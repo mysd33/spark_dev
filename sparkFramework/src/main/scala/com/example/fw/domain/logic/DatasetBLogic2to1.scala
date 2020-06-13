@@ -1,6 +1,8 @@
 package com.example.fw.domain.logic
 
+import com.example.fw.domain.const.FWMsgConst
 import com.example.fw.domain.dataaccess.DataFileReaderWriter
+import com.example.fw.domain.message.Message
 import com.example.fw.domain.model.DataFile
 import org.apache.spark.sql.{Dataset, SparkSession}
 
@@ -62,7 +64,7 @@ abstract class DatasetBLogic2to1[T1 <: Product : TypeTag, T2 <: Product : TypeTa
    * @param sparkSession SparkSession
    */
   def setUp(sparkSession: SparkSession): Unit = {
-    logInfo("ビジネスロジック開始:" + getClass().getTypeName())
+    logInfo(Message.get(FWMsgConst.I_FW_001, getClass().getTypeName()))
   }
 
   /**
@@ -114,7 +116,7 @@ abstract class DatasetBLogic2to1[T1 <: Product : TypeTag, T2 <: Product : TypeTa
    * @param sparkSession SparkSession
    */
   def tearDown(sparkSession: SparkSession): Unit = {
-    logInfo("ビジネスロジック終了")
+    logInfo(Message.get(FWMsgConst.I_FW_002, getClass().getTypeName()))
   }
 
 }

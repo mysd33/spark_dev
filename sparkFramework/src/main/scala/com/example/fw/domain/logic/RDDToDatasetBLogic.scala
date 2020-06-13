@@ -1,9 +1,12 @@
 package com.example.fw.domain.logic
 
+import com.example.fw.domain.const.FWMsgConst
 import com.example.fw.domain.dataaccess.DataFileReaderWriter
+import com.example.fw.domain.message.Message
 import com.example.fw.domain.model.DataFile
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{Dataset, SparkSession}
+
 import scala.reflect.runtime.universe.TypeTag
 
 /**
@@ -60,7 +63,7 @@ abstract class RDDToDatasetBLogic[U <: Product : TypeTag]
    * @param sparkSession SparkSession
    */
   def setUp(sparkSession: SparkSession): Unit = {
-    logInfo("ビジネスロジック開始:" + getClass().getTypeName())
+    logInfo(Message.get(FWMsgConst.I_FW_001, getClass().getTypeName()))
   }
 
   /**
@@ -113,6 +116,6 @@ abstract class RDDToDatasetBLogic[U <: Product : TypeTag]
    * @param sparkSession SparkSession
    */
   def tearDown(sparkSession: SparkSession): Unit = {
-    logInfo("ビジネスロジック終了")
+    logInfo(Message.get(FWMsgConst.I_FW_002, getClass().getTypeName()))
   }
 }
