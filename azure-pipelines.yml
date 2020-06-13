@@ -87,6 +87,7 @@ steps:
       $(System.DefaultWorkingDirectory)/target/**/coverage-report/cobertura.xml
       $(System.DefaultWorkingDirectory)/target/**/scoverage-report/**/?(*.html|*.xml)
       $(System.DefaultWorkingDirectory)/target/**/unidoc/**/?(*.html|*.js|*.css|*.png|*.gif)
+      $(System.DefaultWorkingDirectory)/cd-scripts/**/?(*.py)
     targetFolder: $(Build.ArtifactStagingDirectory)
   displayName: Copy Artifacts
 

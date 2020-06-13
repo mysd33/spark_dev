@@ -155,15 +155,29 @@ az container create -g RG_MYSD_DEV  --name sonarqubeaci --image sonarqube --port
    * https://marketplace.visualstudio.com/items?itemName=riserrad.azdo-databricks&targetId=97d4df0c-2f78-42f0-844c-1ba9d56e3f8a
    * Azure DevOpsのOrganization Sttings->Exntensionsで、Azure DevOps Organizaiont管理者へのExtensionインストールの承認フローが入りインストールを完了させます
  * PipelinesからReleaseパイプラインを作成   
- * 「Artifactes」で「Add」をクリックし、ビルドパイプラインで出力したアーティファクトの設定
+ * 「Artifacts」で「Add」をクリックし、ビルドパイプラインで出力したアーティファクトの設定
    * Project、Source（ビルドパイプラインのリポジトリ）、Default Version、Source aliasを設定
  * 「Stages」で「Add」をクリックし、「Empty Job」（空のジョブ）を追加 
- * Add Taskでタスクを追加し「Use Python vesion」を追加   
+ * Add Taskでタスクを追加し「Use Python version」を追加
+   * Version specは3.x   
  * Add Taskでタスクを追加し「Databricks DBFS File Deployment」を追加
    * jarをDBFS上にインストール
- * TODO: Databricks上に既存ライブラリのアンインストール
- * TODO: Databricks上に新規ライブラリのインストール
-   
+   * Azure Resionは、「japaneast」
+   * Local Root Folderは、「$(System.DefaultWorkingDirectory)/_databricks_dev/applicationAssembly/target/scala-2.11/」
+   * Target folder in DBFSは、「/FileStore/jars/」
+   * Bearer Tokenを設定（事前に設定した環境変数から取得するようにする）
+ * Add Taskでタスクを追加し「Python script」を追加   
+   * cd-scripts/installLibrary.pyをつかってDatabricks上にjarインストール
+   * Script Pathは「$(System.DefaultWorkingDirectory)/_databricks_dev/applicationAssembly/cd-scripts/installLibrary.py」
+   * Argumentsに以下を指定
+     * --shard=XXX --token=XXX --clusterid=XXX --libs=XXX --dbfspath=XXX
+     * shard - ワークスペースのURL(https://xxxx.azuredatabricks.net)
+     * token - ワークスペースのアクセストークン（personal access token）
+     * clusterid - クラスタID
+     * libs - jarを含んでいた元のライブラリフォルダ
+       * 「$(System.DefaultWorkingDirectory)/_databricks_dev/applicationAssembly/target/scala-2.11/」
+     * dbfspath - DFS上のライブラリのパス
+       * 「/FileStore/jars/」 
 
 
 
