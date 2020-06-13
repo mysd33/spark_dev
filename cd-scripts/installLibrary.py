@@ -98,6 +98,7 @@ def main():
 
         resp = requests.post(shard + '/api/2.0/libraries/install', data=json.dumps(values), auth=("token", token))
         runjson = resp.text
+        print("runjson: " + runjson)
         d = json.loads(runjson)
         print(dbfslib + ' after:' + getLibStatus(shard, token, clusterid, dbfslib))
 

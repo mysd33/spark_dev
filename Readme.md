@@ -173,13 +173,16 @@ az container create -g RG_MYSD_DEV  --name sonarqubeaci --image sonarqube --port
    * Script Pathは「$(System.DefaultWorkingDirectory)/_databricks_dev/applicationAssembly/cd-scripts/installLibrary.py」
    * Argumentsに以下を指定
      * --shard=XXX --token=XXX --clusterid=XXX --libs=XXX --dbfspath=XXX
-     * shard - ワークスペースのURL(https://xxxx.azuredatabricks.net)
+     * shard - ワークスペースのURL
+       * 例：https://xxxx.azuredatabricks.net
+       * 最後にスラッシュを入れないこと
      * token - ワークスペースのアクセストークン（personal access token）
      * clusterid - クラスタID
      * libs - jarを含んでいた元のライブラリフォルダ
-       * 「$(System.DefaultWorkingDirectory)/_databricks_dev/applicationAssembly/target/scala-2.11/」
+       * $(System.DefaultWorkingDirectory)/_databricks_dev/applicationAssembly/target/scala-2.11/
      * dbfspath - DFS上のライブラリのパス
-       * 「/FileStore/jars/」 
+       * /FileStore/jars
+       * 最後にスラッシュを入れないこと 
 
 
 
