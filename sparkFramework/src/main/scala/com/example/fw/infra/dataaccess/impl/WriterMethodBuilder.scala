@@ -94,13 +94,12 @@ object WriterMethodBuilder {
      * @return DataFrameWriter
      */
     def buildPartitionBy(file: Partitionable): DataFrameWriter[T] = {
-      file.partition match {
-        case Some(partition) => writer.partitionBy(partition)
-        case _ => writer
+      if (file.partitions.isEmpty) {
+        writer
+      } else {
+        writer.partitionBy(file.partitions: _*)
       }
     }
-
-
   }
 
 }

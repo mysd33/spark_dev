@@ -36,7 +36,7 @@ trait Partitionable {
    *
    * SparkのpartitionByメソッドと対応
    */
-  val partition: Option[String]
+  val partitions: Seq[String]
 }
 
 /**
@@ -126,7 +126,7 @@ case class MultiFormatCsvModel[T](override val relativePath: String,
  * @param relativePath    ファイルの相対パス
  * @param hasHeader       先頭行にヘッダ行を持つか表す。Sparkのoptionメソッドの"header"と対応。
  * @param sep             １行の区切り文字列。Sparkのoptionメソッドの"sep"と対応。
- * @param partition       @see [[com.example.fw.domain.model.Partitionable.partition]]
+ * @param partitions       @see [[com.example.fw.domain.model.Partitionable.partitions]]
  * @param schema          @see [[com.example.fw.domain.model.HavingSchema.schema]]
  * @param encoding        @see [[com.example.fw.domain.model.TextFormat.encoding]]
  * @param dateFormat      @see [[com.example.fw.domain.model.HavingDateFormat.dateFormat]]
@@ -137,7 +137,7 @@ case class MultiFormatCsvModel[T](override val relativePath: String,
 case class CsvModel[T](override val relativePath: String,
                        hasHeader: Boolean = false,
                        sep: Option[String] = None,
-                       override val partition: Option[String] = None,
+                       override val partitions: Seq[String] = Nil,
                        override val schema: Option[StructType] = None,
                        override val encoding: Option[String] = None,
                        override val dateFormat: Option[String] = None,
@@ -150,7 +150,7 @@ case class CsvModel[T](override val relativePath: String,
  * JSONファイルのModel
  *
  * @param relativePath    ファイルの相対パス
- * @param partition       @see [[com.example.fw.domain.model.Partitionable.partition]]
+ * @param partitions       @see [[com.example.fw.domain.model.Partitionable.partitions]]
  * @param schema          @see [[com.example.fw.domain.model.HavingSchema.schema]]
  * @param encoding        @see [[com.example.fw.domain.model.TextFormat.encoding]]
  * @param dateFormat      @see [[com.example.fw.domain.model.HavingDateFormat.dateFormat]]
@@ -159,7 +159,7 @@ case class CsvModel[T](override val relativePath: String,
  * @tparam T データセットが扱うデータ型。RDDやDataFrame、Dataset等で扱う型パラメータと対応する。
  */
 case class JsonModel[T](override val relativePath: String,
-                        override val partition: Option[String] = None,
+                        override val partitions: Seq[String] = Nil,
                         override val schema: Option[StructType] = None,
                         override val encoding: Option[String] = None,
                         override val dateFormat: Option[String] = None,
@@ -171,12 +171,12 @@ case class JsonModel[T](override val relativePath: String,
  * Parquet（またはParquet拡張のDeltaLake）ファイルのModel
  *
  * @param relativePath ファイルの相対パス
- * @param partition    @see [[com.example.fw.domain.model.Partitionable.partition]]
+ * @param partitions    @see [[com.example.fw.domain.model.Partitionable.partitions]]
  * @param compression  @see [[com.example.fw.domain.model.Compressable.compression]]
  * @tparam T データセットが扱うデータ型。RDDやDataFrame、Dataset等で扱う型パラメータと対応する。
  */
 case class ParquetModel[T](override val relativePath: String,
-                           override val partition: Option[String] = None,
+                           override val partitions: Seq[String] = Nil,
                            override val compression: Option[String] = None)
   extends DataFile[T] with Partitionable with Compressable
 
