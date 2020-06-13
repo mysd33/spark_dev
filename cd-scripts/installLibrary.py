@@ -58,6 +58,7 @@ def main():
 
     for lib in libslist:
         dbfslib = dbfspath + '/' + lib
+        print("dbfslib: " + dbfslib)
         print(dbfslib + ' before:' + getLibStatus(shard, token, clusterid, dbfslib))
 
         if (getLibStatus(shard, token, clusterid, dbfslib) != 'not found'):
@@ -115,6 +116,8 @@ def getLibStatus(shard, token, clusterid, dbfslib):
                     return status['status']
                 else:
                     return "not found"
+            else:
+                return "not found"
     else:
         # No libraries found
         return "not found"
