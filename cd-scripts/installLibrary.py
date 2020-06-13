@@ -98,9 +98,14 @@ def main():
 
         resp = requests.post(shard + '/api/2.0/libraries/install', data=json.dumps(values), auth=("token", token))
         runjson = resp.text
-        print("runjson: " + runjson)
+        print("install result runjson: " + runjson)
         d = json.loads(runjson)
-        print(dbfslib + ' after:' + getLibStatus(shard, token, clusterid, dbfslib))
+        #if not install error occurred
+        if (d.get('error_code'):
+            sys.exit(1)
+
+        #print(dbfslib + ' after:' + getLibStatus(shard, token, clusterid, dbfslib))
+
 
 def getLibStatus(shard, token, clusterid, dbfslib):
 

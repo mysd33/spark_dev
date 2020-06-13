@@ -171,6 +171,9 @@ az container create -g RG_MYSD_DEV  --name sonarqubeaci --image sonarqube --port
  * Add Taskでタスクを追加し「Python script」を追加   
    * cd-scripts/installLibrary.pyをつかってDatabricks上にjarインストール
    * Script Pathは「$(System.DefaultWorkingDirectory)/_databricks_dev/applicationAssembly/cd-scripts/installLibrary.py」
+     * Databricks REST API（Library API)を使用しています。
+     * REST APIの仕様上、クラスタが終了状態（Terminated）か存在しない場合にはインストールできないためパイプラインはエラーになります
+     * https://docs.microsoft.com/ja-jp/azure/databricks/dev-tools/api/latest/libraries
    * Argumentsに以下を指定
      * --shard=XXX --token=XXX --clusterid=XXX --libs=XXX --dbfspath=XXX
      * shard - ワークスペースのURL
