@@ -104,6 +104,7 @@ def getLibStatus(shard, token, clusterid, dbfslib):
 
     resp = requests.get(shard + '/api/2.0/libraries/cluster-status?cluster_id='+ clusterid, auth=("token", token))
     libjson = resp.text
+    print("libjson: " + libjson)
     d = json.loads(libjson)
     if (d.get('library_statuses')):
         statuses = d['library_statuses']

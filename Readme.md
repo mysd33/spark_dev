@@ -166,6 +166,8 @@ az container create -g RG_MYSD_DEV  --name sonarqubeaci --image sonarqube --port
    * Local Root Folderは、「$(System.DefaultWorkingDirectory)/_databricks_dev/applicationAssembly/target/scala-2.11/」
    * Target folder in DBFSは、「/FileStore/jars/」
    * Bearer Tokenを設定（事前に設定した環境変数から取得するようにする）
+ * Add Taskでタスクを追加し「Command Line Script」を追加
+   * pip install requests 
  * Add Taskでタスクを追加し「Python script」を追加   
    * cd-scripts/installLibrary.pyをつかってDatabricks上にjarインストール
    * Script Pathは「$(System.DefaultWorkingDirectory)/_databricks_dev/applicationAssembly/cd-scripts/installLibrary.py」
