@@ -6,10 +6,18 @@ import org.apache.spark.sql.{Dataset, SparkSession}
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe.TypeTag
 
+/**
+ * 医科レセプトのMapperクラスの例
+ */
 object MedReceiptRecordMapper {
   private val delimiter = ","
   private val lineSeparator = "\r\n"
 
+  /**
+   * 1レセプトの文字列を、ReceiptRecordに変換
+   * @param receipt 1レセプトの文字列
+   * @return
+   */
   def mapToReceiptRecordTuples(receipt: String): Array[(String, ReceiptRecord)] = {
     //1レセプトを改行コードでレコードごとに分解
     val records = receipt.split(lineSeparator)
@@ -26,9 +34,9 @@ object MedReceiptRecordMapper {
     })
   }
 
-  def mapToRecord(recordString: String): ReceiptRecord = mapToRecord(recordString, null)
+  private def mapToRecord(recordString: String): ReceiptRecord = mapToRecord(recordString, null)
 
-  def mapToRecord(recordString: String, receiptKanriNo: String): ReceiptRecord = {
+  private def mapToRecord(recordString: String, receiptKanriNo: String): ReceiptRecord = {
     //値がない場合のためlimit=-1
     val items = recordString.split(delimiter, -1)
     val unKnownRecord = UnknownReceiptRecord(items)
