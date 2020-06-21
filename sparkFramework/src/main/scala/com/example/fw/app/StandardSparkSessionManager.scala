@@ -17,7 +17,7 @@ object StandardSparkSessionManager extends Logging {
    * 指定したLogicクラスを使用しアプリケーションを実行する
    *
    * @param logicClassFQDN Logicクラスの完全修飾名
-   * @param args
+   * @param args Logicクラスの起動引数
    */
   def run(logicClassFQDN: String, args: Array[String]): Unit = {
     assert(logicClassFQDN != null)
@@ -36,9 +36,9 @@ object StandardSparkSessionManager extends Logging {
    * SparkSessionを作成する。
    *
    * @param appName SparkSessionに渡すアプリケーション名
-   * @return SparkSession
+   * @return SparkSession SparkSession
    */
-  def createSparkSession(appName: String) = {
+  def createSparkSession(appName: String): SparkSession = {
     val clusterMode = ResourceBundleManager.get(FWConst.CLUSTER_MODE_KEY)
 
     //log4j.propertiesの適用

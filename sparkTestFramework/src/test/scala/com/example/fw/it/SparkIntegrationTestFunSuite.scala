@@ -2,13 +2,16 @@ package com.example.fw.it
 
 import java.io.File
 
-import com.example.fw.app.StandardSparkSessionManager
+import com.example.fw.app.StandardSparkSessionManager.createSparkSession
+import com.example.fw.app.{StandardSparkDataFileReaderWriterFactory, StandardSparkSessionManager}
 import com.example.fw.domain.const.FWConst
+import com.example.fw.domain.logic.LogicCreator
 import com.example.fw.domain.utils.ResourceBundleManager
+import com.example.fw.domain.utils.Using.using
 import com.example.fw.test.AssertUtils
 import org.apache.commons.io.FileUtils
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.Dataset
+import org.apache.spark.sql.{Dataset, SparkSession}
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.{Assertion, BeforeAndAfter, BeforeAndAfterAll}
 
@@ -18,6 +21,7 @@ import scala.collection.JavaConversions._
  * 結合テスト用基底テストクラス
  */
 abstract class SparkIntegrationTestFunSuite extends AnyFunSuite with BeforeAndAfter with BeforeAndAfterAll {
+
   /**
    * 入力テストデータ
    */
@@ -50,11 +54,16 @@ abstract class SparkIntegrationTestFunSuite extends AnyFunSuite with BeforeAndAf
    * @param methodArgs 実行するビジネスロジッククラスへ渡す起動パラメータ
    * @param assertionLogic assertion処理を実装
    */
-  protected def runJob(logicClassFQDN: String, methodArgs: Array[String] = null)(assertionLogic: => Unit): Unit = {
+  protected def runJob(logicClassFQDN: String, methodArgs: Array[String] = null)(assertionLogic: SparkSession => Unit): Unit = {
     //SparkでBLogicクラスを実行
-    StandardSparkSessionManager.run(logicClassFQDN, methodArgs)
+    //StandardSparkSessionManager.run(logicClassFQDN, methodArgs)
+    val sparkSession = StandardSparkSessionManager.createSparkSession(logicClassFQDN)
+    //Logicインスタンスの実行
+    val logic = LogicCreator.newInstance(logicClassFQDN,
+        StandardSparkDataFileReaderWriterFactory.createDataFileReaderWriter(), methodArgs)
+    logic.execute(sparkSession)
     //実装したアサーション処理を使って実行結果確認
-    assertionLogic
+    assertionLogic(sparkSession)
   }
 
   /**

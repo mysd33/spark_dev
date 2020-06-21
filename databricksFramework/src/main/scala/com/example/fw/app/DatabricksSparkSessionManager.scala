@@ -20,7 +20,7 @@ object DatabricksSparkSessionManager extends Logging {
    * 指定したLogicクラスを使用しアプリケーションを実行する
    *
    * @param logicClassFQDN Logicクラスの完全修飾名
-   * @param args
+   * @param args Logicクラスの起動引数
    */
   def run(logicClassFQDN: String, args: Array[String]): Unit = {
     assert(logicClassFQDN != null)
@@ -43,9 +43,9 @@ object DatabricksSparkSessionManager extends Logging {
    * SparkSessionを作成する。
    *
    * @param appName SparkSessionに渡すアプリケーション名
-   * @return SparkSession
+   * @return SparkSession SparkSession
    */
-  def createSparkSession(appName: String) = {
+  def createSparkSession(appName: String): SparkSession = {
 
     val clusterMode = ResourceBundleManager.get(FWConst.CLUSTER_MODE_KEY)
 
@@ -69,7 +69,7 @@ object DatabricksSparkSessionManager extends Logging {
     val accountKeyName = ResourceBundleManager.get(SQLDW_BLOB_ACCOUNTKEY_NAME)
     val accountKeyScope = ResourceBundleManager.get(SQLDW_BLOB_ACCOUNTKEY_SCOPE)
     val accountKeyKey = ResourceBundleManager.get(SQLDW_BLOB_ACCOUNTKEY_KEY)
-    if (accountKeyKey!= null && accountKeyScope != null && accountKeyKey != null) {
+    if (accountKeyKey != null && accountKeyScope != null && accountKeyKey != null) {
       sparkSession.conf.set(accountKeyName, dbutils.secrets.get(accountKeyScope, accountKeyKey))
     }
     sparkSession
