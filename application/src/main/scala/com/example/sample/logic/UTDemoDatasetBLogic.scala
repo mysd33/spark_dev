@@ -3,7 +3,7 @@ package com.example.sample.logic
 import com.example.fw.domain.dataaccess.DataFileReaderWriter
 import com.example.fw.domain.logic.DatasetBLogic1to1
 import com.example.fw.domain.message.Message
-import com.example.fw.domain.model.{CsvModel, DataFile, ParquetModel}
+import com.example.fw.domain.model.{CsvModel, DataModel, ParquetModel}
 import com.example.sample.common.logic.SampleSharedLogic
 import com.example.sample.common.rule.PersonRule
 import com.example.sample.common.entity.Person
@@ -30,14 +30,14 @@ class UTDemoDatasetBLogic(dataFileReaderWriter: DataFileReaderWriter) extends
   //ビジネスルールクラス
   val personRule = new PersonRule
 
-  override val inputFile: DataFile[Person] = CsvModel[Person](
+  override val inputFile: DataModel[Person] = CsvModel[Person](
     "person_noheader.csv",
     schema = StructType(Array(
       StructField("age", LongType, true),
       StructField("name", StringType, true)
     ))
   )
-  override val outputFile: DataFile[Person] = ParquetModel[Person]("person.parquet")
+  override val outputFile: DataModel[Person] = ParquetModel[Person]("person.parquet")
 
   override def process(input: Dataset[Person], sparkSession: SparkSession): Dataset[Person] = {
     import sparkSession.implicits._

@@ -1,6 +1,6 @@
 package com.example.fw.infra.dataaccess.impl
 
-import com.example.fw.domain.model.{DataFile, JsonModel}
+import com.example.fw.domain.model.{DataModel, JsonModel}
 import org.apache.spark.sql.{DataFrame, Dataset, Row, SaveMode, SparkSession}
 
 import scala.reflect.runtime.universe.TypeTag

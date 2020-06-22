@@ -3,7 +3,7 @@ package com.example.fw.domain.logic
 import com.example.fw.domain.const.FWMsgConst
 import com.example.fw.domain.dataaccess.DataFileReaderWriter
 import com.example.fw.domain.message.Message
-import com.example.fw.domain.model.DataFile
+import com.example.fw.domain.model.DataModel
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 
 /**
@@ -22,9 +22,9 @@ abstract class DataFrameBLogic(val dataFileReaderWriter: DataFileReaderWriter,
                                val args: Array[String] = null) extends Logic {
   require(dataFileReaderWriter != null)
   /** 入力ファイルのDataFileのリストを実装する。複数ファイル指定できる。 */
-  val inputFiles: Seq[DataFile[Row]]
+  val inputFiles: Seq[DataModel[Row]]
   /** 出力ファイルのDataFileのリストを実装する。複数ファイル指定できる。 */
-  val outputFiles: Seq[DataFile[Row]]
+  val outputFiles: Seq[DataModel[Row]]
 
   /**
    * @see [[com.example.fw.domain.logic.Logic.execute]]

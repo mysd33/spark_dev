@@ -1,7 +1,7 @@
 package com.example.fw.infra.dataaccess
 
 import com.example.fw.domain.dataaccess.DataFileReaderWriterImpl
-import com.example.fw.domain.model.{CsvModel, DataFile, JsonModel, MultiFormatCsvModel, ParquetModel, TextLineModel, XmlModel}
+import com.example.fw.domain.model.{CsvModel, DataModel, JsonModel, MultiFormatCsvModel, ParquetModel, TextLineModel, XmlModel}
 import com.example.fw.infra.dataaccess.impl.{CsvReaderWriter, JsonReaderWriter, MultiFormatCsvReaderWriter, StandardParquetReaderWriter, TextLineFileReaderWriter, XmlReaderWriter}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{DataFrame, Dataset, Row, SaveMode, SparkSession}
@@ -24,7 +24,7 @@ trait StandardSparkDataFileReaderWriter extends DataFileReaderWriterImpl {
    * @param sparkSession SparkSession
    * @return RDD
    */
-  override def readToRDDImpl(inputFile: DataFile[String], sparkSession: SparkSession): RDD[String] = {
+  override def readToRDDImpl(inputFile: DataModel[String], sparkSession: SparkSession): RDD[String] = {
     inputFile match {
       case f: TextLineModel[String] => new TextLineFileReaderWriter().readToRDD(f, sparkSession)
       case f: MultiFormatCsvModel[String] => new MultiFormatCsvReaderWriter().readToRDD(f, sparkSession)
@@ -38,7 +38,7 @@ trait StandardSparkDataFileReaderWriter extends DataFileReaderWriterImpl {
    * @param sparkSession SparkSession
    * @return DataFrame
    */
-  override def readToDfImpl(inputFile: DataFile[Row], sparkSession: SparkSession): DataFrame = {
+  override def readToDfImpl(inputFile: DataModel[Row], sparkSession: SparkSession): DataFrame = {
     inputFile match {
       case f: CsvModel[Row] => new CsvReaderWriter().readToDf(f, sparkSession)
       case f: JsonModel[Row] => new JsonReaderWriter().readToDf(f, sparkSession)
@@ -57,7 +57,7 @@ trait StandardSparkDataFileReaderWriter extends DataFileReaderWriterImpl {
    * @tparam T DataFileおよびDatasetの型パラメータ
    * @return Dataset
    */
-  override def readToDsImpl[T <: Product : TypeTag](inputFile: DataFile[T], sparkSession: SparkSession): Dataset[T] = {
+  override def readToDsImpl[T <: Product : TypeTag](inputFile: DataModel[T], sparkSession: SparkSession): Dataset[T] = {
     inputFile match {
       case f: CsvModel[T] => new CsvReaderWriter().readToDs(f, sparkSession)
       case f: JsonModel[T] => new JsonReaderWriter().readToDs(f, sparkSession)
@@ -72,7 +72,7 @@ trait StandardSparkDataFileReaderWriter extends DataFileReaderWriterImpl {
    * @param sparkSession TextLineModel
    * @return Dataset
    */
-  override def readToDsImpl(inputFile: DataFile[String], sparkSession: SparkSession): Dataset[String] = {
+  override def readToDsImpl(inputFile: DataModel[String], sparkSession: SparkSession): Dataset[String] = {
     inputFile match {
       case f: TextLineModel[String] => new TextLineFileReaderWriter().readToDs(f, sparkSession)
       case _ => ???
@@ -85,7 +85,7 @@ trait StandardSparkDataFileReaderWriter extends DataFileReaderWriterImpl {
    * @param outputFile 出力先ファイルのDataFile
    * @tparam T RDDおよびDataFileの型パラメータ
    */
-  override def writeFromRDDImpl[T](rdd: RDD[T], outputFile: DataFile[T]): Unit = {
+  override def writeFromRDDImpl[T](rdd: RDD[T], outputFile: DataModel[T]): Unit = {
     outputFile match {
       case f: TextLineModel[T] => new TextLineFileReaderWriter().writeFromRDD(rdd, f)
       case _ => ???
@@ -99,7 +99,7 @@ trait StandardSparkDataFileReaderWriter extends DataFileReaderWriterImpl {
    * @param saveMode   出力時のSaveMode
    * @tparam T DataFileの型パラメータ
    */
-  override def writeFromDsDfImpl[T](ds: Dataset[T], outputFile: DataFile[T], saveMode: SaveMode): Unit = {
+  override def writeFromDsDfImpl[T](ds: Dataset[T], outputFile: DataModel[T], saveMode: SaveMode): Unit = {
     outputFile match {
       case f: CsvModel[T] => new CsvReaderWriter().writeFromDsDf(ds, f, saveMode)
       case f: JsonModel[T] => new JsonReaderWriter().writeFromDsDf(ds, f, saveMode)

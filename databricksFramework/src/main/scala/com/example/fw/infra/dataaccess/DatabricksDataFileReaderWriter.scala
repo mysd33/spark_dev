@@ -1,6 +1,6 @@
 package com.example.fw.infra.dataaccess
 
-import com.example.fw.domain.model.{DataFile, DwDmModel, ParquetModel}
+import com.example.fw.domain.model.{DataModel, DwDmModel, ParquetModel}
 import com.example.fw.infra.dataaccess.impl.{DeltaLakeReaderWriter, SynapseAnalyticsReaderWriter}
 import org.apache.spark.sql.{DataFrame, Dataset, Row, SaveMode, SparkSession}
 
@@ -22,7 +22,7 @@ trait DatabricksDataFileReaderWriter extends StandardSparkDataFileReaderWriter {
    * @param sparkSession SparkSession
    * @return RDD
    */
-  override def readToDfImpl(inputFile: DataFile[Row], sparkSession: SparkSession): DataFrame = {
+  override def readToDfImpl(inputFile: DataModel[Row], sparkSession: SparkSession): DataFrame = {
     inputFile match {
       //DeltaLakeのみReaderWriterを差し替え
       case f: ParquetModel[Row] => new DeltaLakeReaderWriter().readToDf(f, sparkSession)
@@ -38,7 +38,7 @@ trait DatabricksDataFileReaderWriter extends StandardSparkDataFileReaderWriter {
    * @param sparkSession SparkSession
    * @return DataFrame
    */
-  override def readToDsImpl[T <: Product : universe.TypeTag](inputFile: DataFile[T], sparkSession: SparkSession): Dataset[T] = {
+  override def readToDsImpl[T <: Product : universe.TypeTag](inputFile: DataModel[T], sparkSession: SparkSession): Dataset[T] = {
     inputFile match {
       //DeltaLakeのみReaderWriterを差し替え
       case f: ParquetModel[T] => new DeltaLakeReaderWriter().readToDs(f, sparkSession)
@@ -55,7 +55,7 @@ trait DatabricksDataFileReaderWriter extends StandardSparkDataFileReaderWriter {
    * @param saveMode   出力時のSaveMode
    * @tparam T DataFileの型パラメータ
    */
-  override def writeFromDsDfImpl[T](ds: Dataset[T], outputFile: DataFile[T], saveMode: SaveMode): Unit = {
+  override def writeFromDsDfImpl[T](ds: Dataset[T], outputFile: DataModel[T], saveMode: SaveMode): Unit = {
     outputFile match {
       //DeltaLakeのみReaderWriterを差し替え
       case f: ParquetModel[T] => new DeltaLakeReaderWriter().writeFromDsDf(ds, f, saveMode)

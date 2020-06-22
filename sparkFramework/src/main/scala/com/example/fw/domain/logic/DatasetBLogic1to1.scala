@@ -3,7 +3,7 @@ package com.example.fw.domain.logic
 import com.example.fw.domain.const.FWMsgConst
 import com.example.fw.domain.dataaccess.DataFileReaderWriter
 import com.example.fw.domain.message.Message
-import com.example.fw.domain.model.DataFile
+import com.example.fw.domain.model.DataModel
 import org.apache.spark.sql.{Dataset, SparkSession}
 
 import scala.reflect.runtime.universe.TypeTag
@@ -27,9 +27,9 @@ abstract class DatasetBLogic1to1[T <: Product : TypeTag, U <: Product : TypeTag]
 (val dataFileReaderWriter: DataFileReaderWriter, val args: Array[String] = null) extends Logic {
   require(dataFileReaderWriter != null)
   /** 入力ファイルのDataFileを実装する。 1ファイルのみ指定できる。 */
-  val inputFile: DataFile[T]
+  val inputFile: DataModel[T]
   /** 出力ファイルのDataFileを実装する。 1ファイルのみ指定できる。 */
-  val outputFile: DataFile[U]
+  val outputFile: DataModel[U]
 
   /**
    * @see [[com.example.fw.domain.logic.Logic.execute]]

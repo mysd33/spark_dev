@@ -2,7 +2,7 @@ package com.example.sample.logic
 
 import com.example.fw.domain.dataaccess.DataFileReaderWriter
 import com.example.fw.domain.logic.DatasetBLogic1to1
-import com.example.fw.domain.model.{CsvModel, DataFile, ParquetModel}
+import com.example.fw.domain.model.{CsvModel, DataModel, ParquetModel}
 import com.example.sample.common.entity.Person
 import org.apache.spark.sql.types.{LongType, StringType, StructField, StructType}
 import org.apache.spark.sql.{Dataset, SparkSession}
@@ -20,7 +20,7 @@ import com.example.fw.domain.utils.OptionImplicit._
 class SampleDataSetBLogic3(dataFileReaderWriter: DataFileReaderWriter)
   extends DatasetBLogic1to1[Person, Person](dataFileReaderWriter) {
   //ヘッダなしのCSVファイルの読み込みの例
-  override val inputFile: DataFile[Person] = CsvModel[Person](
+  override val inputFile: DataModel[Person] = CsvModel[Person](
     "person_noheader.csv",
     //caseクラス（Person）とマッピングさせるようスキーマ定義する
     schema = StructType(Array(
@@ -29,7 +29,7 @@ class SampleDataSetBLogic3(dataFileReaderWriter: DataFileReaderWriter)
     ))
   )
   //Parquetファイルの書き込みの例
-  override val outputFile: DataFile[Person] = ParquetModel[Person]("person.parquet")
+  override val outputFile: DataModel[Person] = ParquetModel[Person]("person.parquet")
 
   override def process(input: Dataset[Person], sparkSession: SparkSession): Dataset[Person] = {
     //DataSetで扱おうとするとimport文が必要なのでsparkSessionが引数に必要

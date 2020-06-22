@@ -1,6 +1,6 @@
 package com.example.fw.domain.dataaccess
 
-import com.example.fw.domain.model.DataFile
+import com.example.fw.domain.model.DataModel
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{DataFrame, Dataset, Row, SaveMode, SparkSession}
 
@@ -24,7 +24,7 @@ trait DataFileReaderWriterImpl {
    * @param sparkSession SparkSession
    * @return RDD
    */
-  def readToRDDImpl(inputFile: DataFile[String], sparkSession: SparkSession): RDD[String]
+  def readToRDDImpl(inputFile: DataModel[String], sparkSession: SparkSession): RDD[String]
 
   /**
    * ファイルを読み込みDatasetを返却する
@@ -34,7 +34,7 @@ trait DataFileReaderWriterImpl {
    * @tparam T DataFileおよびDatasetの型パラメータ
    * @return Dataset
    */
-  def readToDsImpl[T <: Product : TypeTag](inputFile: DataFile[T], sparkSession: SparkSession): Dataset[T]
+  def readToDsImpl[T <: Product : TypeTag](inputFile: DataModel[T], sparkSession: SparkSession): Dataset[T]
 
 
   /**
@@ -44,7 +44,7 @@ trait DataFileReaderWriterImpl {
    * @param sparkSession SparkSession
    * @return Dataset
    */
-  def readToDsImpl(inputFile: DataFile[String], sparkSession: SparkSession): Dataset[String]
+  def readToDsImpl(inputFile: DataModel[String], sparkSession: SparkSession): Dataset[String]
 
   /**
    * ファイルを読み込みDataFrameを返却する
@@ -53,7 +53,7 @@ trait DataFileReaderWriterImpl {
    * @param sparkSession SparkSession
    * @return DataFrame
    */
-  def readToDfImpl(inputFile: DataFile[Row], sparkSession: SparkSession): DataFrame
+  def readToDfImpl(inputFile: DataModel[Row], sparkSession: SparkSession): DataFrame
 
 
   /**
@@ -63,7 +63,7 @@ trait DataFileReaderWriterImpl {
    * @param outputFile 出力先ファイルのDataFile
    * @tparam T RDDおよびDataFileの型パラメータ
    */
-  def writeFromRDDImpl[T](rdd: RDD[T], outputFile: DataFile[T]): Unit
+  def writeFromRDDImpl[T](rdd: RDD[T], outputFile: DataModel[T]): Unit
 
   /**
    * 引数で受け取ったDataset/DataFrameを指定のファイルに出力する
@@ -73,5 +73,5 @@ trait DataFileReaderWriterImpl {
    * @param saveMode   出力時のSaveMode
    * @tparam T DataFileの型パラメータ
    */
-  def writeFromDsDfImpl[T](ds: Dataset[T], outputFile: DataFile[T], saveMode: SaveMode = SaveMode.Overwrite): Unit
+  def writeFromDsDfImpl[T](ds: Dataset[T], outputFile: DataModel[T], saveMode: SaveMode = SaveMode.Overwrite): Unit
 }

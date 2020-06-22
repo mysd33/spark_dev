@@ -3,7 +3,7 @@ package com.example.fw.domain.logic
 import com.example.fw.domain.const.FWMsgConst
 import com.example.fw.domain.dataaccess.DataFileReaderWriter
 import com.example.fw.domain.message.Message
-import com.example.fw.domain.model.DataFile
+import com.example.fw.domain.model.DataModel
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{Dataset, SparkSession}
 
@@ -29,9 +29,9 @@ abstract class RDDToDatasetBLogic[U <: Product : TypeTag]
 (val dataFileReaderWriter: DataFileReaderWriter, val args: Array[String] = null) extends Logic {
   require(dataFileReaderWriter != null)
   /** 入力ファイルのDataFileのリストを実装する。複数ファイル指定できる。 */
-  val inputFiles: Seq[DataFile[String]]
+  val inputFiles: Seq[DataModel[String]]
   /** 出力ファイルのDataFileを実装する。 1ファイルのみ指定できる。 */
-  val outputFile: DataFile[U]
+  val outputFile: DataModel[U]
 
   /**
    * @see [[com.example.fw.domain.logic.Logic.execute]]

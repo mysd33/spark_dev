@@ -2,7 +2,7 @@ package com.example.sample.logic
 
 import com.example.fw.domain.dataaccess.DataFileReaderWriter
 import com.example.fw.domain.logic.DataFrameBLogic
-import com.example.fw.domain.model.{CsvModel, DataFile}
+import com.example.fw.domain.model.{CsvModel, DataModel}
 import com.example.fw.domain.utils.OptionImplicit._
 import com.example.sample.common.receipt.MedReceiptRecordMapper.{delimiter, lineSeparator}
 import com.example.sample.common.receipt._
@@ -28,7 +28,7 @@ class SampleMedReceiptDataFrameBLogic(dataFileReaderWriter: DataFileReaderWriter
   extends DataFrameBLogic(dataFileReaderWriter) {
 
   //区切り文字を\u0000とするCSVファイルとみて、CsvModelとして扱う
-  override val inputFiles: Seq[DataFile[Row]] = CsvModel[Row](
+  override val inputFiles: Seq[DataModel[Row]] = CsvModel[Row](
     relativePath = "receipt/11_RECODEINFO_MED_result2.CSV",
     sep = "\u0000",
     schema = StructType(
@@ -41,7 +41,7 @@ class SampleMedReceiptDataFrameBLogic(dataFileReaderWriter: DataFileReaderWriter
 
   //レセプトをレコード種別ごとにCSVファイルで出力する例。出力時にbzip2で圧縮。
   private val outputDirPath = "receipt/output2/"
-  override val outputFiles: Seq[DataFile[Row]] =
+  override val outputFiles: Seq[DataModel[Row]] =
     CsvModel[Row](outputDirPath + ReceiptConst.MN, compression = "bzip2"
     ) :: CsvModel[Row](outputDirPath + ReceiptConst.RE, compression = "bzip2"
     ) :: Nil

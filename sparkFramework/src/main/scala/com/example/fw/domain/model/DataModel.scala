@@ -5,14 +5,19 @@ import com.example.fw.domain.utils.ResourceBundleManager
 import org.apache.spark.sql.types.StructType
 
 /**
- * Spark APで扱うファイルを表す最上位のトレイト
- *
- * ファイルのパスやデータセットが扱うデータ形式を保持する
+ * Spark APで扱うテーブル・ファイルといったModelを表す最上位のトレイト
  *
  * @tparam T データセットが扱うデータ型。RDDやDataFrame、Dataset等で扱う型パラメータと対応する。
  */
-sealed trait DataFile[+T] extends Serializable {
-  require(relativePath != null)
+sealed trait DataModel[+T]
+
+/**
+ * ファイルをあつかう基底のModelトレイト
+ * ファイルのパスやデータセットが扱うデータ形式を保持する
+ * @tparam T データセットが扱うデータ型。RDDやDataFrame、Dataset等で扱う型パラメータと対応する。
+ */
+trait DataFile[+T] extends DataModel[T]{
+
   /** ファイルの相対パス */
   val relativePath: String
   /** ファイルのフルパス
@@ -27,7 +32,6 @@ sealed trait DataFile[+T] extends Serializable {
     basePath + relativePath
   }
 }
-
 /**
  * ファイルがパーティショニング（partitionBy）可能であることを示すトレイト
  */
@@ -217,11 +221,7 @@ case class XmlModel[T](override val relativePath: String,
  * @tparam T データセットが扱うデータ型。RDDやDataFrame、Dataset等で扱う型パラメータと対応する。
  */
 case class DwDmModel[T](dbTable: Option[String] = None,
-                        query: Option[String] = None,
-                        //TODO: DBのためファイルパスがないので暫定でダミー値を格納。
-                        //TODO: 本来はDataFileより一つ上の概念を表すトレイトを追加し全体のリファクタリング要
-                        override val relativePath: String = ???
-                       ) extends DataFile[T] {
+                        query: Option[String] = None) extends DataModel[T] {
   //いずれか一方が定義されていること
   assert(!(dbTable.isDefined && query.isDefined))
   assert(!(dbTable.isEmpty && query.isEmpty))

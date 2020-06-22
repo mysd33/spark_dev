@@ -1,6 +1,6 @@
 package com.example.fw.domain.dataaccess
 
-import com.example.fw.domain.model.DataFile
+import com.example.fw.domain.model.DataModel
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{DataFrame, Dataset, Row, SaveMode, SparkSession}
 
@@ -33,7 +33,7 @@ class DataFileReaderWriter {
    * @param sparkSession SparkSession
    * @return RDD
    */
-  def readToRDD(inputFile: DataFile[String], sparkSession: SparkSession): RDD[String] = {
+  def readToRDD(inputFile: DataModel[String], sparkSession: SparkSession): RDD[String] = {
     self.readToRDDImpl(inputFile, sparkSession)
   }
 
@@ -44,7 +44,7 @@ class DataFileReaderWriter {
    * @tparam T DataFileおよびDatasetの型パラメータ
    * @return Dataset
    */
-  def readToDs[T <: Product : TypeTag](inputFile: DataFile[T], sparkSession: SparkSession): Dataset[T] = {
+  def readToDs[T <: Product : TypeTag](inputFile: DataModel[T], sparkSession: SparkSession): Dataset[T] = {
     self.readToDsImpl(inputFile, sparkSession)
   }
 
@@ -54,7 +54,7 @@ class DataFileReaderWriter {
    * @param sparkSession SparkSession
    * @return DataFrame
    */
-  def readToDf(inputFile: DataFile[Row], sparkSession: SparkSession): DataFrame = {
+  def readToDf(inputFile: DataModel[Row], sparkSession: SparkSession): DataFrame = {
     self.readToDfImpl(inputFile, sparkSession)
   }
 
@@ -64,7 +64,7 @@ class DataFileReaderWriter {
    * @param outputFile 出力先ファイルのDataFile
    * @tparam T RDDおよびDataFileの型パラメータ
    */
-  def writeFromRDD[T](rdd: RDD[T], outputFile: DataFile[T]): Unit = {
+  def writeFromRDD[T](rdd: RDD[T], outputFile: DataModel[T]): Unit = {
     self.writeFromRDDImpl(rdd, outputFile)
   }
 
@@ -75,7 +75,7 @@ class DataFileReaderWriter {
    * @param saveMode 出力時のSaveMode
    * @tparam T DataFileの型パラメータ
    */
-  def writeFromDf[T](df: DataFrame, outputFile: DataFile[Row], saveMode: SaveMode = SaveMode.Overwrite): Unit = {
+  def writeFromDf[T](df: DataFrame, outputFile: DataModel[Row], saveMode: SaveMode = SaveMode.Overwrite): Unit = {
     self.writeFromDsDfImpl(df, outputFile, saveMode)
   }
 
@@ -86,7 +86,7 @@ class DataFileReaderWriter {
    * @param saveMode 出力時のSaveMode
    * @tparam T DatasetおよびDataFileの型パラメータ
    */
-  def writeFromDs[T <: Product : TypeTag](ds: Dataset[T], outputFile: DataFile[T], saveMode: SaveMode = SaveMode.Overwrite): Unit = {
+  def writeFromDs[T <: Product : TypeTag](ds: Dataset[T], outputFile: DataModel[T], saveMode: SaveMode = SaveMode.Overwrite): Unit = {
     self.writeFromDsDfImpl(ds, outputFile, saveMode)
   }
 }
