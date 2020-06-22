@@ -16,7 +16,6 @@ import com.example.fw.infra.dataaccess.impl.WriterMethodBuilder._
  * spark-xmlの依存jarをすべてDatabricksクラスタにインストールしないと動作しないので注意
  *
  * @see [[https://github.com/databricks/spark-xml/blob/master/README.md]]
- *
  * @deprecated spark-xmlは、ネストした複雑なXMLデータ構造だと煩雑なコードになってしまうし、ファイルを読んで逐次動作させながらでないと実装が難しいので使わない
  */
 class XmlReaderWriter {
@@ -26,48 +25,48 @@ class XmlReaderWriter {
   /**
    * Xmlファイルを読み込みDataFrameを返却する
    *
-   * @param inputFile    入力ファイルのXmlModel
+   * @param input        入力のXmlModel
    * @param sparkSession SparkSession
    * @return DataFrame
    */
-  def readToDf(inputFile: XmlModel[Row], sparkSession: SparkSession): DataFrame = {
-    val reader = inputFile.rowTag match {
+  def readToDf(input: XmlModel[Row], sparkSession: SparkSession): DataFrame = {
+    val reader = input.rowTag match {
       case Some(rowTag) => sparkSession.read.option("rowTag", rowTag)
       case _ => sparkSession.read
     }
-    val reader2 = inputFile.encoding match {
+    val reader2 = input.encoding match {
       //spark-xmlではencodingではなくcharset
       case Some(encoding) => reader.option("charset", encoding)
       case _ => reader
     }
     reader2
       //暗黙の型変換でメソッド拡張
-      .buildSchema(inputFile)
-      .xml(inputFile.absolutePath)
+      .buildSchema(input)
+      .xml(input.absolutePath)
   }
 
   /**
    * 引数で受け取ったDataset/DataFrameを、指定のXmlファイルに出力する
    *
-   * @param ds         出力対象のDataset/DataFrame
-   * @param outputFile 出力先ファイルのXmlModel
-   * @param saveMode   出力時のSaveMode
+   * @param ds       出力対象のDataset/DataFrame
+   * @param output   出力先のXmlModel
+   * @param saveMode 出力時のSaveMode
    * @tparam T CsvModelの型パラメータ
    */
-  def writeFromDsDf[T](ds: Dataset[T], outputFile: XmlModel[T], saveMode: SaveMode): Unit = {
+  def writeFromDsDf[T](ds: Dataset[T], output: XmlModel[T], saveMode: SaveMode): Unit = {
     val writer = ds.write.mode(saveMode)
-    val writer2 = outputFile.rootTag match {
+    val writer2 = output.rootTag match {
       case Some(rootTag) => writer.option("rootTag", rootTag)
       case _ => writer
     }
-    val writer3 = outputFile.rowTag match {
+    val writer3 = output.rowTag match {
       case Some(rowTag) => writer2.option("rowTag", rowTag)
       case _ => writer2
     }
     writer3
       //暗黙の型変換でメソッド拡張
-      .buildOptionCompression(outputFile)
-      .xml(outputFile.absolutePath)
+      .buildOptionCompression(output)
+      .xml(output.absolutePath)
   }
 
 }

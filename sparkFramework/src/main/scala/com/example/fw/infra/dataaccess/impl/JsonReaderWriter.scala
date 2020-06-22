@@ -18,53 +18,53 @@ class JsonReaderWriter {
   /**
    * Jsonファイルを読み込みDataFrameを返却する
    *
-   * @param inputFile    入力ファイルのJsonModel
+   * @param input        入力のJsonModel
    * @param sparkSession SparkSession
    * @return DataFrame
    */
-  def readToDf(inputFile: JsonModel[Row], sparkSession: SparkSession): DataFrame = {
+  def readToDf(input: JsonModel[Row], sparkSession: SparkSession): DataFrame = {
     sparkSession.read
-      .buildSchema(inputFile)
-      .buildOptionDateFormat(inputFile)
-      .buildOptionEncoding(inputFile)
-      .buildOptionCompression(inputFile)
-      .json(inputFile.absolutePath)
+      .buildSchema(input)
+      .buildOptionDateFormat(input)
+      .buildOptionEncoding(input)
+      .buildOptionCompression(input)
+      .json(input.absolutePath)
   }
 
   /**
    * Jsonファイルを読み込みDatasetを返却する
    *
-   * @param inputFile    入力ファイルのJsonModel
+   * @param input        入力のJsonModel
    * @param sparkSession SparkSession
    * @tparam T JsonModelおよびDatasetの型パラメータ
    * @return Dataset
    */
-  def readToDs[T <: Product : TypeTag](inputFile: JsonModel[T], sparkSession: SparkSession): Dataset[T] = {
+  def readToDs[T <: Product : TypeTag](input: JsonModel[T], sparkSession: SparkSession): Dataset[T] = {
     import sparkSession.implicits._
     sparkSession.read
       //暗黙の型変換でメソッド拡張
-      .buildSchema(inputFile)
-      .buildOptionDateFormat(inputFile)
-      .buildOptionEncoding(inputFile)
-      .buildOptionCompression(inputFile)
-      .json(inputFile.absolutePath).as[T]
+      .buildSchema(input)
+      .buildOptionDateFormat(input)
+      .buildOptionEncoding(input)
+      .buildOptionCompression(input)
+      .json(input.absolutePath).as[T]
   }
 
   /**
    * 引数で受け取ったDataset/DataFrameを、指定のJsonファイルに出力する
    *
-   * @param ds         出力対象のDataset/DataFrame
-   * @param outputFile 出力先ファイルのJsonModel
-   * @param saveMode   出力時のSaveMode
+   * @param ds       出力対象のDataset/DataFrame
+   * @param output   出力先のJsonModel
+   * @param saveMode 出力時のSaveMode
    * @tparam T JsonModelの型パラメータ
    */
-  def writeFromDsDf[T](ds: Dataset[T], outputFile: JsonModel[T], saveMode: SaveMode): Unit = {
+  def writeFromDsDf[T](ds: Dataset[T], output: JsonModel[T], saveMode: SaveMode): Unit = {
     ds.write.mode(saveMode)
       //暗黙の型変換でメソッド拡張
-      .buildOptionDateFormat(outputFile)
-      .buildOptionEncoding(outputFile)
-      .buildOptionCompression(outputFile)
-      .buildPartitionBy(outputFile)
-      .json(outputFile.absolutePath)
+      .buildOptionDateFormat(output)
+      .buildOptionEncoding(output)
+      .buildOptionCompression(output)
+      .buildPartitionBy(output)
+      .json(output.absolutePath)
   }
 }

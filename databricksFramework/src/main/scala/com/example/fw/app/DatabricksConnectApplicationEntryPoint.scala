@@ -43,7 +43,7 @@ abstract class DatabricksConnectApplicationEntryPoint extends Logging {
     try {
       //Logicインスタンスの実行
       val logic = LogicCreator.newInstance(logicClassFQDN,
-        DatabrickDataFileReaderWriterFactory.createDataFileReaderWriter(), methodArgs)
+        DatabricksDataModelReaderWriterFactory.createDataModelReaderWriter(), methodArgs)
       logic.execute(spark)
     } catch {
       case e: Exception => {

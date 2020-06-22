@@ -1,6 +1,6 @@
 package com.example.sample.logic
 
-import com.example.fw.domain.dataaccess.DataFileReaderWriter
+import com.example.fw.domain.dataaccess.DataModelReaderWriter
 import com.example.fw.domain.logic.DataFrameBLogic
 import com.example.fw.domain.model.{CsvModel, DataModel, XmlModel}
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
@@ -20,26 +20,26 @@ import scala.collection.mutable
  *
  * @deprecated spark-xmlは、ネストした複雑なXMLデータ構造だと煩雑なコードになってしまうし、ファイルを読んで逐次動作させながらでないと実装が難しいので使わない
  *
- * @param dataFileReaderWriter Logicクラスが使用するDataFileReaderWriter
+ * @param dataModelReaderWriter Logicクラスが使用するDataModelReaderWriter
  */
-class SampleTokuteiXMLDatasetBLogic(dataFileReaderWriter: DataFileReaderWriter)
-  extends DataFrameBLogic(dataFileReaderWriter) {
+class SampleTokuteiXMLDatasetBLogic(dataModelReaderWriter: DataModelReaderWriter)
+  extends DataFrameBLogic(dataModelReaderWriter) {
   private val outputDir = "tokutei/output/"
 
   //特定健診データを複数１つのXMLとして連結したもの
-  override val inputFiles: Seq[DataModel[Row]] =
+  override val inputModels: Seq[DataModel[Row]] =
     XmlModel[Row](relativePath = "tokutei/kensin_kihon_tokutei_result.xml",
       rowTag = "ClinicalDocument"
     ) :: Nil
 
-  override val outputFiles: Seq[DataModel[Row]] =
+  override val outputModels: Seq[DataModel[Row]] =
     CsvModel[Row](outputDir + TokuteiKenshinConst.Code, compression = "bzip2"
     ) :: CsvModel[Row](outputDir + TokuteiKenshinConst.PatientRole, compression = "bzip2"
     ) :: Nil
 
-  override def process(inputs: Seq[DataFrame], sparkSession: SparkSession): Seq[DataFrame] = {
+  override def process(dfList: Seq[DataFrame], sparkSession: SparkSession): Seq[DataFrame] = {
     import sparkSession.implicits._
-    val df = inputs(0)
+    val df = dfList(0)
 
     //本来なら特定検診の解析コンポーネントとして別クラスに切り出して単体テストしやすくする
     //報告区分(code)タグ

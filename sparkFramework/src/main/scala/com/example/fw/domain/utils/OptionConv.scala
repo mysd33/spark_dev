@@ -5,7 +5,7 @@ import org.apache.spark.sql.types.StructType
 /**
  * Optionクラスに関する暗黙の型変換を行うユーティリティクラス
  *
- * DataFileの引数がOption型の場合に、本クラスをインポートするとことで、
+ * DataModelの引数がOption型の場合に、本クラスをインポートするとことで、
  * Option型で作成不要になりコードが短くなる
  * {{{
  *   import com.example.fw.domain.utils.OptionImplicit._

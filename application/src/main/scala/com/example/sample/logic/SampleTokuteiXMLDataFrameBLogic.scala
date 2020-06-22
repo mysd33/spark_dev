@@ -1,6 +1,6 @@
 package com.example.sample.logic
 
-import com.example.fw.domain.dataaccess.DataFileReaderWriter
+import com.example.fw.domain.dataaccess.DataModelReaderWriter
 import com.example.fw.domain.logic.RDDToDataFrameBLogic
 import com.example.fw.domain.model.{CsvModel, DataModel, TextLineModel}
 import com.example.sample.common.tokutei.{Code, CodeTokuteiKenshinMapper, PatientRole, PatientRoleTokuteiKenshinMapper, TokuteiKenshin, TokuteiKenshinConst, TokuteiKenshinMapper}
@@ -16,29 +16,29 @@ import com.example.fw.domain.utils.OptionImplicit._
  * 事前にシェルで、1行1特定検診XMLで複数特定検診のXMLを連結したテキストファイルを
  * 読み込み、各タグごとに、CSVファイルに書き込みを試行した例
  *
- * @param dataFileReaderWriter Logicクラスが使用するDataFileReaderWriter
+ * @param dataModelReaderWriter Logicクラスが使用するDataModelReaderWriter
  */
-class SampleTokuteiXMLDataFrameBLogic(dataFileReaderWriter: DataFileReaderWriter)
-  extends RDDToDataFrameBLogic(dataFileReaderWriter) {
+class SampleTokuteiXMLDataFrameBLogic(dataModelReaderWriter: DataModelReaderWriter)
+  extends RDDToDataFrameBLogic(dataModelReaderWriter) {
 
   //1行1特定検診XMLで複数特定検診のXMLを連結したテキストファイルを読み込む例。TextLineModelで扱う
-  override val inputFiles: Seq[DataModel[String]] =
+  override val inputModels: Seq[DataModel[String]] =
     TextLineModel[String]("tokutei/kensin_kihon_tokutei_result2.xml") :: Nil
 
   //CSVファイルに書き込む例。bzip2でファイル圧縮
   private val outputDir = "tokutei/output2/"
-  override val outputFiles: Seq[DataModel[Row]] =
+  override val outputModels: Seq[DataModel[Row]] =
     CsvModel[Row](outputDir + TokuteiKenshinConst.Code, compression = "bzip2"
     ) :: CsvModel[Row](outputDir + TokuteiKenshinConst.PatientRole, compression = "bzip2"
     ) :: Nil
 
   private var cached: RDD[(String, TokuteiKenshin)] = null
 
-  override def process(inputs: Seq[RDD[String]], sparkSession: SparkSession): Seq[DataFrame] = {
+  override def process(rddList: Seq[RDD[String]], sparkSession: SparkSession): Seq[DataFrame] = {
     // scala xmlで特定検診XMLのデータを操作
     import sparkSession.implicits._
 
-    val tokuteiXmlStrs = inputs(0)
+    val tokuteiXmlStrs = rddList(0)
     val recordRDD = tokuteiXmlStrs.flatMap(xmlStr => {
       val xml = XML.loadString(xmlStr)
       TokuteiKenshinMapper.mapToTokuteiKennshinTuples(xml)

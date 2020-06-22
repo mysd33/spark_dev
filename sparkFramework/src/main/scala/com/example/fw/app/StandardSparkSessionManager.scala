@@ -26,7 +26,7 @@ object StandardSparkSessionManager extends Logging {
       sparkSession => {
         //Logicインスタンスの実行
         val logic = LogicCreator.newInstance(logicClassFQDN,
-          StandardSparkDataFileReaderWriterFactory.createDataFileReaderWriter(), args)
+          StandardSparkDataModelReaderWriterFactory.createDataModelReaderWriter(), args)
         logic.execute(sparkSession)
       }
     }

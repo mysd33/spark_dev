@@ -1,6 +1,6 @@
 package com.example.fw.domain.logic
 
-import com.example.fw.domain.dataaccess.DataFileReaderWriter
+import com.example.fw.domain.dataaccess.DataModelReaderWriter
 
 import scala.reflect.runtime.{universe => ru}
 
@@ -16,19 +16,19 @@ object LogicCreator {
    * 引数のクラス名のLogicクラスのインスタンスを生成する
    *
    * @param className            Logicクラスの完全修飾名
-   * @param dataFileReaderWriter Logicクラスのコンストラクタ引数に渡すDataFileReaderWriter
+   * @param dataModelReaderWriter Logicクラスのコンストラクタ引数に渡すDataModelReaderWriter
    * @param methodArgs           Logicクラスのメソッド引数
    * @return 生成されたLogicインスタンス
    */
-  def newInstance(className: String, dataFileReaderWriter: DataFileReaderWriter, methodArgs: Array[String]): Logic = {
+  def newInstance(className: String, dataModelReaderWriter: DataModelReaderWriter, methodArgs: Array[String]): Logic = {
     val constructorMirror: ru.MethodMirror = getConstructorMirror(className)
     val paramList = constructorMirror.symbol.asMethod.paramLists
     val logic = if (paramList.size == 0) {
       constructorMirror()
     } else if (paramList.size == 1) {
-      constructorMirror(dataFileReaderWriter)
+      constructorMirror(dataModelReaderWriter)
     } else if (paramList.size == 2) {
-      constructorMirror(dataFileReaderWriter, methodArgs)
+      constructorMirror(dataModelReaderWriter, methodArgs)
     }else {
       ???
     }

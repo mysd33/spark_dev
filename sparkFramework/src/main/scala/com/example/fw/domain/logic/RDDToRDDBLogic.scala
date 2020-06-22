@@ -1,7 +1,7 @@
 package com.example.fw.domain.logic
 
 import com.example.fw.domain.const.FWMsgConst
-import com.example.fw.domain.dataaccess.DataFileReaderWriter
+import com.example.fw.domain.dataaccess.DataModelReaderWriter
 import com.example.fw.domain.message.Message
 import com.example.fw.domain.model.DataModel
 import javassist.bytecode.stackmap.TypeTag
@@ -14,23 +14,23 @@ import org.apache.spark.sql.{DataFrame, Dataset, SparkSession}
  * 業務開発者は本クラスを継承してLogicクラスを実装する。
  *
  * 入力ファイルを文字列として扱い加工し表形式のファイルへ変換する場合での利用を想定している。
- * このため、入力ファイルを、DataFile[String]、RDD[String]で扱う必要がある。
+ * このため、入力ファイルを、DataModel[String]、RDD[String]で扱う必要がある。
  * 入力RDDは複数ファイル扱うことができ汎用的に利用できるが、
  * 出力RDDの型パラメータを指定する必要があるため、
  * 複数のRDDに対して1つのRDDを返却する場合のみ利用できる。
  *
  * @constructor コンストラクタ
- * @param dataFileReaderWriter Logicクラスが使用するDataFileReaderWriter
+ * @param dataModelReaderWriter Logicクラスが使用するDataModelReaderWriter
  * @param args                 AP起動時の引数
- * @tparam U 出力ファイルつまり、outputFileのDataFile、RDDが扱う型パラメータ
+ * @tparam U 出力ファイルつまり、outputのDataModel、RDDが扱う型パラメータ
  */
-abstract class RDDToRDDBLogic[U](val dataFileReaderWriter: DataFileReaderWriter,
+abstract class RDDToRDDBLogic[U](val dataModelReaderWriter: DataModelReaderWriter,
                                  val args: Array[String] = null) extends Logic {
-  require(dataFileReaderWriter != null)
-  /** 入力ファイルのDataFileのリストを実装する。複数ファイル指定できる。 */
-  val inputFiles: Seq[DataModel[String]]
-  /** 出力ファイルのDataFileを実装する。 1ファイルのみ指定できる。 */
-  val outputFile: DataModel[U]
+  require(dataModelReaderWriter != null)
+  /** 入力ファイルのDataModelのリストを実装する。複数ファイル指定できる。 */
+  val inputModels: Seq[DataModel[String]]
+  /** 出力ファイルのDataModelを実装する。 1ファイルのみ指定できる。 */
+  val outputModel: DataModel[U]
 
   /**
    * @see [[com.example.fw.domain.logic.Logic.execute]]
@@ -66,15 +66,15 @@ abstract class RDDToRDDBLogic[U](val dataFileReaderWriter: DataFileReaderWriter,
   }
 
   /**
-   * inputFilesのDataFileのリストからRDDのリストを取得する
+   * inputModelsのDataModelのリストからRDDのリストを取得する
    *
    * @param sparkSession SparkSession
    * @return RDDのリスト
    */
   final def input(sparkSession: SparkSession): Seq[RDD[String]] = {
-    inputFiles.map(
-      inputFile => {
-        dataFileReaderWriter.readToRDD(inputFile, sparkSession)
+    inputModels.map(
+      inputModel => {
+        dataModelReaderWriter.readToRDD(inputModel, sparkSession)
       }
     )
   }
@@ -82,20 +82,20 @@ abstract class RDDToRDDBLogic[U](val dataFileReaderWriter: DataFileReaderWriter,
   /**
    * ジョブ設計書の処理内容を実装する。
    *
-   * @param inputs       inputFilesで定義したDataListのリストの順番にRDDのリストが渡される。
+   * @param rddList       inputModelsで定義したDataListのリストの順番にRDDのリストが渡される。
    * @param sparkSession SparkSession
    * @return ジョブの処理結果となるRDD
    */
-  def process(inputs: Seq[RDD[String]], sparkSession: SparkSession): RDD[U]
+  def process(rddList: Seq[RDD[String]], sparkSession: SparkSession): RDD[U]
 
   /**
-   * processメソッドで返却されたRDDからoutputFileのDataFileで
+   * processメソッドで返却されたRDDからoutputModelのDataModelで
    * 指定されたファイルを出力する
    *
    * @param rdd processメソッドで返却されたRDD
    */
   final def output(rdd: RDD[U]): Unit = {
-    dataFileReaderWriter.writeFromRDD(rdd, outputFile)
+    dataModelReaderWriter.writeFromRDD(rdd, outputModel)
   }
 
   /**

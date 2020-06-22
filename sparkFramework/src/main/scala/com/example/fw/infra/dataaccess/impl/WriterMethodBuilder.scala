@@ -24,11 +24,11 @@ object WriterMethodBuilder {
     /**
      * sepを設定するoptionメソッドを構築する
      *
-     * @param file CsvModel
+     * @param model CsvModel
      * @return DataFrameWriter
      */
-    def buildOptionSep(file: CsvModel[T]): DataFrameWriter[T] = {
-      file.sep match {
+    def buildOptionSep(model: CsvModel[T]): DataFrameWriter[T] = {
+      model.sep match {
         case Some(sep) => writer.option("sep", sep)
         case _ => writer
       }
@@ -37,15 +37,15 @@ object WriterMethodBuilder {
     /**
      * dateFormat、timestampFormatを設定するoptionメソッドを構築する
      *
-     * @param file HavingDateFormatトレイト
+     * @param model HavingDateFormatトレイト
      * @return DataFrameWriter
      */
-    def buildOptionDateFormat(file: HavingDateFormat): DataFrameWriter[T] = {
-      val writer2 = file.dateFormat match {
+    def buildOptionDateFormat(model: HavingDateFormat): DataFrameWriter[T] = {
+      val writer2 = model.dateFormat match {
         case Some(dateFormat) => writer.option("dateFormat", dateFormat)
         case _ => writer
       }
-      file.timestampFormat match {
+      model.timestampFormat match {
         case Some(timestampFormat) => writer2.option("timestampFormat", timestampFormat)
         case _ => writer2
       }
@@ -54,21 +54,21 @@ object WriterMethodBuilder {
     /**
      * headerを設定するoptionメソッドを構築する
      *
-     * @param file
+     * @param model
      * @return DataFrameWriter
      */
-    def buildOptionHeader(file: CsvModel[T]): DataFrameWriter[T] = {
-      writer.option("header", file.hasHeader)
+    def buildOptionHeader(model: CsvModel[T]): DataFrameWriter[T] = {
+      writer.option("header", model.hasHeader)
     }
 
     /**
      * encodingを設定するoptionメソッドを構築する
      *
-     * @param file TextFormatトレイト
+     * @param model TextFormatトレイト
      * @return DataFrameWriter
      */
-    def buildOptionEncoding(file: TextFormat): DataFrameWriter[T] = {
-      file.encoding match {
+    def buildOptionEncoding(model: TextFormat): DataFrameWriter[T] = {
+      model.encoding match {
         case Some(encoding) => writer.option("encoding", encoding)
         case _ => writer
       }
@@ -77,11 +77,11 @@ object WriterMethodBuilder {
     /**
      * compressionを設定するoptionメソッドを構築する
      *
-     * @param file Compressableトレイト
+     * @param model Compressableトレイト
      * @return DataFrameWriter
      */
-    def buildOptionCompression(file: Compressable): DataFrameWriter[T] = {
-      file.compression match {
+    def buildOptionCompression(model: Compressable): DataFrameWriter[T] = {
+      model.compression match {
         case Some(compression) => writer.option("compression", compression)
         case _ => writer
       }
@@ -90,14 +90,14 @@ object WriterMethodBuilder {
     /**
      * partitionByメソッドを構築する
      *
-     * @param file Partitionableトレイト
+     * @param model Partitionableトレイト
      * @return DataFrameWriter
      */
-    def buildPartitionBy(file: Partitionable): DataFrameWriter[T] = {
-      if (file.partitions.isEmpty) {
+    def buildPartitionBy(model: Partitionable): DataFrameWriter[T] = {
+      if (model.partitions.isEmpty) {
         writer
       } else {
-        writer.partitionBy(file.partitions: _*)
+        writer.partitionBy(model.partitions: _*)
       }
     }
   }

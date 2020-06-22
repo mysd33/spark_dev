@@ -19,59 +19,59 @@ class CsvReaderWriter {
   /**
    * CSVファイルを読み込みDataFrameを返却する
    *
-   * @param inputFile    入力ファイルのCsvModel
+   * @param input        入力のCsvModel
    * @param sparkSession SparkSession
    * @return DataFrame
    */
-  def readToDf(inputFile: CsvModel[Row], sparkSession: SparkSession): DataFrame = {
+  def readToDf(input: CsvModel[Row], sparkSession: SparkSession): DataFrame = {
     sparkSession.read
       //暗黙の型変換でメソッド拡張
-      .buildOptionSep(inputFile)
-      .buildOptionDateFormat(inputFile)
-      .buildCsvSchema(inputFile)
-      .buildOptionEncoding(inputFile)
-      .buildOptionCompression(inputFile)
-      .csv(inputFile.absolutePath)
+      .buildOptionSep(input)
+      .buildOptionDateFormat(input)
+      .buildCsvSchema(input)
+      .buildOptionEncoding(input)
+      .buildOptionCompression(input)
+      .csv(input.absolutePath)
   }
 
   /**
    * CSVファイルを読み込みDatasetを返却する
    *
-   * @param inputFile    入力ファイルのCsvModel
+   * @param input        入力のCsvModel
    * @param sparkSession SparkSession
    * @tparam T CsvModelおよびDatasetの型パラメータ
    * @return Dataset
    */
-  def readToDs[T <: Product : TypeTag](inputFile: CsvModel[T], sparkSession: SparkSession): Dataset[T] = {
+  def readToDs[T <: Product : TypeTag](input: CsvModel[T], sparkSession: SparkSession): Dataset[T] = {
     import sparkSession.implicits._
     sparkSession.read
       //暗黙の型変換でメソッド拡張
-      .buildOptionSep(inputFile)
-      .buildOptionDateFormat(inputFile)
-      .buildCsvSchema(inputFile)
-      .buildOptionEncoding(inputFile)
-      .buildOptionCompression(inputFile)
-      .csv(inputFile.absolutePath).as[T]
+      .buildOptionSep(input)
+      .buildOptionDateFormat(input)
+      .buildCsvSchema(input)
+      .buildOptionEncoding(input)
+      .buildOptionCompression(input)
+      .csv(input.absolutePath).as[T]
   }
 
   /**
    * 引数で受け取ったDataset/DataFrameを、指定のCSVファイルに出力する
    *
-   * @param ds         出力対象のDataset/DataFrame
-   * @param outputFile 出力先ファイルのCsvModel
-   * @param saveMode   出力時のSaveMode
+   * @param ds       出力対象のDataset/DataFrame
+   * @param output   出力先のCsvModel
+   * @param saveMode 出力時のSaveMode
    * @tparam T CsvModelの型パラメータ
    */
-  def writeFromDsDf[T](ds: Dataset[T], outputFile: CsvModel[T], saveMode: SaveMode): Unit = {
+  def writeFromDsDf[T](ds: Dataset[T], output: CsvModel[T], saveMode: SaveMode): Unit = {
     ds.write.mode(saveMode)
       //暗黙の型変換でメソッド拡張
-      .buildOptionSep(outputFile)
-      .buildOptionHeader(outputFile)
-      .buildOptionDateFormat(outputFile)
-      .buildOptionCompression(outputFile)
-      .buildOptionEncoding(outputFile)
-      .buildPartitionBy(outputFile)
-      .csv(outputFile.absolutePath)
+      .buildOptionSep(output)
+      .buildOptionHeader(output)
+      .buildOptionDateFormat(output)
+      .buildOptionCompression(output)
+      .buildOptionEncoding(output)
+      .buildPartitionBy(output)
+      .csv(output.absolutePath)
   }
 
 }

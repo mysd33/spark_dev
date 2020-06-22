@@ -23,11 +23,11 @@ object ReaderMethodBuilder {
     /**
      * schemaメソッドを構築する
      *
-     * @param file HavingSchemaトレイト
+     * @param model HavingSchemaトレイト
      * @return DataFrameReader
      */
-    def buildSchema(file: HavingSchema): DataFrameReader = {
-      file.schema match {
+    def buildSchema(model: HavingSchema): DataFrameReader = {
+      model.schema match {
         case Some(schema) => reader.schema(schema)
         case _ => reader
       }
@@ -36,21 +36,21 @@ object ReaderMethodBuilder {
     /**
      * CsvModelの場合のSchemaメソッドを構築する
      *
-     * @param file CsvModel
+     * @param model CsvModel
      * @tparam T CsvModelの型パラメータ
      * @return DataFrameReader
      */
-    def buildCsvSchema[T](file: CsvModel[T]): DataFrameReader = {
-      file.schema match {
+    def buildCsvSchema[T](model: CsvModel[T]): DataFrameReader = {
+      model.schema match {
         case Some(schema) => {
           reader.schema(schema)
-            .option("header", file.hasHeader)
+            .option("header", model.hasHeader)
         }
         case _ => {
           //CSVの場合、schema設定がない場合は、ヘッダをもとにスキーマ推定
-          assert(file.hasHeader, "HavingSchema.hasHeader must be true")
+          assert(model.hasHeader, "HavingSchema.hasHeader must be true")
           reader
-            .option("header", file.hasHeader)
+            .option("header", model.hasHeader)
             .option("inferSchema", "true")
         }
       }
@@ -59,12 +59,12 @@ object ReaderMethodBuilder {
     /**
      * sepを設定するoptionメソッドを構築する
      *
-     * @param file CsvModel
+     * @param model CsvModel
      * @tparam T CsvModelの型パラメータ
      * @return DataFrameReader
      */
-    def buildOptionSep[T](file: CsvModel[T]): DataFrameReader = {
-      file.sep match {
+    def buildOptionSep[T](model: CsvModel[T]): DataFrameReader = {
+      model.sep match {
         case Some(delimiter) => reader.option("sep", delimiter)
         case _ => reader
       }
@@ -73,15 +73,15 @@ object ReaderMethodBuilder {
     /**
      * dateFormat、timestampFormatを設定するoptionメソッドを構築する
      *
-     * @param file HavingDateFormatトレイト
+     * @param model HavingDateFormatトレイト
      * @return DataFrameReader
      */
-    def buildOptionDateFormat(file: HavingDateFormat): DataFrameReader = {
-      val reader2 = file.dateFormat match {
+    def buildOptionDateFormat(model: HavingDateFormat): DataFrameReader = {
+      val reader2 = model.dateFormat match {
         case Some(dateFormat) => reader.option("dateFormat", dateFormat)
         case _ => reader
       }
-      file.timestampFormat match {
+      model.timestampFormat match {
         case Some(timestampFormat) => reader2.option("timestampFormat", timestampFormat)
         case _ => reader2
       }
@@ -90,11 +90,11 @@ object ReaderMethodBuilder {
     /**
      * encodingを設定するoptionメソッドを構築する
      *
-     * @param file TextFormatトレイト
+     * @param model TextFormatトレイト
      * @return DataFrameReader
      */
-    def buildOptionEncoding(file: TextFormat): DataFrameReader = {
-      file.encoding match {
+    def buildOptionEncoding(model: TextFormat): DataFrameReader = {
+      model.encoding match {
         case Some(encoding) => reader.option("encoding", encoding)
         case _ => reader
       }
@@ -103,11 +103,11 @@ object ReaderMethodBuilder {
     /**
      * compressionを設定するoptionメソッドを構築する
      *
-     * @param file Compressableトレイト
+     * @param model Compressableトレイト
      * @return DataFrameReader
      */
-    def buildOptionCompression(file: Compressable): DataFrameReader = {
-      file.compression match {
+    def buildOptionCompression(model: Compressable): DataFrameReader = {
+      model.compression match {
         case Some(compression) => reader.option("compression", compression)
         case _ => reader
       }

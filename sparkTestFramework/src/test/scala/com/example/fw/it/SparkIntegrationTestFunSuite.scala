@@ -3,7 +3,7 @@ package com.example.fw.it
 import java.io.File
 
 import com.example.fw.app.StandardSparkSessionManager.createSparkSession
-import com.example.fw.app.{StandardSparkDataFileReaderWriterFactory, StandardSparkSessionManager}
+import com.example.fw.app.{StandardSparkDataModelReaderWriterFactory, StandardSparkSessionManager}
 import com.example.fw.domain.const.FWConst
 import com.example.fw.domain.logic.LogicCreator
 import com.example.fw.domain.utils.ResourceBundleManager
@@ -60,7 +60,7 @@ abstract class SparkIntegrationTestFunSuite extends AnyFunSuite with BeforeAndAf
     val sparkSession = StandardSparkSessionManager.createSparkSession(logicClassFQDN)
     //Logicインスタンスの実行
     val logic = LogicCreator.newInstance(logicClassFQDN,
-        StandardSparkDataFileReaderWriterFactory.createDataFileReaderWriter(), methodArgs)
+        StandardSparkDataModelReaderWriterFactory.createDataModelReaderWriter(), methodArgs)
     logic.execute(sparkSession)
     //実装したアサーション処理を使って実行結果確認
     assertionLogic(sparkSession)

@@ -18,29 +18,29 @@ import org.apache.spark.sql.SparkSession
  *
  * @constructor コンストラクタ
  */
-class MultiFormatCsvReaderWriter  {
+class MultiFormatCsvReaderWriter {
 
   /**
    * マルチフォーマット形式のCSVファイルを読み込み
    * 複数行を1要素とするRDDを返却する
    *
-   * @param inputFile    入力ファイルのMutiFormatCsvModel
+   * @param input        入力のMultiFormatCsvModel
    * @param sparkSession SparkSession
    * @return RDD
    */
-  def readToRDD(inputFile: MultiFormatCsvModel[String], sparkSession: SparkSession): RDD[String] = {
+  def readToRDD(input: MultiFormatCsvModel[String], sparkSession: SparkSession): RDD[String] = {
     val sc = sparkSession.sparkContext
     val conf = new Configuration(sc.hadoopConfiguration)
-    inputFile.recordDelimiter match {
+    input.recordDelimiter match {
       case Some(delimiter) => conf.set("textinputformat.record.delimiter", delimiter)
       case _ => FWConst.DEFAULT_MULTIFORMAT_CSV_DELIMITER
     }
 
     //参考： https://stackoverflow.com/questions/25259425/spark-reading-files-using-different-delimiter-than-new-line
     //エンコーディングをShift_JIS（MS932）に変更し、複数行を１要素とするRDD[String]を取得
-    val rdd = sc.newAPIHadoopFile(inputFile.absolutePath, classOf[TextInputFormat], classOf[LongWritable], classOf[Text], conf)
+    val rdd = sc.newAPIHadoopFile(input.absolutePath, classOf[TextInputFormat], classOf[LongWritable], classOf[Text], conf)
     rdd.map { case (_, text) =>
-      inputFile.encoding match {
+      input.encoding match {
         case Some(encoding) => new String(text.getBytes, encoding)
         case _ => new String(text.getBytes)
       }

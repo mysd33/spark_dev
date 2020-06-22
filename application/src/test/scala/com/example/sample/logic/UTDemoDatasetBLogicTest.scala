@@ -1,8 +1,8 @@
 package com.example.sample.logic
 
-import com.example.fw.domain.dataaccess.DataFileReaderWriter
+import com.example.fw.domain.dataaccess.DataModelReaderWriter
 import com.example.fw.domain.utils.ResourceBundleManager
-import com.example.fw.infra.dataaccess.StandardSparkDataFileReaderWriter
+import com.example.fw.infra.dataaccess.StandardSparkDataModelReaderWriter
 import com.example.fw.test.SparkTestFunSuite
 import com.example.sample.common.logic.SampleSharedLogic
 import com.example.sample.common.rule.PersonRule
@@ -46,7 +46,7 @@ class UTDemoDatasetBLogicTest extends SparkTestFunSuite with MockitoSugar {
 
     //テスト対象クラス
     val sut = new UTDemoDatasetBLogic(
-      new DataFileReaderWriter with StandardSparkDataFileReaderWriter) {
+      new DataModelReaderWriter with StandardSparkDataModelReaderWriter) {
       //overrideしてMockに置き換え
       override val sampleSharedLogic: SampleSharedLogic = sampleSharedLogicMock
       override val personRule: PersonRule = personRuleMock

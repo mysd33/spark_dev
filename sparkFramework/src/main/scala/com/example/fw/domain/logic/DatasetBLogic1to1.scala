@@ -1,7 +1,7 @@
 package com.example.fw.domain.logic
 
 import com.example.fw.domain.const.FWMsgConst
-import com.example.fw.domain.dataaccess.DataFileReaderWriter
+import com.example.fw.domain.dataaccess.DataModelReaderWriter
 import com.example.fw.domain.message.Message
 import com.example.fw.domain.model.DataModel
 import org.apache.spark.sql.{Dataset, SparkSession}
@@ -18,18 +18,18 @@ import scala.reflect.runtime.universe.TypeTag
  * 1つの入力Datasetに対して1つのDatasetを返却する場合のみ利用できる。
  *
  * @constructor コンストラクタ
- * @param dataFileReaderWriter Logicクラスが使用するDataFileReaderWriter
+ * @param dataModelReaderWriter Logicクラスが使用するDataModelReaderWriter
  * @param args                 AP起動時の引数
- * @tparam T 入力ファイルつまり、inputFileのDataFile、Datasetが扱う型パラメータ
- * @tparam U 出力ファイルつまり、outputFileのDataFile、Datasetが扱う型パラメータ
+ * @tparam T 入力ファイルつまり、inputModelのDataModel、Datasetが扱う型パラメータ
+ * @tparam U 出力ファイルつまり、outputModeのDataModel、Datasetが扱う型パラメータ
  */
 abstract class DatasetBLogic1to1[T <: Product : TypeTag, U <: Product : TypeTag]
-(val dataFileReaderWriter: DataFileReaderWriter, val args: Array[String] = null) extends Logic {
-  require(dataFileReaderWriter != null)
-  /** 入力ファイルのDataFileを実装する。 1ファイルのみ指定できる。 */
-  val inputFile: DataModel[T]
-  /** 出力ファイルのDataFileを実装する。 1ファイルのみ指定できる。 */
-  val outputFile: DataModel[U]
+(val dataModelReaderWriter: DataModelReaderWriter, val args: Array[String] = null) extends Logic {
+  require(dataModelReaderWriter != null)
+  /** 入力ファイルのDataModelを実装する。 1ファイルのみ指定できる。 */
+  val inputModel: DataModel[T]
+  /** 出力ファイルのDataModelを実装する。 1ファイルのみ指定できる。 */
+  val outputModel: DataModel[U]
 
   /**
    * @see [[com.example.fw.domain.logic.Logic.execute]]
@@ -65,35 +65,35 @@ abstract class DatasetBLogic1to1[T <: Product : TypeTag, U <: Product : TypeTag]
   }
 
   /**
-   * inputFilesのDataFileからDatasetを取得する
+   * inputのDataModelからDatasetを取得する
    *
    * @param sparkSession SparkSession
-   * @return Dataset
+   * @return Dataset inputのDataModelを元に取得したDataset
    */
   final def input(sparkSession: SparkSession): Dataset[T] = {
-    dataFileReaderWriter.readToDs(inputFile, sparkSession)
+    dataModelReaderWriter.readToDs(inputModel, sparkSession)
   }
 
   /**
    * ジョブ設計書の処理内容を実装する。
    *
-   * @param input        inputFileで定義したDatasetが渡される。
+   * @param ds        inputで定義したDatasetが渡される。
    * @param sparkSession SparkSession。当該メソッド内でDatasetを扱うために
    * {{{ import sparkSession.implicits._ }}}
    *                     を指定できる。
    * @return ジョブの処理結果となるDataset
    */
-  def process(input: Dataset[T], sparkSession: SparkSession): Dataset[U]
+  def process(ds: Dataset[T], sparkSession: SparkSession): Dataset[U]
 
 
   /**
-   * processメソッドで返却されたDatasetからoutputFileのDataFileで
+   * processメソッドで返却されたDatasetからoutputFileのDataModelで
    * 指定されたファイルを出力する
    *
    * @param ds processメソッドで返却されたDataset
    */
   final def output(ds: Dataset[U]): Unit = {
-    dataFileReaderWriter.writeFromDs(ds, outputFile)
+    dataModelReaderWriter.writeFromDs(ds, outputModel)
   }
 
   /**

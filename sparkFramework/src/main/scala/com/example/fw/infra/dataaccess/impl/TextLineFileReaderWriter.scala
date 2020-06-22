@@ -15,24 +15,31 @@ class TextLineFileReaderWriter {
   /**
    * ファイルを読み込みRDDを返却する
    *
-   * @param inputFile    入力ファイルのTextLineModel
+   * @param input        入力ファイルのTextLineModel
    * @param sparkSession SparkSession
    * @return RDD
    */
-  def readToRDD(inputFile: TextLineModel[String], sparkSession: SparkSession): RDD[String] = {
-    val rdd = sparkSession.sparkContext.textFile(inputFile.absolutePath)
+  def readToRDD(input: TextLineModel[String], sparkSession: SparkSession): RDD[String] = {
+    val rdd = sparkSession.sparkContext.textFile(input.absolutePath)
     //encoding
-    inputFile.encoding match {
+    input.encoding match {
       case Some(encoding) => rdd.map(s => new String(s.getBytes, encoding))
       case _ => rdd
     }
   }
 
-  def readToDf(inputFile: TextLineModel[Row], sparkSession: SparkSession): DataFrame = {
+  /**
+   * ファイルを読み込みDataFrameを返却する
+   *
+   * @param input        入力ファイルのTextLineModel
+   * @param sparkSession SparkSession
+   * @return DataFrame
+   */
+  def readToDf(input: TextLineModel[Row], sparkSession: SparkSession): DataFrame = {
     import sparkSession.implicits._
-    val df = sparkSession.read.text(inputFile.absolutePath)
+    val df = sparkSession.read.text(input.absolutePath)
     //encoding
-    inputFile.encoding match {
+    input.encoding match {
       case Some(encoding) => df.map(row => {
         val s = row.getAs[String]("value")
         new String(s.getBytes(), encoding)
@@ -42,11 +49,18 @@ class TextLineFileReaderWriter {
 
   }
 
-  def readToDs(inputFile: TextLineModel[String], sparkSession: SparkSession): Dataset[String] = {
+  /**
+   * ファイルを読み込みDatasetを返却する
+   *
+   * @param input        入力ファイルのTextLineModel
+   * @param sparkSession SparkSession
+   * @return Dataset
+   */
+  def readToDs(input: TextLineModel[String], sparkSession: SparkSession): Dataset[String] = {
     import sparkSession.implicits._
-    val ds = sparkSession.read.textFile(inputFile.absolutePath)
+    val ds = sparkSession.read.textFile(input.absolutePath)
     //encoding
-    inputFile.encoding match {
+    input.encoding match {
       case Some(encoding) => ds.map(s => new String(s.getBytes, encoding))
       case _ => ds
     }
@@ -55,11 +69,11 @@ class TextLineFileReaderWriter {
   /**
    * 引数で受け取ったRDDを指定のファイルに出力する
    *
-   * @param rdd        出力対象のRDD
-   * @param outputFile 出力先ファイルのTextLineModel
+   * @param rdd    出力対象のRDD
+   * @param output 出力先のTextLineModel
    * @tparam T RDDおよびDataFileの型パラメータ
    */
-  def writeFromRDD[T](rdd: RDD[T], outputFile: TextLineModel[T]): Unit = {
-    rdd.saveAsTextFile(outputFile.absolutePath)
+  def writeFromRDD[T](rdd: RDD[T], output: TextLineModel[T]): Unit = {
+    rdd.saveAsTextFile(output.absolutePath)
   }
 }

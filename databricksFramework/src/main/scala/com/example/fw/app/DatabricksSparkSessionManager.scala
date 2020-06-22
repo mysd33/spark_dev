@@ -29,7 +29,7 @@ object DatabricksSparkSessionManager extends Logging {
       val spark = createSparkSession(logicClassFQDN)
       //Logicインスタンスの実行
       val logic = LogicCreator.newInstance(logicClassFQDN,
-        DatabrickDataFileReaderWriterFactory.createDataFileReaderWriter(), args)
+        DatabricksDataModelReaderWriterFactory.createDataModelReaderWriter(), args)
       logic.execute(spark)
     } catch {
       case e: Exception => {

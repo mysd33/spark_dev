@@ -1,7 +1,7 @@
 package com.example.fw.domain.logic
 
 import com.example.fw.domain.const.FWMsgConst
-import com.example.fw.domain.dataaccess.DataFileReaderWriter
+import com.example.fw.domain.dataaccess.DataModelReaderWriter
 import com.example.fw.domain.message.Message
 import com.example.fw.domain.model.DataModel
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
@@ -15,16 +15,16 @@ import org.apache.spark.sql.{DataFrame, Row, SparkSession}
  * 複数ファイル扱うことができ汎用的に利用できる。
  *
  * @constructor コンストラクタ
- * @param dataFileReaderWriter Logicクラスが使用するDataFileReaderWriter
+ * @param dataModelReaderWriter Logicクラスが使用するDataModelReaderWriter
  * @param args AP起動時の引数
  */
-abstract class DataFrameBLogic(val dataFileReaderWriter: DataFileReaderWriter,
+abstract class DataFrameBLogic(val dataModelReaderWriter: DataModelReaderWriter,
                                val args: Array[String] = null) extends Logic {
-  require(dataFileReaderWriter != null)
+  require(dataModelReaderWriter != null)
   /** 入力ファイルのDataFileのリストを実装する。複数ファイル指定できる。 */
-  val inputFiles: Seq[DataModel[Row]]
-  /** 出力ファイルのDataFileのリストを実装する。複数ファイル指定できる。 */
-  val outputFiles: Seq[DataModel[Row]]
+  val inputModels: Seq[DataModel[Row]]
+  /** 出力ファイルのDataModelのリストを実装する。複数ファイル指定できる。 */
+  val outputModels: Seq[DataModel[Row]]
 
   /**
    * @see [[com.example.fw.domain.logic.Logic.execute]]
@@ -60,15 +60,15 @@ abstract class DataFrameBLogic(val dataFileReaderWriter: DataFileReaderWriter,
   }
 
   /**
-   * inputFilesのDataFileのリストからDataFrameのリストを取得する
+   * inputModelsのDataModelのリストからDataFrameのリストを取得する
    *
    * @param sparkSession SparkSession
    * @return DataFrameのリスト
    */
   final def input(sparkSession: SparkSession): Seq[DataFrame] = {
-    inputFiles.map(
-      inputFile => {
-        dataFileReaderWriter.readToDf(inputFile, sparkSession)
+    inputModels.map(
+      inputModel => {
+        dataModelReaderWriter.readToDf(inputModel, sparkSession)
       }
     )
   }
@@ -76,24 +76,24 @@ abstract class DataFrameBLogic(val dataFileReaderWriter: DataFileReaderWriter,
   /**
    * ジョブ設計書の処理内容を実装する。
    *
-   * @param inputs       inputFilesで定義したDataFileのリストの順番にDataFrameのリストが渡される。
+   * @param dfList       inputModelsで定義したDataModelのリストの順番にDataFrameのリストが渡される。
    * @param sparkSession SparkSession。当該メソッド内でDatasetを扱うために
    * {{{ import sparkSession.implicits._ }}}
    *                     を指定できる。
-   * @return ジョブの処理結果となるDataFrame。outputFilesで定義したDataFileのリストの順番にDataFrameのリストを渡す必要がある。
+   * @return ジョブの処理結果となるDataFrame。outputsで定義したDataModelのリストの順番にDataFrameのリストを渡す必要がある。
    */
-  def process(inputs: Seq[DataFrame], sparkSession: SparkSession): Seq[DataFrame]
+  def process(dfList: Seq[DataFrame], sparkSession: SparkSession): Seq[DataFrame]
 
   /**
-   * processメソッドで返却されたDataFrameのリストからoutputFilesのDataFileのリストで指定されたファイルを出力する
+   * processメソッドで返却されたDataFrameのリストからoutputModelsのDataModelのリストで指定されたファイルを出力する
    *
-   * @param outputs processメソッドで返却されたDataFrame
+   * @param dfList processメソッドで返却されたDataFrame
    */
-  final def output(outputs: Seq[DataFrame]): Unit = {
-    outputs.zip(outputFiles).foreach(tuple => {
+  final def output(dfList: Seq[DataFrame]): Unit = {
+    dfList.zip(outputModels).foreach(tuple => {
       val df = tuple._1
-      val outputFile = tuple._2
-      dataFileReaderWriter.writeFromDf(df, outputFile)
+      val output = tuple._2
+      dataModelReaderWriter.writeFromDf(df, output)
     })
   }
 

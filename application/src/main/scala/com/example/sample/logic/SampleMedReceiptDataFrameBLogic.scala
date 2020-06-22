@@ -1,6 +1,6 @@
 package com.example.sample.logic
 
-import com.example.fw.domain.dataaccess.DataFileReaderWriter
+import com.example.fw.domain.dataaccess.DataModelReaderWriter
 import com.example.fw.domain.logic.DataFrameBLogic
 import com.example.fw.domain.model.{CsvModel, DataModel}
 import com.example.fw.domain.utils.OptionImplicit._
@@ -22,13 +22,13 @@ import scala.collection.immutable.Nil
  *
  * @deprecated RDDを使わずにDataFrame/Datasetのみで実現しようとしたが、前処理とかCsvModelの定義とか少し煩雑なのと
  *             汎用的に処理しようとすると型パラメータの問題で、Encoderが働かず動作しないので、使えない。
- * @param dataFileReaderWriter Logicクラスが使用するDataFileReaderWriter
+ * @param dataModelReaderWriter Logicクラスが使用するDataModelReaderWriter
  */
-class SampleMedReceiptDataFrameBLogic(dataFileReaderWriter: DataFileReaderWriter)
-  extends DataFrameBLogic(dataFileReaderWriter) {
+class SampleMedReceiptDataFrameBLogic(dataModelReaderWriter: DataModelReaderWriter)
+  extends DataFrameBLogic(dataModelReaderWriter) {
 
   //区切り文字を\u0000とするCSVファイルとみて、CsvModelとして扱う
-  override val inputFiles: Seq[DataModel[Row]] = CsvModel[Row](
+  override val inputModels: Seq[DataModel[Row]] = CsvModel[Row](
     relativePath = "receipt/11_RECODEINFO_MED_result2.CSV",
     sep = "\u0000",
     schema = StructType(
@@ -41,7 +41,7 @@ class SampleMedReceiptDataFrameBLogic(dataFileReaderWriter: DataFileReaderWriter
 
   //レセプトをレコード種別ごとにCSVファイルで出力する例。出力時にbzip2で圧縮。
   private val outputDirPath = "receipt/output2/"
-  override val outputFiles: Seq[DataModel[Row]] =
+  override val outputModels: Seq[DataModel[Row]] =
     CsvModel[Row](outputDirPath + ReceiptConst.MN, compression = "bzip2"
     ) :: CsvModel[Row](outputDirPath + ReceiptConst.RE, compression = "bzip2"
     ) :: Nil
@@ -50,9 +50,9 @@ class SampleMedReceiptDataFrameBLogic(dataFileReaderWriter: DataFileReaderWriter
   //キャッシュを保持
   private var cached: Dataset[(String, ReceiptRecord)] = null
 
-  override def process(inputs: Seq[DataFrame], sparkSession: SparkSession): Seq[DataFrame] = {
+  override def process(dfList: Seq[DataFrame], sparkSession: SparkSession): Seq[DataFrame] = {
     import sparkSession.implicits._
-    val receipts = inputs(0)
+    val receipts = dfList(0)
     val result = receipts.flatMap(row => {
 
       //TODO: 具体的なcaseクラスでジェネリクスを扱えないのに、Datasetで扱おうとして、(string, ReceiptReord)のEncoderがないというエラーが出てしまい動作しない

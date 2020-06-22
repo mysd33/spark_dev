@@ -49,7 +49,7 @@ trait Partitionable {
 trait TextFormat {
   /** ファイルのエンコーディング
    *
-   * Sparkのoptionメソッドの"encoding"と対応。UTF-8、MS932等を指定する。
+   * Sparkのoptionメソッドの"encoding"と対応。UTF-8、Windows-31J(MS932)等を指定する。
    * */
   val encoding: Option[String]
 }

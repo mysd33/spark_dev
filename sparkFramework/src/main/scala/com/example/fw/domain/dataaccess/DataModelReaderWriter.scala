@@ -8,85 +8,85 @@ import scala.reflect.runtime.universe.TypeTag
 
 /**
  * ファイル・テーブルアクセス機能のインタフェース。
- * DataFileを元にファイルやテーブルの読み書きを行う。
+ * DataModelを元にファイルやテーブルの読み書きを行う。
  *
  * DI機能を実装しており、インスタンス化する場合には、
- * 自分型アノテーションでDataFileReaderWriterImplトレイトの
+ * 自分型アノテーションでDataModelReaderWriterImplトレイトの
  * 実装トレイトをミックスインすることで、Sparkのディストリビューション専用の
- * DataFileReaderWriter実装に切替えて使用する。
+ * DataModelReaderWriter実装に切替えて使用する。
  * {{{
  *   //example for Standard Spark Application
- *   new DataFileReaderWriter with StandardSparkDataFileReaderWriter
+ *   new DataModelReaderWriter with StandardSparkDataModelReaderWriter
  *
  *   //example for Databricks(and Delta Lake) Spark Application
- *   new DataFileReaderWriter with DatabricksDataFileReaderWriter
+ *   new DataModelReaderWriter with DatabricksDataModelReaderWriter
  * }}}
  *
  * @constructor コンストラクタ
  */
-class DataFileReaderWriter {
+class DataModelReaderWriter {
   //自分型アノテーションでDataFileReaderWriterの実装をDI
-  self: DataFileReaderWriterImpl =>
+  self: DataModelReaderWriterImpl =>
   /**
    * ファイルを読み込みRDDを返却する
-   * @param inputFile 入力ファイルのDataFile
+   * @param input 入力のDataModel
    * @param sparkSession SparkSession
    * @return RDD
    */
-  def readToRDD(inputFile: DataModel[String], sparkSession: SparkSession): RDD[String] = {
-    self.readToRDDImpl(inputFile, sparkSession)
+  def readToRDD(input: DataModel[String], sparkSession: SparkSession): RDD[String] = {
+    self.readToRDDImpl(input, sparkSession)
   }
 
   /**
    * ファイルを読み込みDatasetを返却する
-   * @param inputFile 入力ファイルのDataFile
+   * @param input 入力のDataModel
    * @param sparkSession SparkSession
    * @tparam T DataFileおよびDatasetの型パラメータ
    * @return Dataset
    */
-  def readToDs[T <: Product : TypeTag](inputFile: DataModel[T], sparkSession: SparkSession): Dataset[T] = {
-    self.readToDsImpl(inputFile, sparkSession)
+  def readToDs[T <: Product : TypeTag](input: DataModel[T], sparkSession: SparkSession): Dataset[T] = {
+    self.readToDsImpl(input, sparkSession)
   }
 
   /**
    * ファイルを読み込みDataFrameを返却する
-   * @param inputFile 入力ファイルのDataFile
+   * @param input 入力のDataModel
    * @param sparkSession SparkSession
    * @return DataFrame
    */
-  def readToDf(inputFile: DataModel[Row], sparkSession: SparkSession): DataFrame = {
-    self.readToDfImpl(inputFile, sparkSession)
+  def readToDf(input: DataModel[Row], sparkSession: SparkSession): DataFrame = {
+    self.readToDfImpl(input, sparkSession)
   }
 
   /**
    * 引数で受け取ったRDDを、指定のファイルに出力する
    * @param rdd 出力対象のRDD
-   * @param outputFile 出力先ファイルのDataFile
+   * @param output 出力のDataModel
    * @tparam T RDDおよびDataFileの型パラメータ
    */
-  def writeFromRDD[T](rdd: RDD[T], outputFile: DataModel[T]): Unit = {
-    self.writeFromRDDImpl(rdd, outputFile)
+  def writeFromRDD[T](rdd: RDD[T], output: DataModel[T]): Unit = {
+    self.writeFromRDDImpl(rdd, output)
   }
 
   /**
    * 引数で受け取ったDataFrameを、指定のファイルに出力する
    * @param df 出力対象のDataFrame
-   * @param outputFile 出力先ファイルのDataFile
+   * @param output 出力のDataModel
    * @param saveMode 出力時のSaveMode
    * @tparam T DataFileの型パラメータ
    */
-  def writeFromDf[T](df: DataFrame, outputFile: DataModel[Row], saveMode: SaveMode = SaveMode.Overwrite): Unit = {
-    self.writeFromDsDfImpl(df, outputFile, saveMode)
+  def writeFromDf[T](df: DataFrame, output: DataModel[Row], saveMode: SaveMode = SaveMode.Overwrite): Unit = {
+    self.writeFromDsDfImpl(df, output, saveMode)
   }
 
   /**
    * 引数で受け取ったDatasetを、指定のファイルに出力する
    * @param ds 出力対象のDataset
-   * @param outputFile 出力先ファイルのDataFile
+   * @param output 出力のDataModel
    * @param saveMode 出力時のSaveMode
    * @tparam T DatasetおよびDataFileの型パラメータ
    */
-  def writeFromDs[T <: Product : TypeTag](ds: Dataset[T], outputFile: DataModel[T], saveMode: SaveMode = SaveMode.Overwrite): Unit = {
-    self.writeFromDsDfImpl(ds, outputFile, saveMode)
+  def writeFromDs[T <: Product : TypeTag](ds: Dataset[T], output: DataModel[T], saveMode: SaveMode = SaveMode.Overwrite): Unit = {
+    self.writeFromDsDfImpl(ds, output, saveMode)
   }
 }

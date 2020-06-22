@@ -5,7 +5,7 @@ import com.example.sample.logic._
 
 // COMMAND ----------
 
-val readerWriter = DatabrickDataFileReaderWriterFactory.createDataFileReaderWriter()
+val readerWriter = DatabricksDataModelReaderWriterFactory.createDataModelReaderWriter()
 
 
 // COMMAND ----------
