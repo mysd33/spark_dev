@@ -163,7 +163,7 @@ az container create -g RG_MYSD_DEV  --name sonarqubeaci --image sonarqube --port
     * Azure DevOps Organizaiont管理者へのExtensionインストールの承認フローが入りインストールを完了させます
 
 * SonarQube Serverの接続情報を登録します 
-  * Project Setting -> Piplines -> Service connectionsへ移動
+  * Project Setting -> Pipelines -> Service connectionsへ移動
   * Create Service Connectionをクリック
   * 「SonarQube Server」を選択し、「Server Url」と「Token」「Service connection name」を入力します
   * 「Service connection name」はazure-pipelines.yamlの「task: SonarQubePrepare@4」の「SonarQube」の設定と合わせて'SonarQube'とします。
@@ -179,6 +179,11 @@ az container create -g RG_MYSD_DEV  --name sonarqubeaci --image sonarqube --port
  * 「Artifacts」で「Add」をクリックし、ビルドパイプラインで出力したアーティファクトの設定
    * Project、Source（ビルドパイプラインのリポジトリ）、Default Version、Source aliasを設定
  * 「Stages」で「Add」をクリックし、「Empty Job」（空のジョブ）を追加 
+ * Add Taskでタスクを追加し「Azure Key Vault」を追加
+   * Azure Subscriptionを選択   
+   * Key Vaultを選択
+     * 事前にKey Vaultを作成しシークレットにDatabricksのパーソナルアクセストークンを登録しておく
+   * 以降のタスクで、$(シークレット名）の形式で、変数として利用できる。
  * Add Taskでタスクを追加し「Use Python version」を追加
    * Version specは3.x   
  * Add Taskでタスクを追加し「Databricks DBFS File Deployment」を追加
@@ -186,7 +191,8 @@ az container create -g RG_MYSD_DEV  --name sonarqubeaci --image sonarqube --port
    * Azure Resionは、「japaneast」
    * Local Root Folderは、「$(System.DefaultWorkingDirectory)/_databricks_dev/applicationAssembly/target/scala-2.11/」
    * Target folder in DBFSは、「/FileStore/jars/」
-   * Bearer Tokenを設定（事前に設定した環境変数から取得するようにする）
+   * Bearer Tokenを「$(KeyVaultのシークレット名)」設定
+     * 事前に設定したシークレットから取得するようにする
  * Add Taskでタスクを追加し「Command Line Script」を追加
    * pip install requests 
  * Add Taskでタスクを追加し「Python script」を追加   
@@ -196,7 +202,8 @@ az container create -g RG_MYSD_DEV  --name sonarqubeaci --image sonarqube --port
      * REST APIの仕様上、クラスタが終了状態（Terminated）か存在しない場合にはインストールできないためパイプラインはエラーになります
      * https://docs.microsoft.com/ja-jp/azure/databricks/dev-tools/api/latest/libraries
    * Argumentsに以下を指定
-     * --shard=XXX --token=XXX --clusterid=XXX --libs=XXX --dbfspath=XXX
+     * --shard=XXX --token=$(KeyVaultのシークレット名) --clusterid=XXX --libs=XXX --dbfspath=XXX
+       * XXXのところの各パラメータ値は事前に変数定義して利用すると汎化できる
      * shard - ワークスペースのURL
        * 例：https://xxxx.azuredatabricks.net
        * 最後にスラッシュを入れないこと
@@ -206,7 +213,4 @@ az container create -g RG_MYSD_DEV  --name sonarqubeaci --image sonarqube --port
        * $(System.DefaultWorkingDirectory)/_databricks_dev/applicationAssembly/target/scala-2.11/
      * dbfspath - DFS上のライブラリのパス
        * /FileStore/jars
-       * 最後にスラッシュを入れないこと 
-
-
-
+       * 最後にスラッシュを入れないこと
