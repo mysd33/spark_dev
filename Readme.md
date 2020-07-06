@@ -100,9 +100,30 @@
   * https://docs.microsoft.com/ja-jp/azure/databricks/jobs#create-a-job
 
 ## Databricksでのnotbookジョブ実行手順
-* 下記ドキュメントの通り、ジョブを作成し、notebooを指定します
+* 下記ドキュメントの通り、ジョブを作成し、notebookを指定します
   * https://docs.microsoft.com/ja-jp/azure/databricks/jobs#create-a-job
-  
+
+## AWS EMRでのステップ実行手順
+* エントリポイントにApplicationEntryPointクラスを使用することで、AP基盤のDI機能によりSpark標準機能のみを使用したSparkAPとしてAWS EMR上で実行できます。
+* S3のバケットにフォルダを作成しデータを配備（例：s3://xxxxbucket/mystorage/）  
+* EMRで動作するようアプリケーションの設定を変更します
+  * application.propertiesをactive.profile=prodawsに変更
+  * application-prdaws.propertiesのbasepathをデータを配備するS3のURLを指定（例：s3://mysd33bucket123/mystorage/）
+* sbt assemblyコマンドで実行可能jarを作成します(databricks_dev-assembly-0.1.jar)
+* 作成したjarをS3にを配備（例：s3://xxxxbucket/app/databricks_dev-assembly-0.1.jar）
+* EMRでクラスタを作成
+  * 起動モードは「ステップ実行」を選択
+  * ステップタイプに「Sparkアプリケーション」を選択し、設定をクリック。以下の通り設定
+    * Spark-sumitオプション
+      * --class com.example.fw.app.ApplicationEntryPoint
+    * アプリケーションの場所
+      * アプリケーションを配備したS3のURL
+      * 例：s3://xxxxbucket/app/databricks_dev-assembly-0.1.jar
+    * 引数
+      * LogicクラスのFQDNを指定
+      * 例：com.example.sample.logic.SampleDataSetBLogic3
+  * ソフトウェア設定、ハードウェア構成を適切に設定し、「クラスタを作成」をクリック
+
 ##Azure DevOps PipelineでのCI
 * Azure Reposでソースコード管理し、Azure Pipelineでパイプラインを作成することでazure-pipelines.ymlの定義に基づきPipeline実行できます
 * ビルド、scaladoc、単体テスト実行、結合テスト実行、実行可能jar作成、テスト結果レポート、カバレッジレポート、SonarQubeによる静的コード解析レポートに対応しています
