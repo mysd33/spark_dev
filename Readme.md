@@ -99,9 +99,15 @@
 * 下記ドキュメントの通り、ジョブを作成し、jarをアップロードして実行するか、ワークスペース上のjarを指定します
   * https://docs.microsoft.com/ja-jp/azure/databricks/jobs#create-a-job
 
-## Databricksでのnotbookジョブ実行手順
+## DatabricksでのNotebookジョブ実行手順
 * 下記ドキュメントの通り、ジョブを作成し、notebookを指定します
   * https://docs.microsoft.com/ja-jp/azure/databricks/jobs#create-a-job
+
+## Azure DataFactoryからのDatabricksの実行
+* 同様にDataFactory Databricks jarアクティビティやNotebookアクティビティを実行できます。
+  * https://docs.microsoft.com/ja-jp/azure/data-factory/transform-data-databricks-jar
+  * https://docs.microsoft.com/ja-jp/azure/data-factory/transform-data-databricks-notebook
+* サンプルソースとして、別のリポジトリ（adf_dev）で管理されているので、そちらを参考にしてください。
 
 ## AWS EMRでのステップ実行手順
 * エントリポイントにApplicationEntryPointクラスを使用することで、AP基盤のDI機能によりSpark標準機能のみを使用したSparkAPとしてAWS EMR上で実行できます。
@@ -124,6 +130,52 @@
       * 例：com.example.sample.logic.SampleDataSetBLogic3
   * ソフトウェア設定、ハードウェア構成を適切に設定し、「クラスタを作成」をクリック
 
+## AWS DataPipelineによるSparkジョブ実行
+* 同様に、AWS DataPipelineのEmrActivityを使ってEMRを起動しSparkジョブを実行できます。
+  * 「Create Pipeline」をクリック
+  * 「Build using a template」で「Run jbo on an Elastic MapReaduce cluster」を選択
+  * 「EMR step(s)」に以下を記入
+    ```
+     command-runner.jar,spark-submit,--deploy-mode,cluster,--class,com.example.fw.app.ApplicationEntryPoint,s3://(バケット名)/（フォルダ名）/databricks_dev-assembly-0.1.jar,com.example.sample.logic.SampleDataSetBLogic3
+    ```
+  * 「Core node instance type」に「m5.xlarge」
+  * 「EMR Release Label」に「emr-5.30.1」
+  * 「Core node instance count 2」
+  * 「Master node instace type」に「m5.xlarge」
+  * 「Schedule」を指定
+    * お試しで実行するなら「on pipeline activation」を選択しておくとよい
+  * 「S3location for logs」で、ログを格納するS3のパスを指定
+  * 「Edit Architect」を選択
+  *  EMR Cluster Objectの編集画面で「Add an option field」で「Applications」を追加し「spark」を記述
+    * デフォルトではEMRクラスタに、HiveとPigしかインストールされないため、sparkをインストールするようにする
+  * 「Activate」を実行する
+* すでにjson設定化したファイルが以下のフォルダにあるので、それを使ってCLI実行しても良い
+  * aws-datapipelineフォルダ配下のawsdatapipeline.json
+  * jsonファイルのマネージメントコンソールでのインポートがうまくいかないので注意
+    
+    * パイプラインを新規作成
+    ```
+    aws datapipeline create-pipeline --name tutorialEMRCLI --unique-id tutorialEMRCLI-token
+    ```
+    * 下のようなパイプラインIDが返却される
+    ```
+    {
+        "pipelineId": "df-03617342CEQKZU3JZOXQ"
+    }
+    ```
+    * パイプライン定義(json）をアップロード
+    ```
+    aws datapipeline put-pipeline-definition --pipeline-id df-03617342CEQKZU3JZOXQ --pipeline-definition file://awsdatapipeline.json
+    ```
+    * 定義がアップロードされたことを確認
+    ```
+    aws datapipeline get-pipeline-definition --pipeline-id df-03617342CEQKZU3JZOXQ
+    ```
+    * パイプラインをアクティベート。パイプラインが実行されEMRのジョブが起動する
+    ```
+    aws datapipeline activate-pipeline --pipeline-id df-03617342CEQKZU3JZOXQ
+    ```
+    
 ##Azure DevOps PipelineでのCI
 * Azure Reposでソースコード管理し、Azure Pipelineでパイプラインを作成することでazure-pipelines.ymlの定義に基づきPipeline実行できます
 * ビルド、scaladoc、単体テスト実行、結合テスト実行、実行可能jar作成、テスト結果レポート、カバレッジレポート、SonarQubeによる静的コード解析レポートに対応しています
@@ -131,7 +183,7 @@
 * 本サンプルではAzure DevOps Serviceを使って動作確認しています
   * 本番開発では、東日本リージョン内でのDevOps Serverの構築が必要です
 
-##Azure DevOps PipelineからのSonar Qubeの実行
+##Azure DevOps PipelineからのSonarQubeの実行
 * Azure DevOps Pipelineで、SonarQubeを使用した静的コードチェックを実施しています
 * 利用しない場合は、azure-pipeline.ymlの該当箇所をコメントアウトしてください
   * 「task: SonarQubePrepare@4」、「task: SonarQubePrepare@4」、「task: SonarQubePublish@4」
