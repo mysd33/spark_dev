@@ -70,6 +70,7 @@ object DatabricksSparkSessionManager extends Logging {
     val accountKeyScope = ResourceBundleManager.get(SQLDW_BLOB_ACCOUNTKEY_SCOPE)
     val accountKeyKey = ResourceBundleManager.get(SQLDW_BLOB_ACCOUNTKEY_KEY)
     if (accountKeyKey != null && accountKeyScope != null && accountKeyKey != null) {
+      //DBUtilsはローカル環境では動かないので注意
       sparkSession.conf.set(accountKeyName, dbutils.secrets.get(accountKeyScope, accountKeyKey))
     }
     sparkSession

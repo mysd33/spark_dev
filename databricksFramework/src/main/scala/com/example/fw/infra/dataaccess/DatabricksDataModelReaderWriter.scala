@@ -28,6 +28,8 @@ trait DatabricksDataModelReaderWriter extends StandardSparkDataModelReaderWriter
       case f: ParquetModel[Row] => new DeltaLakeReaderWriter().readToDf(f, sparkSession)
       //SynapseAnalyticsへの対応
       case f: DwDmModel[Row] => new SynapseAnalyticsReaderWriter().readToDf(f, sparkSession)
+      //TODO: ローカルでは別のReaderWriterの切り替え
+      //TODO: SnowflakeとのReaderWriterの切り替え
       case _ => super.readToDfImpl(input, sparkSession)
     }
   }
@@ -44,6 +46,8 @@ trait DatabricksDataModelReaderWriter extends StandardSparkDataModelReaderWriter
       case f: ParquetModel[T] => new DeltaLakeReaderWriter().readToDs(f, sparkSession)
       //SynapseAnalyticsへの対応
       case f: DwDmModel[T] => new SynapseAnalyticsReaderWriter().readToDs(f, sparkSession)
+      //TODO: ローカルでは別のReaderWriterの切り替え
+      //TODO: SnowflakeとのReaderWriterの切り替え
       case _ => super.readToDsImpl(input, sparkSession)
     }
   }
@@ -60,7 +64,9 @@ trait DatabricksDataModelReaderWriter extends StandardSparkDataModelReaderWriter
       //DeltaLakeのみReaderWriterを差し替え
       case f: ParquetModel[T] => new DeltaLakeReaderWriter().writeFromDsDf(ds, f, saveMode)
       //SynapseAnalyticsへの対応
-      case f: DwDmModel[T] => new SynapseAnalyticsReaderWriter().writeFromDsDf(ds, f)
+      case f: DwDmModel[T] => new SynapseAnalyticsReaderWriter().writeFromDsDf(ds, f, saveMode)
+      //TODO: ローカルでは別のReaderWriterの切り替え
+      //TODO: SnowflakeとのReaderWriterの切り替え
       case _ => super.writeFromDsDfImpl(ds, output, saveMode)
     }
   }

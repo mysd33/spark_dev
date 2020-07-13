@@ -1,42 +1,47 @@
 package com.example.fw.infra.dataaccess.impl
 
+import com.databricks.dbutils_v1.DBUtilsHolder.dbutils
 import com.example.fw.domain.model.DwDmModel
 import com.example.fw.domain.utils.ResourceBundleManager
-import org.apache.spark.sql.{DataFrame, Dataset, Row, SparkSession}
+import org.apache.spark.sql.{DataFrame, Dataset, Row, SaveMode, SparkSession}
 
 import scala.reflect.runtime.universe.TypeTag
 
-//TODO:動作確認テスト未実施
 /**
  * DwhDmModelに対応した、Azure Synapse Analyticsへのテーブルアクセス機能を提供するクラス
  *
  * Azure Databricks上でしか動作しない。また、Azure Synapse Analyticsや仲介するBlobストレージのセットアップが必要となる。
  *
  * 本機能を利用する際は、application-xxx.propertiesに、以下のSynapse Analyticsの接続情報を定義すること。
- * {{{
- *   #Synapse Analytics URL
- *   sqldw.url=jdbc:sqlserver://<the-rest-of-the-connection-string>
- *   #Temp directory path on BLob Storage
- *   sqldw.blob.tempdir=wasbs://<your-container-name>@<your-storage-account-name>.blob.core.windows.net/<your-directory-name>
- * }}}
- * また、機能を利用する際は、Azure KeyVaultまたはDatabricksのシークレットを定義して仲介するBlobストレージのユーザ、パスワードを設定すること。
- * 本クラス内部では、Databricksユーティリティ（dbuutils）を使用してシークレットを取得する。
+ * なお、SQLDWのURL（JDBC接続文字列）にはパスワードが含まれる。また、Blobストレージのアカウントキーなど秘密情報がソースコードに保存されないよう
+ * Databricksのシークレットに設定すること。
+ * 本クラス内部では、Databricksユーティリティ（dbUtils）を使用してシークレットを取得する。
  * application-xxx.propertiesに、以下のシークレット取得のための情報定義すること。
  * {{{
+ *
+ *   #Synapse Analytics URL scope to get from Databricks Secret
+ *   sqldw.url.scope=<scope>
+ *   #Synapse Analytics URL secret key to get from Databricks Secret
+ *   sqldw.url.key=<key>
+ *   #Temp directory path on BLob Storage
+ *   sqldw.blob.tempdir=wasbs://<your-container-name>@<your-storage-account-name>.blob.core.windows.net/<your-directory-name>
+ *
  *   #Storage account name
  *   sqldw.blob.accountkey.name=fs.azure.account.key.<your-storage-account-name>.blob.core.windows.net
  *   #Account-key scope to get from secret manager
  *   sqldw.blob.accountkey.scope=<scope>
- *   #Acount-key key to get from secret manager
+ *   #Acount-key scecret key to get from Databricks Secret
  *   sqldw.blob.accountkey.key=<key>
  * }}}
+ *
  * @see [[https://docs.microsoft.com/ja-jp/azure/databricks/data/data-sources/azure/synapse-analytics]]
  * @see [[https://docs.microsoft.com/ja-jp/azure/azure-databricks/databricks-extract-load-sql-data-warehouse]]
  */
 class SynapseAnalyticsReaderWriter {
   private val formatName = "com.databricks.spark.sqldw"
-  private val SQL_DW_URL_KEY = "sqldw.url"
-  private val SQL_DW_BLOB_TEMPDIR_KEY = "sqldw.blob.tempdir"
+  private val SQL_DW_URL_SCOPE = "sqldw.url.scope"
+  private val SQL_DW_URL_KEY = "sqldw.url.key"
+  private val SQL_DW_BLOB_TEMPDIR_URL = "sqldw.blob.tempdir.url"
 
   /**
    * Azure Synapse Analyticsのテーブルから読み込みDataFrameを返却する
@@ -46,12 +51,10 @@ class SynapseAnalyticsReaderWriter {
    * @return DataFrame
    */
   def readToDf(inputFile: DwDmModel[Row], sparkSession: SparkSession): DataFrame = {
-    val url = ResourceBundleManager.get(SQL_DW_URL_KEY)
-    val tempDir = ResourceBundleManager.get(SQL_DW_BLOB_TEMPDIR_KEY)
     val reader = sparkSession.read
       .format(formatName)
-      .option("url", url)
-      .option("tempDir", tempDir)
+      .option("url", getSynapseAnalyticsUrl())
+      .option("tempDir", getBlobTempDirUrl())
       .option("forwardSparkAzureStorageCredentials", "true")
     val reader2 = inputFile.query match {
       case Some(query) => reader.option("query", query)
@@ -75,12 +78,10 @@ class SynapseAnalyticsReaderWriter {
    */
   def readToDs[T <: Product : TypeTag](inputFile: DwDmModel[T], sparkSession: SparkSession): Dataset[T] = {
     import sparkSession.implicits._
-    val url = ResourceBundleManager.get(SQL_DW_URL_KEY)
-    val tempDir = ResourceBundleManager.get(SQL_DW_BLOB_TEMPDIR_KEY)
     val reader = sparkSession.read
       .format(formatName)
-      .option("url", url)
-      .option("tempDir", tempDir)
+      .option("url", getSynapseAnalyticsUrl())
+      .option("tempDir", getBlobTempDirUrl())
       .option("forwardSparkAzureStorageCredentials", "true")
     val reader2 = inputFile.query match {
       case Some(query) => reader.option("query", query)
@@ -101,16 +102,35 @@ class SynapseAnalyticsReaderWriter {
    * @param outputFile 出力先ファイルのDwDmModel。dbTableプロパティに指定したテーブルに書き込む。
    * @tparam T DwDmModelの型パラメータ
    */
-  def writeFromDsDf[T](ds: Dataset[T], outputFile: DwDmModel[T]): Unit = {
+  def writeFromDsDf[T](ds: Dataset[T], outputFile: DwDmModel[T], saveMode: SaveMode): Unit = {
     assert(outputFile.dbTable.isDefined)
     val url = ResourceBundleManager.get(SQL_DW_URL_KEY)
-    val tempDir = ResourceBundleManager.get(SQL_DW_BLOB_TEMPDIR_KEY)
-    ds.write
+    val tempDir = ResourceBundleManager.get(SQL_DW_BLOB_TEMPDIR_URL)
+    ds.write.mode(saveMode)
       .format(formatName)
-      .option("url", url)
-      .option("tempDir", tempDir)
+      .option("url", getSynapseAnalyticsUrl())
+      .option("tempDir", getBlobTempDirUrl())
       .option("forwardSparkAzureStorageCredentials", "true")
       .option("dbTable", outputFile.dbTable.get)
       .save()
+  }
+
+  /**
+   * Synapse AnalyticsのDWHのURLを取得する
+   * @return Synapse AnalyticsのDWHのURL
+   */
+  private def getSynapseAnalyticsUrl() : String = {
+    val urlKey = ResourceBundleManager.get(SQL_DW_URL_KEY)
+    val urlScope = ResourceBundleManager.get(SQL_DW_URL_SCOPE)
+    //DBUtilsはローカルでは動作しないので注意
+    dbutils.secrets.get(urlScope, urlKey)
+  }
+
+  /**
+   * 一時ストレージとなるBLobストレージのディレクトリのURLを取得
+   * @return 一時ストレージとなるBLobストレージのディレクトリ
+   */
+  private def getBlobTempDirUrl() : String = {
+    ResourceBundleManager.get(SQL_DW_BLOB_TEMPDIR_URL)
   }
 }
