@@ -31,6 +31,7 @@ object DatabricksNotebookEntryPoint {
     //TODO: log4j.propertiesの動的切り替え機能を必要に応じて適用
     //Log4jConfiguration.configure()
 
+    DatabricksSparkSessionManager.configureSynapseAnalytics(sparkSession)
     logic.execute(sparkSession)
   }
 }

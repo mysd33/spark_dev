@@ -64,7 +64,15 @@ object DatabricksSparkSessionManager extends Logging {
         .appName(appName)
         .getOrCreate()
     }
+    configureSynapseAnalytics(sparkSession)
+    sparkSession
+  }
 
+  /**
+   * SynapseAnalyticsの接続情報を設定する
+   * @param sparkSession SparkSession
+   */
+  def configureSynapseAnalytics(sparkSession: SparkSession) = {
     //Synapse Analyticsによる仲介用のBLobストレージアカウントキーの設定
     val accountKeyName = ResourceBundleManager.get(SQLDW_BLOB_ACCOUNTKEY_NAME)
     val accountKeyScope = ResourceBundleManager.get(SQLDW_BLOB_ACCOUNTKEY_SCOPE)
@@ -73,8 +81,6 @@ object DatabricksSparkSessionManager extends Logging {
       //DBUtilsはローカル環境では動かないので注意
       sparkSession.conf.set(accountKeyName, dbutils.secrets.get(accountKeyScope, accountKeyKey))
     }
-    sparkSession
   }
-
 }
 
