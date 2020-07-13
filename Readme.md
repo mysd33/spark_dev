@@ -109,6 +109,30 @@
   * https://docs.microsoft.com/ja-jp/azure/data-factory/transform-data-databricks-notebook
 * サンプルソースとして、別のリポジトリ（adf_dev）で管理されているので、そちらを参考にしてください。
 
+## Azure Synapse Analyticsとの連携
+* SparkのAPIを使って、Databricksから（Blobストレージを経由し）直接Synapse Analyticsのテーブルへの書き込みが可能です。
+  * （参考）
+    * https://docs.microsoft.com/ja-jp/azure/databricks/scenarios/databricks-extract-load-sql-data-warehouse#create-an-azure-databricks-service
+    * https://docs.microsoft.com/ja-jp/azure/databricks/data/data-sources/azure/synapse-analytics
+* 接続準備として以下を実施します
+  * Azure Synapseで、SQL Pool（DWH）を作成
+    *（参考）https://docs.microsoft.com/ja-jp/azure/synapse-analytics/sql-data-warehouse/create-data-warehouse-portal
+  *　作成したデータベースに対して、Azure Synapseに使用するマスターキーを作成
+    * （参考）https://docs.microsoft.com/ja-jp/sql/relational-databases/security/encryption/create-a-database-master-key?view=sql-server-ver15
+  * 一時ストレージ用のAzure BLobストレージを作成（Databricksでの処理用に作成済のものでもOK）
+* Synapseの接続情報とBlobストレージのアカウント情報をDatabricksのシークレットに格納
+  * （参考）https://docs.microsoft.com/ja-jp/azure/databricks/security/secrets/secrets
+  * Databricksの独自シークレットでも、プレビューのKeyVaultを使った方法のどちらでもよい
+* 接続情報をapplication-prod.propertiesに設定
+```
+sqldw.url.scope=（SynapseAnalyticsのURLをDatabricksのシークレット登録したときのスコープ名）
+sqldw.url.key=（SynapseAnalyticsのURLをDatabricksのシークレット登録したときのシークレットキー名）
+sqldw.blob.tempdir.url=（一時ストレージ用のBlobストレージのURL）
+sqldw.blob.accountkey.name=（一時ストレージ用のBlobストレージのアカウントキー名）
+sqldw.blob.accountkey.scope=（一時ストレージ用のBLobストレージのアカウントキーをシークレット登録したときのスコープ名）
+sqldw.blob.accountkey.key=（一時ストレージ用のBLobストレージのアカウントキーをシークレット登録したときのシークレットキー名）
+```
+
 ## AWS EMRでのステップ実行手順
 * エントリポイントにApplicationEntryPointクラスを使用することで、AP基盤のDI機能によりSpark標準機能のみを使用したSparkAPとしてAWS EMR上で実行できます。
 * S3のバケットにフォルダを作成しデータを配備（例：s3://xxxxbucket/mystorage/）  
