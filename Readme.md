@@ -43,6 +43,7 @@
   * 「作業ディレクトリ」はプロジェクトのルートフォルダを設定
     * 例）C:\Users\xxxx\IdeaProjects\databricks_dev
   * 「クラスパスとJDK」は「dbconnectApplication」を設定
+  
 ##ビルド
 * IntelliJのsbt shellの場合
     ```
@@ -73,6 +74,7 @@
   ```
   sbt -Dactive.profile=ut test
   ```
+  
 ##実行可能jar（アセンブリ）作成 
 * Databricks/Sparkクラスタ上でAPを実行するためには「sbt package」コマンドで生成するjarではなく、「sbt assembly」を使って必要なclassファイル等を全て1つにまとめた実行可能jarを作成します
 * なお、テストをスキップするように設定済です
@@ -132,7 +134,36 @@ sqldw.blob.accountkey.name=（一時ストレージ用のBlobストレージの�
 sqldw.blob.accountkey.scope=（一時ストレージ用のBLobストレージのアカウントキーをシークレット登録したときのスコープ名）
 sqldw.blob.accountkey.key=（一時ストレージ用のBLobストレージのアカウントキーをシークレット登録したときのシークレットキー名）
 ```
+## Azure Monitorとの連携
+* 以下のサイトで紹介されているライブラリをつかうことで、アプリケーションログとメトリックを、AzureMonitorログ（LogAnalytics）へのログ転送できます。
+  * （参考）
+    * https://github.com/mspnp/spark-monitoring/blob/master/README.md
+* 上記サイトで記載の通り、jarをビルドします。src/targetフォルダにjarが作成されます
+  * spark-listeners_2.4.5_2.11-1.0.0.jar
+  * spark-listeners-loganalytics_2.4.5_2.11-1.0.0.jar
+* LogAnalyticsワークスペースを作成しID、KEYを取得し/src/spark-listeners/scripts/spark-monitoring.shの以下を編集します
+　（参考サイトのとおり、プレビュー機能のKeyVaultを使った場合は別の編集方法になります）
+```
+export LOG_ANALYTICS_WORKSPACE_ID= <LogAnaltyics Workspace ID>
+export LOG_ANALYTICS_WORKSPACE_KEY= <Log Analytics Workspace キー>
+```
+* Databricks CLIで以下を実行し、spark-monitoring.shとjarファイルをDBFS上にコピーします。
+```
+dbfs mkdirs dbfs:/databricks/spark-monitoring
+dbfs cp <local path to spark-monitoring.sh> dbfs:/databricks/spark-monitoring/spark-monitoring.sh
+dbfs cp --overwrite --recursive <local path to target jars folder> dbfs:/databricks/spark-monitoring/
+```
+* コンソールより、Databricksクラスタを起動します。この時、「Init Scripts」タブで、Init Scriptsとして、「dbfs:/databricks/spark-monitoring/spark-monitoring.sh」を追加します。
 
+* 当該APのapplication/src/main/resources/application-prod.propertiesの設定を変更します。
+  * log4j.overwrite=trueにすると、application/src/main/resources/com/example/log4j-prod.propertiesによるlog4jの設定が有効になります
+```
+log4j.overwrite=true
+```
+* ビルドし当該APのアセンブリjar（databricks_dev-assembly-0.1.jar）をDatabricksクラスタへデプロイし、実行します。
+
+* 作成したLogAnalyticsへログが転送されるようになります。
+ 
 ## AWS EMRでのステップ実行手順
 * エントリポイントにApplicationEntryPointクラスを使用することで、AP基盤のDI機能によりSpark標準機能のみを使用したSparkAPとしてAWS EMR上で実行できます。
 * S3のバケットにフォルダを作成しデータを配備（例：s3://xxxxbucket/mystorage/）  
