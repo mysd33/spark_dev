@@ -162,7 +162,11 @@ log4j.overwrite=true
 ```
 * ビルドし当該APのアセンブリjar（databricks_dev-assembly-0.1.jar）をDatabricksクラスタへデプロイし、実行します。
 
-* 作成したLogAnalyticsへログが転送されるようになります。
+* 作成したLogAnalyticsへログが転送されるようになります。LogAnalyticsのログで、例えば、以下のクエリを実行すると、アプリケーション実行時のログが検索できます
+```
+SparkLoggingEvent_CL
+| where logger_name_s contains "com.example"
+```
  
 ## AWS EMRでのステップ実行手順
 * エントリポイントにApplicationEntryPointクラスを使用することで、AP基盤のDI機能によりSpark標準機能のみを使用したSparkAPとしてAWS EMR上で実行できます。
