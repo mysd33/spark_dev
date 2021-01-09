@@ -1,3 +1,5 @@
+import scala.collection.JavaConverters._
+
 ThisBuild / scalaVersion := "2.11.0"
 ThisBuild / version := "0.1"
 ThisBuild / organization := "com.example"
@@ -25,7 +27,8 @@ lazy val commonSettings = Seq(
     .copy(includeScala = false, includeDependency = false),
   //sbt assemblyで、テストをスキップ
   test in assembly := {},
-  autoAPIMappings := true
+  autoAPIMappings := true,
+  scalacOptions ++= Seq("-encoding", "UTF-8")
 )
 
 lazy val root = (project in file("."))
