@@ -11,7 +11,7 @@ phases:
       - sbt clean package
       - echo scaladoc_unidoc
       - sbt unidoc
-      - echo test
+      - echo unit_test
       - sbt -Dactive.profile=ut coverage test
       - echo integration_test
       - sbt -Dactive.profile=it it:test
@@ -22,7 +22,7 @@ phases:
 artifacts:
   files:
     - '**/target/**/databricks_dev-assembly-*.jar'
-
+    - '**/target/**/unidoc/**/*'
 cache:
   paths:
     - '/root/.m2/**/*'
