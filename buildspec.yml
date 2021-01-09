@@ -9,6 +9,12 @@ phases:
     commands:
       - echo assembly
       - sbt assembly
+      - echo scaladoc_unidoc
+      - sbt unidoc
+      - echo test
+      - sbt -Dactive.profile=ut coverage test
+      - echo integration_test
+      - sbt -Dactive.profile=it it:test
 artifacts:
   files:
     - '**/target/**/databricks_dev-assembly-*.jar'
