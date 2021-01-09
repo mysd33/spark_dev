@@ -16,7 +16,9 @@ phases:
       - echo integration_test
       - sbt -Dactive.profile=it it:test
       - echo create_CoverageReport
-      - sbt coverageReport coverageAggregate
+      - sbt coverageReport
+      - echo aggregate_CoverageReport
+      - sbt coverageAggregate
   post_build:
     commands:
       - echo assembly
