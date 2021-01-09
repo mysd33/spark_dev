@@ -2,7 +2,7 @@ version: 0.2
 
 
 phases:
-  instal:
+  install:
     runtime-versions:
       java: corretto8
   build:
@@ -22,3 +22,7 @@ phases:
 artifacts:
   files:
     - '**/target/**/databricks_dev-assembly-*.jar'
+
+cache:
+  paths:
+    - '/root/.ivy/**/*'
