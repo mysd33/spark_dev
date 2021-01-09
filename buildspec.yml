@@ -25,4 +25,6 @@ artifacts:
 
 cache:
   paths:
-    - '/root/.ivy/**/*'
+    - '/root/.m2/**/*'
+    - '/root/.sbt/**/*'
+    - '/root/.ivy2/**/*'
