@@ -9,16 +9,16 @@ phases:
     commands:
       - echo build
       - sbt clean package
-  post_build:
-    commands:
-      - echo assembly
-      - sbt assembly
       - echo scaladoc_unidoc
       - sbt unidoc
       - echo test
       - sbt -Dactive.profile=ut coverage test
       - echo integration_test
       - sbt -Dactive.profile=it it:test
+  post_build:
+    commands:
+      - echo assembly
+      - sbt assembly
 artifacts:
   files:
     - '**/target/**/databricks_dev-assembly-*.jar'
