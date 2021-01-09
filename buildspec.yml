@@ -1,6 +1,10 @@
 version: 0.2
 
+
 phases:
+  instal:
+    runtime-versions:
+      java: corretto8
   build:
     commands:
       - echo build
@@ -18,4 +22,3 @@ phases:
 artifacts:
   files:
     - '**/target/**/databricks_dev-assembly-*.jar'
-
