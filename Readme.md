@@ -325,3 +325,9 @@ az container create -g RG_MYSD_DEV  --name sonarqubeaci --image sonarqube --port
      * dbfspath - DFS上のライブラリのパス
        * /FileStore/jars
        * 最後にスラッシュを入れないこと
+
+## AWS CodeBuildでのCI
+ * AWS CodeCommitでソースコード管理し、AWS CodeBuildでbuildspec.ymlの定義に基づきCI実行できます
+ * ビルド、scaladoc、単体テスト実行、結合テスト実行、実行可能jar作成、テスト結果レポートやカバレッジレポートに対応しています
+   * SonarQubeによる静的コードチェックの実行等は今後対応
+ * ivyローカルリポジトリのjarをキャッシュしビルド時間を短縮する設定もしています

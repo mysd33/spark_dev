@@ -19,10 +19,20 @@ phases:
     commands:
       - echo assembly
       - sbt assembly
+reports:
+  test_report:
+    files:
+      - '**/target/test-reports/*.xml'
+    file-format: JUNITXML
+  coverage_report:
+    files:
+      - 'target/**/coverage-report/cobertura.xml'
+    file-format: COBERTURAXML
 artifacts:
   files:
-    - '**/target/**/databricks_dev-assembly-*.jar'
-    - '**/target/**/unidoc/**/*'
+    - 'target/**/databricks_dev-assembly-*.jar'
+    - 'target/**/scoverage-report/**/*'
+    - 'target/**/unidoc/**/*'
 cache:
   paths:
     - '/root/.m2/**/*'
