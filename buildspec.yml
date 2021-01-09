@@ -1,0 +1,11 @@
+version: 0.2
+
+phases:
+  build:
+    commands:
+      - echo build
+      - sbt clean package
+  artifacts:
+    files:
+      - '**/target/**/databricks_dev-assembly-*.jar'
+
