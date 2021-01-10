@@ -2,6 +2,8 @@
 
 [![Build Status](https://dev.azure.com/Masashi11Yoshida/scala_dev/_apis/build/status/databricks_dev?branchName=master)](https://dev.azure.com/Masashi11Yoshida/scala_dev/_build/latest?definitionId=1&branchName=master)
 
+![Build Status](https://codebuild.ap-northeast-1.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoidWczL1JYaDlsdVI3alFTNk1QYTBVc3ZkcytXU05NWDUxMndLZ2k5TkdEdVQrZUdLREpWYnpqWkw0Mm5NSmhRWGJsekcxbGlpVkdHNjY0Z0NLdjdwdVFnPSIsIml2UGFyYW1ldGVyU3BlYyI6ImVMUlhpZFNKenk3KzZNQ0MiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master)
+
 ##プロジェクト構成
 * databricks_dev ルートプロジェクト
   * application 業務APサブプロジェクト
@@ -326,8 +328,17 @@ az container create -g RG_MYSD_DEV  --name sonarqubeaci --image sonarqube --port
        * /FileStore/jars
        * 最後にスラッシュを入れないこと
 
-## AWS CodeBuildでのCI
+## AWS CodePipeline AWS CodeBuildでのCICD
  * AWS CodeCommitでソースコード管理し、AWS CodeBuildでbuildspec.ymlの定義に基づきCI実行できます
+ * AWS CodePipelineからBuild時にCodeBuildを呼び出すように設定することで、ソース変更を自動検知しCICD自動実行できます。
  * ビルド、scaladoc、単体テスト実行、結合テスト実行、実行可能jar作成、テスト結果レポートやカバレッジレポートに対応しています
-   * SonarQubeによる静的コードチェックの実行等は今後対応
  * ivyローカルリポジトリのjarをキャッシュしビルド時間を短縮する設定もしています
+ * CodeBuildからのSonarQubeの実行にも対応しています。
+    * SonarQubeサーバの構築手順は省略します
+    * SonarQubeのプロジェクト名(name)、プロジェクトキー(project_key)を"spark_dev"にしてください。
+      * buildspec.yamlのvariablesに「SONAR_PROJECTNAME: "spark_dev"」で設定しています
+    * SystemManager ParameterStoreに、以下２つのパラメータ値を設定して下さい。
+      * /CodeBuild/SonarQubeEndpoint →　SonarQubeのエンドポイントURL（Textで設定）
+      * /CodeBuild/SonarQubeToken → トークンの値（SecureStringで設定）
+    * CodeBuildのIAMロールにSytemManager ParameterStoreとKMSのキーにアクセスするポリシーを割り当ててください。
+      * (参考)https://dev.classmethod.jp/articles/codebuild-env/
