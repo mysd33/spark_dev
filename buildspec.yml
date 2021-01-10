@@ -1,10 +1,20 @@
 version: 0.2
 
-
+env:
+  variables:
+    - SONAR_PROJECTNAME: "spark_dev"
+  parameter-store:
+    - SONARQUBE_ENDPOINT: /CodeBuild/SonarQubeEndpoint
+    - SONARQUBE_TOKEN: /CodeBuild/SonarQubeToken
 phases:
   install:
     runtime-versions:
       java: corretto8
+  pre_build:
+    commands:
+      - wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.5.0.2216-linux.zip
+      - unzip ./sonar-scanner-cli-4.5.0.2216-linux.zip
+      - export PATH=$PATH:/sonar-scanner-cli-4.5.0.2216-linux/bin/
   build:
     commands:
       - echo build
@@ -16,9 +26,9 @@ phases:
       - echo integration_test
       - sbt -Dactive.profile=it it:test
       - echo create_CoverageReport
-      - sbt coverageReport
-      - echo aggregate_CoverageReport
-      - sbt coverageAggregate
+      - sbt coverageReport coverageAggregate
+      - echo SonarQube
+      - sonar-scanner -Dsonar.projectName=$SONAR_PROJECTNAME -Dsonar.projectKey=$SONAR_PROJECTNAME -Dsonar.login=$SONARQUBE_TOKEN -Dsonar.host.url=$SONARQUBE_ENDPOINT
   post_build:
     commands:
       - echo assembly
