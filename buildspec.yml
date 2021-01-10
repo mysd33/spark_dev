@@ -2,10 +2,10 @@ version: 0.2
 
 env:
   variables:
-    - SONAR_PROJECTNAME: "spark_dev"
+    SONAR_PROJECTNAME: "spark_dev"
   parameter-store:
-    - SONARQUBE_ENDPOINT: /CodeBuild/SonarQubeEndpoint
-    - SONARQUBE_TOKEN: /CodeBuild/SonarQubeToken
+    SONARQUBE_ENDPOINT: /CodeBuild/SonarQubeEndpoint
+    SONARQUBE_TOKEN: /CodeBuild/SonarQubeToken
 phases:
   install:
     runtime-versions:
