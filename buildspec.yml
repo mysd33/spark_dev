@@ -16,6 +16,7 @@ phases:
       - unzip ./sonar-scanner-cli-4.5.0.2216-linux.zip
       - CURRENT=$(pwd)
       - echo $CURRENT
+      - ls -l $CURRENT/sonar-scanner-cli-4.5.0.2216-linux/bin/
       - export PATH=$PATH:$CURRENT/sonar-scanner-cli-4.5.0.2216-linux/bin/
   build:
     commands:
