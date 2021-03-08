@@ -236,6 +236,11 @@ SparkLoggingEvent_CL
     ```
     aws datapipeline activate-pipeline --pipeline-id df-03617342CEQKZU3JZOXQ
     ```
+
+##AWS Step FunctionsによるSparkジョブ実行
+* 同様に、AWS Step FunctionsによりSparkジョブが実行できます。
+  * aws-stepfunctionsフォルダの「awsstepfunctions-asl.json」を使ってステートマシン定義します
+  * EMRのクラスタを起動、EMRのジョブフローにステップを追加し実行、クラスタを終了する一連のフローが動作します
     
 ##Azure DevOps PipelineでのCI
 * Azure Reposでソースコード管理し、Azure Pipelineでパイプラインを作成することでazure-pipelines.ymlの定義に基づきPipeline実行できます
