@@ -13,6 +13,12 @@ variables:
   SBT_IVY_OPTION: "--ivy $(IVY_CACHE_FOLDER)"
 
 steps:
+- task: JavaToolInstaller@0
+  inputs:
+    versionSpec: '8'
+    jdkArchitectureOption: 'x64'
+    jdkSourceOption: 'PreInstalled'
+
 - task: Cache@2
   inputs:
     key: 'sbt | "$(Agent.OS)" | **/build.sbt'
